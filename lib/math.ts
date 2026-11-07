@@ -67,6 +67,9 @@ export function safePlayer(value: unknown) {
   for (const part of OUTFIT_PARTS) appearance[part] = Number(a[part] ?? 0);
   return {
     name: p.name.trim().slice(0, 24),
+    ...(typeof p.email === "string" && /^[^\s@]+@[^\s@]+$/.test(p.email.trim())
+      ? { email: p.email.trim().slice(0, 254) }
+      : {}),
     appearance,
     interests: Array.isArray(p.interests)
       ? p.interests.filter(

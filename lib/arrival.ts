@@ -31,6 +31,7 @@ export async function enterFromPass({
     if (document.hidden) abort.abort();
   };
   document.addEventListener("visibilitychange", hidden);
+  window.addEventListener("blur", cancelOwner);
   const animate = async (el: Element, frames: Keyframe[], duration: number) => {
     if (signal.aborted) throw new DOMException("Interrupted", "AbortError");
     const a = el.animate(frames, {
@@ -54,11 +55,19 @@ export async function enterFromPass({
     target = destination.player;
     target.dataset.arriving = "true";
     target.style.opacity = "0";
-    if (reduced) {
-      destination.world.scrollIntoView({
-        behavior: "instant",
-        block: "center",
+    const framePlayer = (behavior: ScrollBehavior) => {
+      if (destination.world.closest(".is-handheld")) return;
+      const rect = target!.getBoundingClientRect();
+      window.scrollTo({
+        top: Math.max(
+          0,
+          scrollY + rect.top - Math.max(24, (innerHeight - rect.height) * 0.62),
+        ),
+        behavior,
       });
+    };
+    if (reduced) {
+      framePlayer("instant");
       return;
     }
     const w = Math.min(220, innerWidth - 48),
@@ -96,7 +105,7 @@ export async function enterFromPass({
       [{ transform: "rotateY(0)" }, { transform: "rotateY(180deg)" }],
       480,
     );
-    destination.world.scrollIntoView({ behavior: "smooth", block: "center" });
+    framePlayer("smooth");
     document.documentElement.dataset.arrival = "navigation";
     let old = Infinity,
       steady = 0;
@@ -177,6 +186,7 @@ export async function enterFromPass({
     ownerSignal?.removeEventListener("abort", cancelOwner);
     document.removeEventListener("keydown", stop, true);
     document.removeEventListener("visibilitychange", hidden);
+    window.removeEventListener("blur", cancelOwner);
     document.documentElement.dataset.arrival = "complete";
     onDone();
   }

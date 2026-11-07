@@ -17,12 +17,15 @@ const tones: Record<string, number[]> = {
   brake: [196, 130],
   boost: [523, 784, 1047],
   pass: [659, 880],
+  bite: [180, 130],
+  step: [95],
 };
 const cooldown: Record<string, number> = {
   talk: 0.08,
   hit: 0.035,
   steer: 0.07,
   near: 0.12,
+  step: 0.12,
 };
 class AudioBus {
   private context: AudioContext | null = null;
@@ -277,7 +280,7 @@ class AudioBus {
       );
       gain.gain.setValueAtTime(0.0001, start);
       gain.gain.exponentialRampToValueAtTime(
-        kind === "talk" ? 0.018 : 0.065,
+        kind === "talk" || kind === "step" ? 0.018 : 0.065,
         start + 0.006,
       );
       gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.09);

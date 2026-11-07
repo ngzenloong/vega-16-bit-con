@@ -8,6 +8,18 @@ export type LoreAction =
   | "find-runner"
   | "find-kart"
   | "find-beat";
+export function dialoguePages(line: string, limit = 86) {
+  const pages: string[] = [];
+  let current = "";
+  for (const word of line.split(/\s+/)) {
+    if (current && current.length + word.length + 1 > limit) {
+      pages.push(current);
+      current = word;
+    } else current += `${current ? " " : ""}${word}`;
+  }
+  if (current) pages.push(current);
+  return pages;
+}
 export type LoreCharacter = {
   id: string;
   name: string;

@@ -199,6 +199,6 @@ async function main() {
   await sharp({create:{width:780,height:576,channels:4,background:C.paper}}).composite(contacts).png().toFile(contactPath);
   fs.writeFileSync(path.join(NOTES,'companion-metadata.json'),JSON.stringify(records,null,2)+'\n');
   for(const[name,hash]of Object.entries(carHashes))assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(OUT,name))).digest('hex'),hash,`${name}: car assets must remain unchanged`);
-  console.log(JSON.stringify({created:records.map(r=>({src:r.src,fps:r.fps,bounds:r.frameBounds})),contact:contactPath,checks:'16 distinct states; fixed core anchors; one-pixel frame guards; binary alpha; no blue; direct 2x/native-nearest equality; all 12 rival checksums unchanged'},null,2));
+  console.log(JSON.stringify({created:records.map(r=>({src:r.src,fps:r.fps,bounds:r.frameBounds})),contact:contactPath,checks:'16 distinct states; fixed core anchors; one-pixel frame guards; binary alpha; no blue; direct 2x/native-nearest equality; existing rival checksums unchanged'},null,2));
 }
 main().catch(e=>{console.error(e);process.exit(1);});

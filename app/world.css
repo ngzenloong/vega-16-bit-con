@@ -1,7 +1,7 @@
 /* Scene geometry uses one 2x pixel scale. Buildings are opaque depth layers. */
 .world-stage {
   position: relative;
-  --camera-x: max(0px, calc(1440px - 50vw));
+  --camera-x: max(0px, calc(var(--world-center, 1800px) - 50vw));
   --floor-height: clamp(760px, calc(100svh - 76px), 920px);
 }
 .world-floor {
@@ -21,7 +21,7 @@
 .world-inner {
   position: absolute;
   inset: 0 auto 0 0;
-  width: 2880px;
+  width: var(--world-width, 3600px);
   transform: translate3d(calc(-1 * var(--camera-x)), 0, 0);
   will-change: transform;
 }
@@ -149,7 +149,7 @@
 }
 .venue-sign {
   position: absolute;
-  left: 1440px;
+  left: var(--world-center, 1800px);
   top: 30px;
   transform: translateX(-50%);
   z-index: 2;
@@ -161,7 +161,7 @@
 }
 .event-board {
   position: absolute;
-  left: 1440px;
+  left: var(--world-center, 1800px);
   top: 100px;
   transform: translateX(-50%);
   width: 560px;
@@ -206,21 +206,9 @@
   font-size: 12px;
   padding: var(--space-2) var(--space-4);
 }
-.platform-beam {
-  position: absolute;
-  top: calc(50% + 6px);
-  height: 12px;
-  width: 230px;
-  border: 2px solid var(--frame-dark);
-  background: var(--platform-face);
-  z-index: 2;
-}
-.beam-left {
-  left: 920px;
-}
-.beam-right {
-  left: 1730px;
-}
+
+
+
 .world-floor-art {
   position: absolute;
   inset: auto 0 0;
@@ -244,7 +232,7 @@
 .foreground-life {
   position: absolute;
   bottom: 40px;
-  width: 2880px;
+  width: var(--world-width, 3600px);
   height: 160px;
   z-index: 12;
   pointer-events: none;
@@ -696,7 +684,7 @@
 .schedule-board {
   position: absolute;
   top: 120px;
-  left: 1440px;
+  left: var(--world-center, 1800px);
   transform: translateX(-50%);
   width: 920px;
   z-index: 4;
@@ -836,21 +824,9 @@
     display: none;
   }
 }
-.upper-catwalk {
-  position: absolute;
-  top: calc(25% + 53px);
-  height: 10px;
-  width: 170px;
-  border: 2px solid var(--frame-dark);
-  background: var(--platform-face);
-  z-index: 2;
-}
-.catwalk-left {
-  left: 980px;
-}
-.catwalk-right {
-  left: 1730px;
-}
+
+
+
 @keyframes cloud-drift {
   to {
     translate: var(--drift) 0;

@@ -12,12 +12,12 @@ import { gameLoaders } from "@/lib/games/loaders";
 import { gameResources } from "@/lib/games/resources";
 import { SimulationClock } from "@/lib/games/clock";
 import { gameViewport } from "@/lib/games/viewport";
-import { RIVAL_CARS } from "@/lib/games/cars";
 import { audio } from "@/lib/audio";
 import { HeldInput } from "@/lib/input";
 import Controls from "./Controls";
 import Icon from "./Icon";
 import RaceGarage from "./RaceGarage";
+import { retainDialogFocus } from "@/lib/dialog-focus";
 
 type Mode =
   | "loading"
@@ -89,9 +89,7 @@ export default function GameHost({
       score: 0,
       time: GAME_DURATION[id],
     });
-  const [gridSeed] = useState(() =>
-    Math.floor(Math.random() * RIVAL_CARS.length),
-  );
+  const [gridSeed] = useState(() => Math.floor(Math.random() * 0x7fffffff));
   const [pressed, setPressed] = useState<GameButton[]>([]),
     [touch, setTouch] = useState(touchControls),
     [keyboardHelp, setKeyboardHelp] = useState(false),
@@ -162,6 +160,11 @@ export default function GameHost({
   }, [onClose]);
   const start = useCallback(async () => {
     if (!["intro", "paused"].includes(modeRef.current)) return;
+    if (document.hidden || !document.hasFocus()) {
+      changeMode("paused");
+      clearInput();
+      return;
+    }
     const resuming = modeRef.current === "paused";
     const offset = resuming ? elapsed.current : 0,
       ticket = ++launch.current;
@@ -256,6 +259,7 @@ export default function GameHost({
       previous = document.activeElement as HTMLElement | null,
       overflow = document.body.style.overflow;
     d.showModal();
+    const releaseFocus = retainDialogFocus(d);
     d.focus({ preventScroll: true });
     document.body.style.overflow = "hidden";
     audio.duck(0.25);
@@ -268,6 +272,7 @@ export default function GameHost({
       launch.current++;
       cancelAnimationFrame(raf.current);
       d.removeEventListener("cancel", cancel);
+      releaseFocus();
       d.close();
       document.body.style.overflow = overflow;
       audio.motor(0);
@@ -295,6 +300,12 @@ export default function GameHost({
         const rect = element.parentElement!.getBoundingClientRect();
         const size = gameViewport(id, rect.width, rect.height);
         if (element.width !== size.width || element.height !== size.height) {
+          if (
+            controller.current &&
+            ["playing", "starting"].includes(modeRef.current)
+          )
+            pause();
+          else clearInput();
           element.width = size.width;
           element.height = size.height;
           controller.current?.resize?.(size.width, size.height);
@@ -304,7 +315,7 @@ export default function GameHost({
       });
     resize.observe(element.parentElement!);
     return () => resize.disconnect();
-  }, [id]);
+  }, [id, pause, clearInput]);
   useEffect(() => {
     let disposed = false,
       lastHUD = 0,
@@ -550,7 +561,12 @@ export default function GameHost({
         if (!e.repeat) void toggleSound();
         return;
       }
-      if (current !== "playing" && e.code === "Space" && target?.closest(".race-garage ul")) return;
+      if (
+        current !== "playing" &&
+        e.code === "Space" &&
+        target?.closest(".race-garage ul")
+      )
+        return;
       if (e.code === "KeyX") {
         e.preventDefault();
         if (!e.repeat) exit();
@@ -585,11 +601,23 @@ export default function GameHost({
         ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)
       ) {
         if (target?.closest(".race-garage")) return;
+        if (
+          target?.closest(".game-message-content") &&
+          [
+            "ArrowUp",
+            "ArrowDown",
+            "PageUp",
+            "PageDown",
+            "Home",
+            "End",
+          ].includes(e.code)
+        )
+          return;
         const buttons = [
           ...d.querySelectorAll<HTMLButtonElement>(
             ".game-message .menu-actions button",
           ),
-        ];
+        ].filter((button) => button.getClientRects().length > 0);
         if (!buttons.length) return;
         e.preventDefault();
         if (e.repeat) return;
@@ -718,126 +746,122 @@ export default function GameHost({
           {mode !== "playing" && (
             <div className="game-overlay">
               <div className="game-message">
-                {(mode === "loading" || mode === "starting") && (
-                  <>
-                    <h3>
-                      {mode === "loading" ? "Loading game…" : "Starting round…"}
-                    </h3>
-                    <p>You can return to the hall while this loads.</p>
-                    <div className="menu-actions">
-                      <button className="pixel-button" onClick={exit}>
-                        Back to the hall
-                      </button>
-                    </div>
-                  </>
-                )}
-                {mode === "intro" && (
-                  <>
-                    <h3>{info.name}</h3>
-                    <p>{info.instructions}</p>
-                    <p className="control-legend">
-                      {isTouch ? touchHelp[id] : info.controls}
-                    </p>
-                    {id === "kart" && <RaceGarage />}
-                    {best !== undefined && (
-                      <p className="best-score">
-                        Personal best: {best.toLocaleString()} points
+                <div
+                  className="game-message-content"
+                  role="region"
+                  aria-label="Game instructions and results"
+                  tabIndex={0}
+                >
+                  {(mode === "loading" || mode === "starting") && (
+                    <>
+                      <h3>
+                        {mode === "loading"
+                          ? "Loading game…"
+                          : "Starting round…"}
+                      </h3>
+                      <p>You can return to the hall while this loads.</p>
+                    </>
+                  )}
+                  {mode === "intro" && (
+                    <>
+                      <h3>{info.name}</h3>
+                      <p>{info.instructions}</p>
+                      <p className="control-legend">
+                        {isTouch ? touchHelp[id] : info.controls}
                       </p>
+                      {id === "kart" && <RaceGarage />}
+                      {best !== undefined && (
+                        <p className="best-score">
+                          Personal best: {best.toLocaleString()} points
+                        </p>
+                      )}
+                    </>
+                  )}
+                  {mode === "paused" && (
+                    <>
+                      <h3>Paused</h3>
+                      <p>Your round will continue where you left off.</p>
+                    </>
+                  )}
+                  {mode === "result" && result && (
+                    <>
+                      <h3>{result.won ? "Round cleared" : "Round over"}</h3>
+                      <p>{result.detail}</p>
+                      <strong className="result-score">
+                        {result.score.toLocaleString()} points
+                      </strong>
+                      <p className="best-score">
+                        {newBest
+                          ? "New personal best"
+                          : `Personal best: ${(best ?? 0).toLocaleString()} points`}
+                      </p>
+                    </>
+                  )}
+                  {mode === "error" && (
+                    <>
+                      <h3>Game unavailable</h3>
+                      <p>
+                        The game could not load or continue. Try again, or
+                        return to the hall.
+                      </p>
+                    </>
+                  )}
+                  {id === "beat" && (mode === "intro" || mode === "paused") && (
+                    <details className="timing-settings">
+                      <summary>Timing adjustment</summary>
+                      <label>
+                        Tap offset: {timingOffset} ms
+                        <input
+                          type="range"
+                          min={-150}
+                          max={150}
+                          step={10}
+                          value={timingOffset}
+                          onChange={(e) =>
+                            setTimingOffset(Number(e.target.value))
+                          }
+                        />
+                      </label>
+                      <p>
+                        Positive values treat your tap as later. Negative values
+                        treat it as earlier. The music and arrows stay
+                        unchanged.
+                      </p>
+                    </details>
+                  )}
+                </div>
+                <div className="menu-actions button-row">
+                  <button
+                    className={`pixel-button ${mode === "loading" || mode === "starting" ? "" : "primary"}`}
+                    onClick={
+                      mode === "intro" || mode === "paused"
+                        ? () => void start()
+                        : mode === "result"
+                          ? restart
+                          : mode === "error"
+                            ? () => setRound((n) => n + 1)
+                            : exit
+                    }
+                  >
+                    {mode === "intro"
+                      ? "Start playing"
+                      : mode === "paused"
+                        ? "Resume"
+                        : mode === "result"
+                          ? "Play again"
+                          : mode === "error"
+                            ? "Try again"
+                            : "Back to the hall"}
+                    {!isTouch && !["loading", "starting"].includes(mode) && (
+                      <kbd>↵</kbd>
                     )}
-                    <div className="menu-actions">
-                      <button
-                        className="pixel-button primary"
-                        onClick={() => void start()}
-                      >
-                        Start playing {!isTouch && <kbd>↵</kbd>}
-                      </button>
-                    </div>
-                  </>
-                )}
-                {mode === "paused" && (
-                  <>
-                    <h3>Paused</h3>
-                    <p>Your round will continue where you left off.</p>
-                    <div className="menu-actions button-row">
-                      <button
-                        className="pixel-button primary"
-                        onClick={() => void start()}
-                      >
-                        Resume {!isTouch && <kbd>↵</kbd>}
-                      </button>
-                      <button className="pixel-button" onClick={exit}>
-                        Back to the hall
-                      </button>
-                    </div>
-                  </>
-                )}
-                {mode === "result" && result && (
-                  <>
-                    <h3>{result.won ? "Round cleared" : "Round over"}</h3>
-                    <p>{result.detail}</p>
-                    <strong className="result-score">
-                      {result.score.toLocaleString()} points
-                    </strong>
-                    <p className="best-score">
-                      {newBest
-                        ? "New personal best"
-                        : `Personal best: ${(best ?? 0).toLocaleString()} points`}
-                    </p>
-                    <div className="menu-actions button-row">
-                      <button
-                        className="pixel-button primary"
-                        onClick={restart}
-                      >
-                        Play again {!isTouch && <kbd>↵</kbd>}
-                      </button>
-                      <button className="pixel-button" onClick={exit}>
-                        Back to the hall
-                      </button>
-                    </div>
-                  </>
-                )}
-                {mode === "error" && (
-                  <>
-                    <h3>Game unavailable</h3>
-                    <p>
-                      The game could not load or continue. Try again, or return
-                      to the hall.
-                    </p>
-                    <div className="menu-actions button-row">
-                      <button
-                        className="pixel-button primary"
-                        onClick={() => setRound((n) => n + 1)}
-                      >
-                        Try again
-                      </button>
-                      <button className="pixel-button" onClick={exit}>
-                        Back to the hall
-                      </button>
-                    </div>
-                  </>
-                )}
-                {id === "beat" && (mode === "intro" || mode === "paused") && (
-                  <details className="timing-settings">
-                    <summary>Timing adjustment</summary>
-                    <label>
-                      Tap offset: {timingOffset} ms
-                      <input
-                        type="range"
-                        min={-150}
-                        max={150}
-                        step={10}
-                        value={timingOffset}
-                        onChange={(e) =>
-                          setTimingOffset(Number(e.target.value))
-                        }
-                      />
-                    </label>
-                    <p>
-                      Positive values treat your tap as later. Negative values
-                      treat it as earlier. The music and arrows stay unchanged.
-                    </p>
-                  </details>
-                )}
+                  </button>
+                  {["paused", "result", "error"].includes(mode) && (
+                    <button className="pixel-button" onClick={exit}>
+                      Back to the hall
+                    </button>
+                  )}
+                </div>
                 {!isTouch && !["loading", "starting"].includes(mode) && (
                   <p className="game-menu-hint">
                     {menuHint} · ↑ ↓ Choose · Esc Hall · M Sound

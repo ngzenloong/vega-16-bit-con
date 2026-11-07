@@ -51,19 +51,8 @@ p {
   color: var(--paper);
   background: var(--cinema-bg);
 }
-.site-header nav > button:not(.pixel-button),
-.motion-toggle {
+.site-header nav > button:not(.pixel-button) {
   min-height: var(--control-hit);
-}
-.motion-toggle {
-  font: var(--text-sm) / 1.4 var(--font-mono);
-}
-.motion-symbol {
-  display: none;
-}
-.site-header .sound-toggle {
-  width: var(--control-hit);
-  min-width: var(--control-hit);
 }
 .sound-toggle {
   position: relative;
@@ -220,9 +209,6 @@ p {
   min-height: 185px;
   padding: 15px var(--space-2) var(--space-3);
 }
-.handheld-active .motion-toggle {
-  display: none;
-}
 .ticket-action {
   min-height: var(--control-hit);
   font-size: var(--text-sm);
@@ -245,18 +231,6 @@ p {
   min-height: 20px;
   margin-top: var(--space-3);
   font: var(--text-sm) / 1.5 var(--font-body);
-}
-.outfit-options .outfit-all {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.outfit-options .outfit-cycle {
-  display: none;
-}
-.outfit-option {
-  min-height: var(--control-hit);
-  font: var(--text-sm) / 1.4 var(--font-mono);
 }
 .form-note {
   font: var(--text-sm) / 1.5 var(--font-body);
@@ -459,28 +433,6 @@ p {
   .site-header nav {
     gap: var(--space-2);
   }
-  .site-header .sound-toggle {
-    min-width: var(--control-hit);
-    width: var(--control-hit);
-  }
-  .motion-toggle {
-    min-height: var(--control-hit);
-    font: var(--text-xs) / 1.4 var(--font-mono);
-    position: static;
-    padding: var(--space-2);
-    width: var(--control-hit);
-    background: transparent;
-    color: var(--ink);
-    border: 0;
-    box-shadow: none;
-  }
-  .motion-label {
-    display: none;
-  }
-  .motion-symbol {
-    display: grid;
-    place-items: center;
-  }
   .hero-explore {
     display: inline-flex;
   }
@@ -514,31 +466,8 @@ p {
     align-items: center;
     white-space: nowrap;
   }
-  .registration-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
   .registration-preview .player-pass {
     margin: auto;
-  }
-  .outfit-options .outfit-all {
-    display: none;
-  }
-  .outfit-options .outfit-cycle {
-    display: grid;
-    grid-template-columns: 44px minmax(0, 1fr) 44px;
-    gap: var(--space-2);
-    align-items: center;
-    text-align: center;
-    font: var(--text-control) / 1.4 var(--font-mono);
-  }
-  .outfit-cycle button {
-    min-height: var(--control-hit);
-    border: 1px solid var(--ink);
-    background: var(--white);
-    font: 18px var(--font-mono);
-  }
-  .outfit-cycle button:active {
-    background: var(--yellow);
   }
   .conversation-frame {
     height: 352px;
@@ -814,6 +743,7 @@ p {
   color: var(--paper);
 }
 .game-dialog.is-touch.game-kart .game-top h2,
+.game-dialog.is-touch.game-runner .game-top h2,
 .game-dialog.is-touch.game-breaker .game-top h2 {
   color: var(--ink);
 }
@@ -890,10 +820,6 @@ p {
 }
 .site-header {
   padding-block: 15px;
-}
-.game-dialog .game-message :focus-visible,
-.game-dialog .handheld-controls :focus-visible {
-  outline-color: var(--ink);
 }
 .game-kart .game-top :focus-visible,
 .game-breaker .game-top :focus-visible,

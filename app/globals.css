@@ -206,18 +206,6 @@ img {
   text-decoration: underline;
   text-underline-offset: 5px;
 }
-.access-controls {
-  display: flex;
-  gap: var(--space-3);
-  align-items: center;
-}
-.motion-toggle {
-  border: 0;
-  background: none;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  font: 11px var(--font-mono);
-}
 .sound-toggle {
   border: 0;
   background: none;
@@ -316,59 +304,6 @@ dialog::backdrop {
 }
 .registration-copy p {
   font-size: 13px;
-}
-.registration-grid {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 34px;
-  align-items: start;
-}
-.registration-fields {
-  display: grid;
-  gap: 13px;
-}
-.registration-fields > label {
-  display: grid;
-  gap: 5px;
-  font-size: 12px;
-}
-.registration-fields input {
-  width: 100%;
-  border: 1px solid var(--ink);
-  background: var(--white);
-  padding: 10px var(--space-3);
-  min-height: 44px;
-  font-size: 16px;
-}
-.outfit-options {
-  display: grid;
-  gap: 13px;
-  margin: 3px 0;
-}
-.outfit-options fieldset {
-  border: 0;
-  padding: 0;
-  margin: 0;
-}
-.outfit-options legend {
-  font-size: 11px;
-  margin-bottom: 6px;
-}
-.outfit-options fieldset > div {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.outfit-option {
-  border: 1px solid var(--ink);
-  background: var(--white);
-  padding: 7px 9px;
-  min-height: 35px;
-  font: 10px var(--font-mono);
-}
-.outfit-option[aria-pressed="true"] {
-  background: var(--yellow);
-  box-shadow: 2px 2px 0 var(--ink);
 }
 .register-submit {
   width: 100%;
@@ -701,9 +636,6 @@ dialog::backdrop {
   .site-header nav {
     gap: var(--space-5);
   }
-  .site-header .motion-toggle {
-    font-size: 10px;
-  }
 }
 @media (max-width: 700px) {
   .site-header {
@@ -727,24 +659,6 @@ dialog::backdrop {
     font-size: 11px;
     padding: var(--space-2) var(--space-3);
     min-height: 40px;
-  }
-  .access-controls {
-    gap: 0;
-  }
-  .motion-toggle {
-    position: fixed;
-    bottom: 10px;
-    left: 12px;
-    z-index: 22;
-    background: var(--paper);
-    border: 1px solid var(--ink);
-    padding: 6px var(--space-2);
-    box-shadow: 2px 2px 0 var(--ink);
-  }
-  .site-header .sound-toggle {
-    min-width: 28px;
-    width: 28px;
-    padding: 0;
   }
   .site-footer {
     padding: 30px 22px 75px;
@@ -781,41 +695,10 @@ dialog::backdrop {
   .registration-copy p {
     font-size: 12px;
   }
-  .registration-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-5);
-  }
   .registration-preview .player-pass {
     margin: auto;
     width: 192px;
     height: 270px;
-  }
-  .registration-grid .pass-face {
-    padding: var(--space-3);
-  }
-  .registration-grid .pass-character {
-    margin-top: var(--space-1);
-  }
-  .registration-grid .pass-face > strong {
-    font-size: 20px;
-  }
-  .registration-grid .pass-face > p {
-    font-size: 9px;
-    margin-top: 7px;
-  }
-  .registration-fields {
-    gap: var(--space-3);
-  }
-  .registration-fields input {
-    font-size: 16px;
-  }
-  .outfit-option {
-    min-height: 40px;
-    padding: 7px 9px;
-    font-size: 10px;
-  }
-  .outfit-options fieldset > div {
-    gap: 5px;
   }
   .form-note {
     font-size: 10px;

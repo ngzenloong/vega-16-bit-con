@@ -7,6 +7,10 @@
   --color-yellow: #ffd11b;
   --color-lime: #d5fb19;
   --color-sky: #8dcaff;
+  --sky-dusk-top: #edc6ce;
+  --sky-dusk-pink: #dc9eaf;
+  --sky-dusk-gold: #ffdb94;
+  --sky-dusk-horizon: #a895c6;
   --color-orange: #ff9823;
   --color-line: #829372;
   --color-muted: #46563c;
@@ -26,9 +30,12 @@
   --beat-keyline: #56674a;
   --glass-mullion: #718779;
   --frame-dark: #526b59;
-  --roof-edge: #586c58;
-  --roof-face: #e0e5d1;
-  --roof-brace: #91a08a;
+  --roof-edge: #5f6564;
+  --roof-face: #c9ccca;
+  --roof-brace: #858c89;
+  --cable-dark: #494f4d;
+  --cable-light: #b2b8b3;
+  --billboard-trim: #b5a779;
   --platform-face: #dfe5d0;
   --rail-light: #dfdfcf;
   --rail-face: #8c9180;
@@ -39,6 +46,7 @@
   --wall-return: #ded3bb;
   --wall-rule: #e5dac1;
   --floor-shadow: #8d8b67;
+  --floor-foreground: #e5bf8c;
   --wall-edge: #64735b;
   --ceiling-rule: #b6bea7;
   --font-body: Geist, Arial, sans-serif;

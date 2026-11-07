@@ -20,6 +20,7 @@ export interface Appearance {
 }
 export interface Player {
   name: string;
+  email?: string;
   appearance: Appearance;
   interests: number[];
 }
@@ -80,7 +81,7 @@ export const GAMES: {
     machine: "16-BIT / SNES",
     name: "Sam Circuit",
     instructions:
-      "Beat all 12 rivals to first place within 55 seconds. Drive the PostSIEM.com Fiat, catch the yellow boosts and keep a clean line through the bends.",
+      "Beat all 11 rivals in 55 seconds. Drive the PostSIEM.com Fiat, use yellow boosts to catch S-Cargo, and avoid heavy collision slowdowns.",
     controls: "← → Steer · ↑ / Space Gas · ↓ Brake",
     action: "GAS",
     secondary: "BRAKE",

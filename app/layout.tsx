@@ -5,6 +5,7 @@ import "./world.css";
 import "./interaction.css";
 import "./controls.css";
 import "./registration.css";
+import "./venue.css";
 export const metadata: Metadata = {
   title: "16-Bit Con — Never stopped playing",
   description:

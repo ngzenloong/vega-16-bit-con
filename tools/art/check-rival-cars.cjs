@@ -15,7 +15,7 @@ function label(text, width = 240) {
 }
 
 (async () => {
-  assert.equal(data.length, 12);
+  assert.equal(data.length, 11);
   assert(!data.some(m => m.id === 'a2'));
   const silhouettes = new Set();
   const contact = [], poses = [], small = [];
@@ -83,7 +83,7 @@ function label(text, width = 240) {
       {input:await sharp(png).extract({left:0,top:0,width:96,height:96}).resize(48,48,{kernel:'nearest'}).png().toBuffer(),left:sx+20,top:sy+46},
       {input:await sharp(png).extract({left:0,top:0,width:96,height:96}).png().toBuffer(),left:sx+78,top:sy+28});
   }
-  assert.equal(silhouettes.size,12,'Every model must have its own silhouette, not a recolor');
+  assert.equal(silhouettes.size,11,'Every model must have its own silhouette, not a recolor');
   await sharp({create:{width:960,height:702,channels:4,background:'#FFFAEB'}}).composite(contact).png().toFile('/tmp/vega-rival-cars-contact.png');
   await sharp({create:{width:1200,height:1332,channels:4,background:'#FFFAEB'}}).composite(poses).png().toFile('/tmp/vega-rival-cars-poses.png');
   await sharp({create:{width:720,height:390,channels:4,background:'#FFFAEB'}}).composite(small).png().toFile('/tmp/vega-rival-cars-phone-scale.png');

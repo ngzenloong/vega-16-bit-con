@@ -1,0 +1,13 @@
+.git
+.agents
+.codex
+.openai
+.next
+.next-export
+out
+node_modules
+tools
+tests
+*.md
+*.tsbuildinfo
+.env*

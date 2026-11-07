@@ -1,6 +1,7 @@
 import { characterSheets, loadImage } from "../character";
 import type { Appearance } from "../types";
 import { selectRivalCars } from "./cars";
+import { duskBackdrop } from "./scenery";
 let fontReady: Promise<FontFace[]> | null = null;
 let fontFailed = false;
 function prepareGameFont() {
@@ -27,11 +28,20 @@ export async function gameResources(
   grid = 0,
 ) {
   const rivalCars = racing ? selectRivalCars(grid) : [];
-  const [sheets, logo, logoLight, backdrop, cars] = await Promise.all([
+  const [
+    sheets,
+    logo,
+    logoLight,
+    backdrop,
+    cars,
+    cityBlocks,
+    cityBlocksDistant,
+    mascot,
+  ] = await Promise.all([
     characterSheets(appearance),
     loadImage("/assets/vega/logo.svg"),
     loadImage("/assets/vega/logo-light.svg"),
-    loadImage("/assets/vega/city-far.png"),
+    duskBackdrop(),
     racing
       ? Promise.all(
           ["fiat-player.svg", ...rivalCars.map((car) => car.asset)].map(
@@ -39,6 +49,9 @@ export async function gameResources(
           ),
         )
       : Promise.resolve([]),
+    duskBackdrop(true),
+    racing ? duskBackdrop("street-far") : Promise.resolve(undefined),
+    loadImage("/assets/vega/sam-portrait.png"),
     prepareGameFont(),
   ]);
   const [idle, run, jump] = await Promise.all(
@@ -50,6 +63,9 @@ export async function gameResources(
     logo,
     logoLight,
     backdrop,
+    cityBlocks,
+    cityBlocksDistant,
+    mascot,
     cars,
     rivalCars,
   };

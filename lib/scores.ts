@@ -1,5 +1,10 @@
 import { GAMES, type Scores } from "./types.ts";
-export const SCORE_RULES = "easy-24-championship-55-grid13";
+const PREVIOUS_RULES = new Set([
+  "easy-24-championship-55-grid13",
+  "easy-24-race-drivers-v2",
+  "easy-24-race-drivers-grid12-v3",
+]);
+export const SCORE_RULES = "easy-24-race-boss-grid12-v4";
 function cleanScores(value: unknown): Scores {
   const result: Scores = {};
   if (!value || typeof value !== "object") return result;
@@ -27,6 +32,10 @@ export function readScoreProgress(value: unknown) {
       archive[id] = Math.max(archive[id] ?? 0, saved[id]!);
   return {
     scores: {
+      ...(PREVIOUS_RULES.has(String(stored.scoreRules)) &&
+      saved.beat !== undefined
+        ? { beat: saved.beat }
+        : {}),
       ...(saved.breaker !== undefined ? { breaker: saved.breaker } : {}),
       ...(saved.runner !== undefined ? { runner: saved.runner } : {}),
     },

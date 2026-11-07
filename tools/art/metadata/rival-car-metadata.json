@@ -45,15 +45,15 @@
         13
       ],
       [
-        34,
+        36,
         32,
-        38,
+        36,
         13
       ],
       [
         24,
         32,
-        38,
+        36,
         13
       ]
     ],
@@ -92,22 +92,22 @@
         "which": "front",
         "center": [
           17,
-          72
+          77
         ],
         "radii": [
           4,
-          10
+          11
         ]
       },
       {
         "which": "rear",
         "center": [
           29,
-          78
+          79
         ],
         "radii": [
           4,
-          10
+          11
         ]
       }
     ],
@@ -168,15 +168,15 @@
         10
       ],
       [
-        33,
+        37,
         44,
-        36,
+        35,
         10
       ],
       [
-        27,
+        24,
         44,
-        36,
+        35,
         10
       ]
     ],
@@ -215,11 +215,11 @@
         "which": "front",
         "center": [
           14,
-          73
+          77
         ],
         "radii": [
           4,
-          9
+          10
         ]
       },
       {
@@ -230,7 +230,7 @@
         ],
         "radii": [
           4,
-          9
+          10
         ]
       }
     ],
@@ -291,13 +291,13 @@
         11
       ],
       [
-        40,
+        41,
         29,
         26,
         11
       ],
       [
-        30,
+        29,
         29,
         26,
         11
@@ -338,11 +338,11 @@
         "which": "front",
         "center": [
           30,
-          74
+          78
         ],
         "radii": [
           4,
-          9
+          10
         ]
       }
     ],
@@ -450,11 +450,11 @@
         "which": "front",
         "center": [
           43,
-          76
+          80
         ],
         "radii": [
           3,
-          7
+          8
         ]
       }
     ],
@@ -562,22 +562,22 @@
         "which": "front",
         "center": [
           16,
-          72
+          78
         ],
         "radii": [
           4,
-          9
+          10
         ]
       },
       {
         "which": "rear",
         "center": [
           29,
-          79
+          80
         ],
         "radii": [
           4,
-          9
+          10
         ]
       }
     ],
@@ -638,13 +638,13 @@
         15
       ],
       [
-        27,
+        38,
         25,
         32,
         15
       ],
       [
-        37,
+        26,
         25,
         32,
         15
@@ -685,22 +685,22 @@
         "which": "front",
         "center": [
           16,
-          71
+          78
         ],
         "radii": [
           4,
-          9
+          10
         ]
       },
       {
         "which": "rear",
         "center": [
           29,
-          79
+          80
         ],
         "radii": [
           4,
-          9
+          10
         ]
       }
     ],
@@ -761,13 +761,13 @@
         14
       ],
       [
-        35,
+        45,
         27,
         18,
         14
       ],
       [
-        43,
+        33,
         27,
         18,
         14
@@ -808,22 +808,22 @@
         "which": "front",
         "center": [
           24,
-          74
+          79
         ],
         "radii": [
           3,
-          8
+          9
         ]
       },
       {
         "which": "rear",
         "center": [
           34,
-          80
+          81
         ],
         "radii": [
           3,
-          8
+          9
         ]
       }
     ],
@@ -834,129 +834,6 @@
       25,
       18,
       46,
-      69
-    ],
-    "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
-  },
-  {
-    "file": "car-smart.svg",
-    "id": "smart",
-    "model": "Smart Fortwo (450)",
-    "frameWidth": 96,
-    "frameHeight": 96,
-    "frames": [
-      "straight",
-      "steering-left",
-      "steering-right"
-    ],
-    "fps": 0,
-    "groundAnchor": [
-      48,
-      90
-    ],
-    "rearLettering": "SIEM",
-    "frameBounds": [
-      [
-        17,
-        17,
-        63,
-        74
-      ],
-      [
-        13,
-        17,
-        69,
-        74
-      ],
-      [
-        14,
-        17,
-        69,
-        74
-      ]
-    ],
-    "bodyWidth": 62,
-    "rearWindowBoxes": [
-      [
-        27,
-        31,
-        42,
-        25
-      ],
-      [
-        35,
-        31,
-        36,
-        25
-      ],
-      [
-        25,
-        31,
-        36,
-        25
-      ]
-    ],
-    "rearLabelBoxes": [
-      [
-        38,
-        74,
-        21,
-        9
-      ],
-      [
-        44,
-        74,
-        21,
-        9
-      ],
-      [
-        31,
-        74,
-        21,
-        9
-      ]
-    ],
-    "identity": "First-generation city coupe proportions, contrasting safety cell, short split hatch and three stacked rear lamps.",
-    "sources": [
-      "https://media.smart.com/en-INT/pages/heritage/"
-    ],
-    "art": "Original code-native pixel illustration; no traced source pixels, manufacturer logo, external image, or font.",
-    "rendering": "Draw one 96x96 frame at square aspect. The three state poses are not an autoplay animation. Ground anchor is shared with the player.",
-    "driver": "Enclosed car or cab; no separate exposed driver sprite.",
-    "turnAngleDegrees": 30,
-    "sideExposureNative": 13,
-    "turnSourceProfile": "car-smart-side.svg",
-    "projectedSideWheels": [
-      {
-        "which": "front",
-        "center": [
-          18,
-          73
-        ],
-        "radii": [
-          4,
-          8
-        ]
-      },
-      {
-        "which": "rear",
-        "center": [
-          28,
-          80
-        ],
-        "radii": [
-          4,
-          8
-        ]
-      }
-    ],
-    "straightGroupSha256": "565fe8e2cfdeeb83dad9f83a0af6486a2510ccd43c617ab0d9c04840d6927866",
-    "turnConstruction": "Rear pixels remain a distinct face. Complete model-specific side profile, glazing, door boundaries, handles and bed details are projected into a stronger rear turn. Rear lettering is copied at native size after geometric mirroring.",
-    "maxVisibleWidth": 69,
-    "straightBodyBounds": [
-      17,
-      17,
-      62,
       69
     ],
     "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
@@ -1007,13 +884,13 @@
         17
       ],
       [
-        34,
+        35,
         35,
         39,
         17
       ],
       [
-        23,
+        22,
         35,
         39,
         17
@@ -1054,11 +931,11 @@
         "which": "front",
         "center": [
           15,
-          72
+          77
         ],
         "radii": [
           4,
-          9
+          11
         ]
       },
       {
@@ -1069,7 +946,7 @@
         ],
         "radii": [
           4,
-          9
+          11
         ]
       }
     ],
@@ -1177,11 +1054,11 @@
         "which": "front",
         "center": [
           16,
-          72
+          77
         ],
         "radii": [
           4,
-          9
+          10
         ]
       },
       {
@@ -1192,7 +1069,7 @@
         ],
         "radii": [
           4,
-          9
+          10
         ]
       }
     ],
@@ -1253,13 +1130,13 @@
         10
       ],
       [
-        36,
+        40,
         37,
         27,
         10
       ],
       [
-        33,
+        29,
         37,
         27,
         10
@@ -1301,22 +1178,22 @@
         "which": "front",
         "center": [
           13,
-          73
+          77
         ],
         "radii": [
           4,
-          9
+          10
         ]
       },
       {
         "which": "rear",
         "center": [
           25,
-          80
+          79
         ],
         "radii": [
           4,
-          9
+          10
         ]
       }
     ],
@@ -1605,11 +1482,15 @@
       [],
       [
         [
+          26,
+          43
+        ],
+        [
           23,
           52
         ],
         [
-          20,
+          19,
           61
         ],
         [
@@ -1619,11 +1500,15 @@
       ],
       [
         [
+          69,
+          43
+        ],
+        [
           72,
           52
         ],
         [
-          75,
+          76,
           61
         ],
         [
@@ -1641,11 +1526,11 @@
         "which": "front",
         "center": [
           13,
-          72
+          77
         ],
         "radii": [
           4,
-          9
+          11
         ]
       },
       {
@@ -1656,7 +1541,7 @@
         ],
         "radii": [
           4,
-          9
+          11
         ]
       }
     ],

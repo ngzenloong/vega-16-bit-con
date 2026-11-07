@@ -131,6 +131,8 @@ export function decorateOutfit(
     r(x + 10, y + 6, 3, 2, leaf);
   }
   if (look.hat === 8) {
+    r(x + 6, y - 2, 7, 15, ink);
+    r(x + 2, y + 2, 15, 7, ink);
     r(x + 5, y + 1, 9, 9, leaf);
     r(x + 7, y - 1, 5, 13, paper);
     r(x + 3, y + 3, 13, 5, paper);

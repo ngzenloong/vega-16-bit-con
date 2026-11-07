@@ -27,9 +27,9 @@ const AttractScreen = memo(function AttractScreen({
       visible = false,
       pending = false,
       frame = 0,
+      focused = document.hasFocus(),
       last = 0,
       time = 0,
-      lastJump = -2,
       ended = false,
       controller: GameController | null = null,
       create: (() => GameController) | null = null;
@@ -67,6 +67,7 @@ const AttractScreen = memo(function AttractScreen({
         disposed ||
         !visible ||
         document.hidden ||
+        !focused ||
         settings.current.paused ||
         settings.current.reduced
       )
@@ -77,7 +78,6 @@ const AttractScreen = memo(function AttractScreen({
         if (ended || time > 12) {
           controller = create!();
           time = 0;
-          lastJump = -2;
           ended = false;
         }
         let left = dt;
@@ -96,6 +96,7 @@ const AttractScreen = memo(function AttractScreen({
         controller &&
         visible &&
         !document.hidden &&
+        focused &&
         !settings.current.paused &&
         !settings.current.reduced
       ) {
@@ -157,12 +158,25 @@ const AttractScreen = memo(function AttractScreen({
       } else start();
     };
     document.addEventListener("visibilitychange", visibility);
+    const blur = () => {
+      focused = false;
+      cancelAnimationFrame(frame);
+      frame = 0;
+    };
+    const focus = () => {
+      focused = true;
+      start();
+    };
+    window.addEventListener("blur", blur);
+    window.addEventListener("focus", focus);
     wake.current = start;
     return () => {
       disposed = true;
       observer.disconnect();
       cancelAnimationFrame(frame);
       document.removeEventListener("visibilitychange", visibility);
+      window.removeEventListener("blur", blur);
+      window.removeEventListener("focus", focus);
       wake.current = () => {};
     };
   }, [id]);
