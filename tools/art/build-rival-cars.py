@@ -402,24 +402,6 @@ def midget(v):
     return v.badge(48,77), [38,27,19,14]
 
 
-def smart(v):
-    # 450-series proportions: tall passenger cell, black glass hatch, stacked lamps.
-    v.wheel(17,75,11,15);v.wheel(68,75,11,15)
-    v.poly([(23,34,10),(29,19,11),(65,19,11),(73,34,9),(78,78),(72,85),(23,85),(17,78)],METAL)
-    v.poly([(29,23,10),(34,17,11),(61,17,11),(67,24,10),(70,30),(26,30)],CREAM)
-    v.poly([(27,27),(69,27),(76,43),(77,75),(71,82),(24,82),(18,74),(19,45)],METAL)
-    v.poly([(31,29),(65,29),(71,43),(69,58),(26,58),(24,44)],BLACK)
-    v.glass([(32,31),(63,31),(68,43),(66,55),(29,55),(27,44)])
-    v.line((43,52),(57,49),BLACK,2)
-    v.poly([(26,59),(69,59),(72,73),(68,79),(28,79),(23,72)],LIME)
-    v.line((28,61),(67,61),YELLOW_L)
-    v.rect(44,59,9,2,BLACK)
-    v.rect(20,49,7,22,BLACK);v.rect(69,49,7,22,BLACK)
-    for x in [23,72]:
-        v.roundlamp(x,53,2,color=ORANGE);v.roundlamp(x,60,2);v.roundlamp(x,67,2,color=CREAM)
-    v.rect(24,77,48,7,BLACK);v.rect(28,83,40,2,RUBBER)
-    return v.badge(48,74), [27,31,41,25]
-
 
 def be1(v):
     # Be-1: soft compact hatch, broad round-corner rear glass, black rub-strip.
@@ -543,7 +525,6 @@ MODELS = [
     ("sambar-van", "Subaru Sambar van", sambar_van, ["https://www.subaru.co.jp/news/archives/01_1_3/01_02_26_1.htm/"], "1990-series high-roof van: upright body, tall cargo hatch, rectangular rear glass and low vertical lamps."),
     ("sambar-truck", "Subaru Sambar kei truck", sambar_truck, ["https://www.subaru.co.jp/news/archives/01_1_3/01_02_26_1.htm/"], "Wide two-seat cab over a long open bed, ribbed floor, full-width tailgate and low horizontal lamps."),
     ("midget", "Daihatsu Midget II pickup", midget, ["https://u-catch.daihatsu.co.jp/history/midget2/midget2/"], "1996 narrow-cab pickup, pinched one-seat rear window and exposed bed rails. Front spare wheel is not incorrectly drawn at the rear."),
-    ("smart", "Smart Fortwo (450)", smart, ["https://media.smart.com/en-INT/pages/heritage/"], "First-generation city coupe proportions, contrasting safety cell, short split hatch and three stacked rear lamps."),
     ("be1", "Nissan Be-1", be1, ["https://www.nissan-global.com/EN/HERITAGE_COLLECTION/Be_1_standardroof.html"], "Soft compact hatch, broad round-corner rear glass and full-width dark bumper."),
     ("pao", "Nissan Pao", pao, ["https://www.nissan-global.com/EN/HERITAGE_COLLECTION/Pao.html"], "Canvas roof, separate upper glass and smooth lower tailgate, exposed hinges and three stacked circular lamps."),
     ("figaro", "Nissan Figaro", figaro, ["https://www.nissan-global.com/EN/HERITAGE_COLLECTION/397_figaro.html", "https://global.nissannews.com/en/heritage_model_figaro"], "Ivory roof over green body, small rear window, separate sculpted boot and vertically paired circular lamps."),

@@ -1,3 +1,4 @@
+import { drawFacade } from "./city-art.ts";
 import { clamp } from "../math.ts";
 import { sweepRect, type Contact, type Rect } from "./collision.ts";
 import {
@@ -265,8 +266,15 @@ export const createGame: GameFactory = (env) => {
     draw(c, t) {
       const { width, height } = state,
         compact = width < 500;
-      c.fillStyle = C.ink;
+      c.fillStyle = "#211b14";
       c.fillRect(0, 0, width, height);
+      c.save();
+      c.globalAlpha = 0.34;
+      drawFacade(c, env, 6, height - 278, 130, 225, 1, 0);
+      drawFacade(c, env, width - 136, height - 316, 130, 263, 3, 1, {
+        flip: true,
+      });
+      c.restore();
       drawBrand(c, env, 18, 12, 84, true);
       pixelText(
         c,
@@ -287,7 +295,7 @@ export const createGame: GameFactory = (env) => {
         C.yellow,
         "center",
       );
-      c.strokeStyle = "#35552b";
+      c.strokeStyle = "#453b2b";
       c.lineWidth = 2;
       for (let row = 0; row < (compact ? 6 : 3); row++) {
         c.beginPath();
@@ -301,7 +309,7 @@ export const createGame: GameFactory = (env) => {
           c.fillRect(brick.x + 27, brick.y + 8, 6, 6);
           continue;
         }
-        c.fillStyle = [C.yellow, C.lime, C.paper][brick.zone];
+        c.fillStyle = [C.orange, C.yellow, C.paper][brick.zone];
         c.fillRect(brick.x, brick.y, brick.w, brick.h);
         pixelText(
           c,
@@ -326,7 +334,7 @@ export const createGame: GameFactory = (env) => {
             (width * (i + 0.5)) / 3,
             compact ? 292 : 202,
             12,
-            completeZones.includes(i) ? C.yellow : "#9caf91",
+            completeZones.includes(i) ? C.yellow : "#c6b69c",
             "center",
           ),
         );
@@ -335,7 +343,7 @@ export const createGame: GameFactory = (env) => {
       c.fillStyle = C.yellow;
       c.fillRect(state.paddle - 47, height - 69, 94, 6);
       if (!state.launched) {
-        c.fillStyle = "#7d985d";
+        c.fillStyle = "#c79655";
         for (let n = 1; n < 7; n++)
           c.fillRect(
             state.x + Math.sin(state.aim) * n * 10 - 1,

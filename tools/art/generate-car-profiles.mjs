@@ -239,21 +239,6 @@ model('midget','Daihatsu Midget II pickup',c=>{
   finishWheels(c,29,70,7,P.orangeDark);
 },29,70,7,'Narrow one-seat cab, visible front-mounted spare edge and short open green cargo bed.',{door:[22,60,23,19],bed:[49,56,32,23]});
 
-model('smart','Smart Fortwo 450',c=>{
-  c.p([[18,64],[23,49],[34,36],[43,33],[61,34],[72,44],[78,61],[80,78],[75,83],[21,83],[16,77]],P.lime);
-  c.p([[29,43],[35,35],[43,32],[61,33],[70,40],[76,53],[75,74],[70,80],[64,80],[69,70],[69,46],[61,39],[38,39]],P.metal);
-  c.p([[33,38],[42,34],[59,35],[65,39],[36,41]],P.cream);
-  c.glass([[34,43],[50,41],[52,58],[24,59]]);
-  c.glass([[55,41],[63,43],[68,50],[68,60],[56,58]]);
-  c.r(52,40,3,20,P.black);
-  c.p([[24,62],[61,62],[65,74],[59,79],[23,79]],P.lime,P.limeDark);
-  c.l([25,63],[25,76],P.limeDark);handle(c,54,64,P.black);
-  c.r(18,67,6,5,P.cream);c.r(75,59,3,10,P.red);
-  c.p([[17,77],[27,78],[68,78],[78,74],[79,81],[72,84],[23,84],[17,81]],P.black);
-  c.r(23,59,5,3,P.black);c.r(21,57,4,3,P.metal);
-  finishWheels(c,29,68,8,P.metal);
-},29,68,8,'Very short two-seat coupe with an exposed contrasting safety cell and large triangular side glazing.',{door:[24,60,40,20]});
-
 model('be1','Nissan Be-1',c=>{
   c.p([[8,65],[15,60],[29,59],[37,44],[45,40],[66,40],[77,45],[84,59],[89,66],[89,80],[10,81]],P.yellow);
   c.p([[36,45],[44,39],[65,39],[75,43],[79,48],[36,48]],P.yellowDark);
@@ -454,4 +439,4 @@ for(let i=0;i<metadata.length;i++){
 }
 await sharp({create:{width:720,height:640,channels:4,background:P.white}}).composite(actual).png().toFile(path.join(notes,'car-profiles-native.png'));
 await sharp({create:{width:840,height:1610,channels:4,background:P.white}}).composite(large).png().toFile(path.join(notes,'car-profiles-2x.png'));
-console.log(JSON.stringify({models:metadata.length,sheets:metadata.map(m=>m.file),metadata:path.join(notes,'car-profile-metadata.json'),nativeContact:path.join(notes,'car-profiles-native.png'),checks:'192×96 sheets; two 96×96 frames; 13 distinct mirrored silhouettes; binary alpha; integer rectangles; direct 2× pixels equal nearest-neighbor scaling; shared ground 90; no external SVG resources/fonts/scripts; blue restricted to the user-specified cargo livery; cargo prohibited-lettering absence'},null,2));
+console.log(JSON.stringify({models:metadata.length,sheets:metadata.map(m=>m.file),metadata:path.join(notes,'car-profile-metadata.json'),nativeContact:path.join(notes,'car-profiles-native.png'),checks:'192×96 sheets; two 96×96 frames; 12 distinct mirrored silhouettes; binary alpha; integer rectangles; direct 2× pixels equal nearest-neighbor scaling; shared ground 90; no external SVG resources/fonts/scripts; blue restricted to the user-specified cargo livery; cargo prohibited-lettering absence'},null,2));

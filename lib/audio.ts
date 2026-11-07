@@ -1,5 +1,13 @@
 import type { GameId } from "./types";
-export type Track = "hall" | GameId;
+export type Track = "hall" | "office" | GameId;
+export const TRACK_ASSETS: Record<Track, string> = {
+  hall: "beat",
+  office: "hall",
+  breaker: "breaker",
+  runner: "runner",
+  kart: "kart",
+  beat: "beat",
+};
 const REVISION = "life-sim-scores-20261107";
 const tones: Record<string, number[]> = {
   click: [520],
@@ -17,12 +25,15 @@ const tones: Record<string, number[]> = {
   brake: [196, 130],
   boost: [523, 784, 1047],
   pass: [659, 880],
+  bite: [180, 130],
+  step: [95],
 };
 const cooldown: Record<string, number> = {
   talk: 0.08,
   hit: 0.035,
   steer: 0.07,
   near: 0.12,
+  step: 0.12,
 };
 class AudioBus {
   private context: AudioContext | null = null;
@@ -30,13 +41,18 @@ class AudioBus {
   private music: GainNode | null = null;
   private effects: BiquadFilterNode | null = null;
   private source: AudioBufferSourceNode | null = null;
-  private buffers = new Map<Track, Promise<AudioBuffer>>();
+  private buffers = new Map<string, Promise<AudioBuffer>>();
   private track: Track = "hall";
   private started = 0;
   private seek = 0;
   private duration = 0;
   private offsets: Record<Track, number> = {
-    hall: 0, breaker: 0, runner: 0, kart: 0, beat: 0,
+    hall: 0,
+    office: 0,
+    breaker: 0,
+    runner: 0,
+    kart: 0,
+    beat: 0,
   };
   private engine: { oscillator: OscillatorNode; gain: GainNode } | null = null;
   private playback = 0;
@@ -86,7 +102,8 @@ class AudioBus {
     }
   }
   private buffer(track: Track) {
-    let pending = this.buffers.get(track);
+    const asset = TRACK_ASSETS[track];
+    let pending = this.buffers.get(asset);
     if (!pending) {
       const load = async (extension: string) => {
         const controller = new AbortController();
@@ -100,9 +117,14 @@ class AudioBus {
         try {
           return await Promise.race([
             (async () => {
-              const response = await fetch(`/audio/${track}.${extension}?v=${REVISION}`, { signal: controller.signal });
+              const response = await fetch(
+                `/audio/${asset}.${extension}?v=${REVISION}`,
+                { signal: controller.signal },
+              );
               if (!response.ok) throw Error("Audio unavailable");
-              return this.context!.decodeAudioData(await response.arrayBuffer());
+              return this.context!.decodeAudioData(
+                await response.arrayBuffer(),
+              );
             })(),
             timeout,
           ]);
@@ -114,14 +136,14 @@ class AudioBus {
         if (error.name === "TimeoutError") throw error;
         return load("wav");
       });
-      this.buffers.set(track, pending);
+      this.buffers.set(asset, pending);
       pending.catch(() => {
-        if (this.buffers.get(track) === pending) this.buffers.delete(track);
+        if (this.buffers.get(asset) === pending) this.buffers.delete(asset);
       });
     }
     // Keep only the active score and the previous room decoded.
-    this.buffers.delete(track);
-    this.buffers.set(track, pending);
+    this.buffers.delete(asset);
+    this.buffers.set(asset, pending);
     while (this.buffers.size > 2) {
       const oldest = this.buffers.keys().next().value!;
       this.buffers.delete(oldest);
@@ -133,6 +155,10 @@ class AudioBus {
     await this.buffer(track);
   }
   async play(track: Track, offset?: number) {
+    if (document.hidden || !document.hasFocus()) {
+      this.pause();
+      return false;
+    }
     if (this.source && this.track === track && offset === undefined)
       return true;
     this.pause();
@@ -157,6 +183,7 @@ class AudioBus {
         !buffer ||
         !this.enabled ||
         document.hidden ||
+        !document.hasFocus() ||
         this.track !== track ||
         ticket !== this.playback
       )
@@ -256,7 +283,14 @@ class AudioBus {
   }
   effect(kind: string) {
     const ctx = this.context;
-    if (!this.enabled || !ctx || !this.effects || document.hidden) return;
+    if (
+      !this.enabled ||
+      !ctx ||
+      !this.effects ||
+      document.hidden ||
+      !document.hasFocus()
+    )
+      return;
     if (
       ctx.currentTime - (this.lastEffect.get(kind) ?? -Infinity) <
       (cooldown[kind] || 0)
@@ -277,7 +311,7 @@ class AudioBus {
       );
       gain.gain.setValueAtTime(0.0001, start);
       gain.gain.exponentialRampToValueAtTime(
-        kind === "talk" ? 0.018 : 0.065,
+        kind === "talk" || kind === "step" ? 0.018 : 0.065,
         start + 0.006,
       );
       gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.09);

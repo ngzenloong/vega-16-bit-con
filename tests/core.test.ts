@@ -58,15 +58,17 @@ test("scene entry accepts a deliberate tap but not scrolling, dragging or a long
   );
   assert.equal(isSceneTap(start, { ...start, time: 1700 }), false);
 });
-test("local player data validates cosmetic bounds and removes unrelated fields", () => {
+test("local player data validates cosmetic bounds and retains only supported profile fields", () => {
   const p = safePlayer({
     name: "  Alex  ",
     appearance: { hat: 2, glasses: 1, shirt: 3 },
     interests: [0, 2, 99, "1"],
-    email: "never-store@example.com",
+    email: "alex@example.com",
+    unrelated: "discard this",
   });
   assert.deepEqual(p, {
     name: "Alex",
+    email: "alex@example.com",
     appearance: { ...DEFAULT_APPEARANCE, hat: 2, glasses: 1, shirt: 3 },
     interests: [0, 2],
   });
@@ -110,4 +112,29 @@ test("physical key identity survives Shift changes and clears on release", () =>
   input.down("KeyD", "right");
   input.clear();
   assert.equal(input.horizontal(), 0);
+});
+
+test("phone dialogue pages preserve every word while fitting the fixed text area", async () => {
+  const { CHARACTERS, dialoguePages } = await import("../lib/lore.ts");
+  for (const character of CHARACTERS)
+    for (const line of character.lines) {
+      const pages = dialoguePages(line);
+      assert.equal(pages.join(" "), line);
+      assert.ok(pages.every((page) => page.length <= 86));
+    }
+});
+
+test("floor framing keeps the brick baseline at the bottom instead of centering Sam", async () => {
+  const { floorFrameScroll } = await import("../lib/math.ts");
+  for (const height of [650, 780, 900]) {
+    const scroll = floorFrameScroll(1024, height, 2400);
+    assert.equal(1024 - 24 - scroll, height);
+    assert.equal(
+      1024 - 88 - scroll,
+      height - 64,
+      "Sam's feet stay low in the viewport",
+    );
+  }
+  assert.equal(floorFrameScroll(900, 1080, 1000), 0);
+  assert.equal(floorFrameScroll(2400, 900, 1200), 1200);
 });

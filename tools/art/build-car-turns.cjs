@@ -16,7 +16,6 @@ const configurations={
   'sambar-van':{roofY:20,exposure:16,depthY:12,roof:'#D5FB19',roofLight:'#FFE577',handles:[[27,59],[57,59]]},
   'sambar-truck':{roofY:24,exposure:16,depthY:12,roof:'#FFFAEB',roofLight:'#DFDEC4',handles:[[33,62]],depth:y=>y<47?11:y<64?11*(64-y)/17:0},
   midget:{roofY:26,exposure:13,depthY:11,roof:'#FF9823',roofLight:'#FFE577',handles:[[40,64]],depth:y=>y<45?10:y<65?10*(65-y)/20:0},
-  smart:{roofY:29,exposure:13,depthY:11,roof:'#DFDEC4',roofLight:'#FFFAEB',handles:[[57,64]],depth:y=>y<58?1:0},
   be1:{roofY:33,exposure:15,depthY:11,roof:'#FFD11B',roofLight:'#FFE577',handles:[[62,64]],depth:y=>y<55?1:0},
   pao:{roofY:28,exposure:15,depthY:11,roof:'#DFDEC4',roofLight:'#FFFAEB',handles:[[61,64]],canvasRoof:true},
   figaro:{roofY:34,exposure:16,depthY:10,roof:'#FFFAEB',roofLight:'#DFDEC4',handles:[[60,64]],depth:y=>y<49?4:y<59?4*(59-y)/10:0},
@@ -43,13 +42,13 @@ const rounded=p=>p.map(Math.round);
 function mapBox(box,point){const[x,y,w,h]=box,pts=[[x,y],[x+w-1,y],[x+w-1,y+h-1],[x,y+h-1]].map(point);let xs=pts.map(p=>Math.round(p[0])),ys=pts.map(p=>Math.round(p[1]));return[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs)+1,Math.max(...ys)-Math.min(...ys)+1];}
 
 function makeTurn(id,canonical,side,profile,cfg){
-  const scale=.86,center=54,depth=y=>cfg.depth?cfg.depth(y):0;
+  const scale=.86,center=54,depth=()=>0;
   const rearPoint=([x,y])=>[center+(x-48)*scale-depth(y),y];
-  const edges=[];for(let y=0;y<96;y++){const row=canonical.rows[y],xs=[];for(let x=0;x<96;x++)if(row[x])xs.push(x);edges[y]=xs.length?Math.min(...xs):48;}
-  function leftEdge(y){y=Math.min(90,Math.max(cfg.roofY,Math.round(y)));const a=[];for(let yy=Math.max(cfg.roofY,y-2);yy<=Math.min(90,y+2);yy++)a.push(edges[yy]);a.sort((a,b)=>a-b);return a[Math.floor(a.length/2)];}
-  const [fx,,fw]=profile.frameBounds[0],end=fx+fw-1,sy=(90-cfg.roofY)/(90-profile.bodyTop);
   const canonicalTop=canonical.bounds()[1];
-  const sidePoint=([x,y])=>{const t=Math.max(0,Math.min(1,(x-fx)/(end-fx))),baseY=90-(90-y)*sy;return[center+(leftEdge(baseY)-48)*scale-cfg.exposure*(1-t)+4*t,baseY-cfg.depthY*(1-t)];};
+  const edges=[];for(let y=0;y<96;y++){const row=canonical.rows[y],xs=[];for(let x=0;x<96;x++)if(row[x])xs.push(x);edges[y]=xs.length?Math.min(...xs):48;}
+  function leftEdge(y){y=Math.min(90,Math.max(canonicalTop,Math.round(y)));const a=[];for(let yy=Math.max(canonicalTop,y-2);yy<=Math.min(90,y+2);yy++)a.push(edges[yy]);a.sort((a,b)=>a-b);return a[Math.floor(a.length/2)];}
+  const [fx,,fw]=profile.frameBounds[0],end=fx+fw-1,sy=(90-canonicalTop-2)/(90-profile.bodyTop);
+  const sidePoint=([x,y])=>{const t=Math.max(0,Math.min(1,(x-fx)/(end-fx))),baseY=90-(90-y)*sy;return[center+(leftEdge(baseY)-48)*scale-depth(baseY)-cfg.exposure*(1-t)+4*t,baseY-3*(1-t)];};
   const sideLayer=new Pixels(),bins=new Map(),glassBins=new Map();
   const rearWheel=profile.wheels[0].rear,radius=profile.wheels[0].radius;
   for(let y=profile.bodyTop;y<=90;y++)for(let x=fx;x<=end;x++){
@@ -100,8 +99,18 @@ function makeTurn(id,canonical,side,profile,cfg){
   const turn=new Pixels();turn.paste(sideLayer);
   const rearLayer=new Pixels(),top=canonical.bounds()[1];
   for(let y=top;y<=90;y++)for(let tx=1;tx<95;tx++){
-    const roofDepth=y<cfg.roofY?Math.round(cfg.exposure*.58)*(cfg.roofY-y)/Math.max(1,cfg.roofY-top):0;
-    const sx=Math.round((tx-center+depth(y)+roofDepth)/scale+48);if(sx>=0&&sx<96&&canonical.rows[y][sx])rearLayer.dot(tx,y,canonical.rows[y][sx]);
+    // The roof belongs to the same rear face: do not shear its upper rows independently.
+    const sx=Math.round((tx-center+depth(y))/scale+48);if(sx>=0&&sx<96&&canonical.rows[y][sx])rearLayer.dot(tx,y,canonical.rows[y][sx]);
+  }
+  // Join the two projected faces before outlining. A silhouette gap here reads
+  // as a raised roof panel, especially on the cab-over vans and trucks.
+  for(let y=canonicalTop;y<=90;y++){
+    const sideXs=[],rearXs=[];
+    for(let x=1;x<95;x++){if(sideLayer.rows[y][x])sideXs.push(x);if(rearLayer.rows[y][x])rearXs.push(x);}
+    if(!sideXs.length||!rearXs.length)continue;
+    const from=Math.max(...sideXs),to=Math.min(...rearXs),row=rowData.get(y);
+    const fill=y<cfg.roofY?cfg.roof:(row?.colors.size?dominant(row.colors):cfg.roof);
+    for(let x=from+1;x<to;x++)turn.dot(x,y,fill);
   }
   // Keep each car's stepped/rounded roof craft and its actual colors.
   turn.paste(rearLayer);
@@ -111,6 +120,8 @@ function makeTurn(id,canonical,side,profile,cfg){
     for(const ps of [ [[24,20],[26,20],[21,29],[19,48],[19,78],[17,78],[17,48],[20,28]], [[69,20],[71,20],[76,27],[79,47],[79,78],[76,78],[76,48],[73,28]] ])turn.poly(ps.map(rearPoint),WHITE,null);
     for(const ps of [[[19,35],[18,40],[18,50],[18,58],[18,64],[18,70],[18,78]],[[75,35],[76,40],[77,50],[77,58],[77,64],[77,70],[77,78]]])for(let i=0;i<ps.length-1;i++)turn.line(rearPoint(ps[i]),rearPoint(ps[i+1]),WHITE);
   }
+  const ground=canonical.bounds()[1]+canonical.bounds()[3]-1;
+  for(let y=ground+1;y<96;y++)turn.rows[y].fill(null);
   return{turn,rearPoint,sidePoint,sideLayer,rearLayer,scale,center,exposure:cfg.exposure,projectedWheels};
 }
 
@@ -163,6 +174,6 @@ async function main(){
   }
   const contactPath=path.join(NOTES,PREVIEW?'car-turns-preview.png':'car-turns-contact.png');await sharp({create:{width:936,height:650,channels:4,background:'#FFFAEB'}}).composite(contacts).png().toFile(contactPath);
   if(!PREVIEW){for(const g of generated)fs.writeFileSync(path.join(OUT,g.file),g.text);fs.writeFileSync(path.join(NOTES,'car-turn-metadata.json'),JSON.stringify(metadata,null,2)+'\n');const rivals=metadata.filter(m=>m.id!=='fiat-player');fs.writeFileSync(path.join(NOTES,'rival-car-metadata.json'),JSON.stringify(rivals,null,2)+'\n');}
-  console.log(JSON.stringify({preview:PREVIEW,contact:contactPath,cars:metadata.map(m=>({id:m.id,turnBounds:m.frameBounds.slice(1),maxVisibleWidth:m.maxVisibleWidth})),checks:'13 exact straight groups preserved;39 native frames;rear lettering/Fiat630 pixel equality;binary alpha;integer2x;bounds/ground;S-Cargo white rear strips/blue sides/no forbidden word'}));
+  console.log(JSON.stringify({preview:PREVIEW,contact:contactPath,cars:metadata.map(m=>({id:m.id,turnBounds:m.frameBounds.slice(1),maxVisibleWidth:m.maxVisibleWidth})),checks:'12 exact straight groups preserved;36 native frames;rear lettering/Fiat630 pixel equality;binary alpha;integer2x;bounds/ground;S-Cargo white rear strips/blue sides/no forbidden word'}));
 }
 main().catch(e=>{console.error(e);process.exit(1);});

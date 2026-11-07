@@ -15,7 +15,11 @@ import {
 } from "@/lib/world";
 import { SPRITES } from "@/lib/assets";
 import { GAMES, SESSIONS, DEFAULT_APPEARANCE, type Player } from "@/lib/types";
-import { characterSheets, type CharacterSheets } from "@/lib/character";
+import {
+  characterSheets,
+  ACTIVITY_PORTRAITS,
+  type CharacterSheets,
+} from "@/lib/character";
 import { CHARACTERS, AMBIENT_CONVERSATIONS } from "@/lib/lore";
 import Sprite from "./Sprite";
 import Controls from "./Controls";
@@ -23,18 +27,10 @@ import NpcSprite from "./NpcSprite";
 import AttractScreen from "./AttractScreen";
 import Icon from "./Icon";
 import Companion from "./Companion";
+import VenueLife from "./VenueLife";
+import { snackSheet } from "@/lib/snack-art";
 import { SCENE, MACHINES } from "@/lib/scene";
 
-const positions: Record<string, number> = {
-  host: 1510,
-  collector: 1200,
-  racer: 1740,
-  artist: 2310,
-  analyst: 2020,
-  coffee: 1620,
-  pingpong_jules: 2400,
-  chess_nico: 820,
-};
 const defaultSheets = {
   idle: "/assets/vega/sam-idle.png",
   run: "/assets/vega/sam-run.png",
@@ -55,6 +51,7 @@ type Props = {
   onAnnounce: (text: string) => void;
   onHandheld: () => void;
   onEnterScene: (floor: number) => void;
+  onFloorChange: (floor: number) => void;
   onExitHandheld: () => void;
   onToggleMotion: () => void;
 };
@@ -73,6 +70,7 @@ const World = forwardRef<WorldController, Props>(function World(
     onAnnounce,
     onHandheld,
     onEnterScene,
+    onFloorChange,
     onExitHandheld,
     onToggleMotion,
     soundControl,
@@ -81,9 +79,22 @@ const World = forwardRef<WorldController, Props>(function World(
 ) {
   const root = useRef<HTMLDivElement>(null),
     engine = useRef<WorldController | null>(null),
-    callbacks = useRef({ onTarget, onAnnounce, onSession, onEnterScene });
-  callbacks.current = { onTarget, onAnnounce, onSession, onEnterScene };
+    callbacks = useRef({
+      onTarget,
+      onAnnounce,
+      onSession,
+      onEnterScene,
+      onFloorChange,
+    });
+  callbacks.current = {
+    onTarget,
+    onAnnounce,
+    onSession,
+    onEnterScene,
+    onFloorChange,
+  };
   const [sheets, setSheets] = useState<CharacterSheets>(defaultSheets),
+    [snackSrc, setSnackSrc] = useState(""),
     [chatter, setChatter] = useState<{ index: number; turn: number } | null>(
       null,
     );
@@ -92,9 +103,13 @@ const World = forwardRef<WorldController, Props>(function World(
   ambientState.current = { paused, reduced, ambientPaused };
   useEffect(() => {
     let active = true;
-    void characterSheets(player?.appearance || DEFAULT_APPEARANCE)
-      .then((value) => {
-        if (active) setSheets(value);
+    const appearance = player?.appearance || DEFAULT_APPEARANCE;
+    void Promise.all([characterSheets(appearance), snackSheet(appearance)])
+      .then(([value, snack]) => {
+        if (active) {
+          setSheets(value);
+          setSnackSrc(snack);
+        }
       })
       .catch(() => {
         if (active) setSheets(defaultSheets);
@@ -112,6 +127,7 @@ const World = forwardRef<WorldController, Props>(function World(
       },
       (text) => callbacks.current.onAnnounce(text),
       (floor) => callbacks.current.onEnterScene(floor),
+      (floor) => callbacks.current.onFloorChange(floor),
     );
     engine.current = controller;
     return () => {
@@ -142,6 +158,7 @@ const World = forwardRef<WorldController, Props>(function World(
     };
     const allowed = () =>
       !document.hidden &&
+      document.hasFocus() &&
       !ambientState.current.paused &&
       !ambientState.current.reduced &&
       !ambientState.current.ambientPaused;
@@ -196,13 +213,17 @@ const World = forwardRef<WorldController, Props>(function World(
       travel: (f) => engine.current?.travel(f),
       cancelTravel: () => engine.current?.cancelTravel(),
       goTo: (f, x, s) => engine.current!.goTo(f, x, s),
+      interact: (t) => engine.current?.interact(t),
+      eat: () => engine.current?.eat(),
       reveal: (f, x) => engine.current?.reveal(f, x),
+      reframe: (f, x) => engine.current!.reframe(f, x),
       control: (f) => engine.current?.control(f),
       release: () => engine.current?.release(),
       focus: () => engine.current?.focus(),
       refresh: () => engine.current?.refresh(),
       destroy: () => engine.current?.destroy(),
-      position: () => engine.current?.position() || { floor: 0, x: 1400 },
+      position: () =>
+        engine.current?.position() || { floor: 0, x: SCENE.booth },
       setAmbient: (v) => engine.current?.setAmbient(v),
     }),
     [],
@@ -212,7 +233,7 @@ const World = forwardRef<WorldController, Props>(function World(
     id: string,
     label: string,
     el: HTMLElement,
-  ) => onTarget({ kind, id, label, element: el });
+  ) => engine.current?.interact({ kind, id, label, element: el });
   const prop = (
     name: string,
     x: number,
@@ -262,11 +283,16 @@ const World = forwardRef<WorldController, Props>(function World(
   const npc = (
     id: string,
     sprite: string,
-    at = positions[id],
+    at: number,
     flip = false,
     roam = 0,
   ) => {
     const c = CHARACTERS.find((c) => c.id === id)!;
+    const head = ACTIVITY_PORTRAITS[id]?.crop;
+    const headX = head
+      ? (head[0] + head[2] / 2 - SPRITES[sprite].width / 2) * 2
+      : 0;
+    const headY = head ? head[1] * 2 : 16;
     return (
       <button
         key={id}
@@ -276,12 +302,16 @@ const World = forwardRef<WorldController, Props>(function World(
             left: at,
             bottom: 88 + (id === "host" ? 60 : 0),
             "--npc-world-x": `${at}px`,
+            "--npc-head-x": `${headX}px`,
+            "--npc-head-y": `${headY}px`,
           } as CSSProperties
         }
         data-target={id}
         data-kind="npc"
         data-label={c.name}
         data-x={at}
+        data-head-x={headX}
+        data-head-y={headY}
         data-home-x={at}
         data-roam={roam || undefined}
         data-pose="idle"
@@ -310,13 +340,24 @@ const World = forwardRef<WorldController, Props>(function World(
         data-pose="idle"
         data-facing="right"
         data-player-floor={floor}
+        style={arriving ? { opacity: 0 } : undefined}
       >
         <span className="player-name">{player?.name || "Sam"}</span>
         <div className="player-facing">
           <Sprite name="sam-idle" src={sheets.idle} className="pose-idle" />
           <Sprite name="sam-run" src={sheets.run} className="pose-run" />
           <Sprite name="sam-jump" src={sheets.jump} className="pose-jump" />
+          <span
+            className="snack-pose"
+            style={{
+              backgroundImage: snackSrc ? `url("${snackSrc}")` : undefined,
+            }}
+            aria-hidden="true"
+          />
         </div>
+        <span className="snack-note" aria-hidden="true">
+          Good slice.
+        </span>
         <span className="player-shadow" />
       </div>
       <div
@@ -335,7 +376,7 @@ const World = forwardRef<WorldController, Props>(function World(
       <div className="service-wall" aria-hidden="true" />
       <div className="lift-bay" aria-hidden="true">
         <img src="/assets/vega/lift-bay.svg" width={416} height={288} alt="" />
-        {floor === 1 && (
+        {floor === 0 && (
           <Sprite name="elevator-floor-2" className="lift-floor-label" />
         )}
       </div>
@@ -343,21 +384,39 @@ const World = forwardRef<WorldController, Props>(function World(
         className="world-lift"
         data-kind="lift"
         data-target={`lift-${floor}`}
-        data-label={floor ? "Main hall upstairs" : "Social floor downstairs"}
-        data-x="520"
+        data-label={
+          floor ? "2F · Main hall upstairs" : "1F · Social floor downstairs"
+        }
+        data-x={SCENE.lift}
         onClick={() => engine.current?.travel(floor ? 0 : 1)}
         aria-label={
           floor
-            ? "Take the lift to the main hall"
-            : "Take the lift to the social floor"
+            ? "Take the lift to 2F, the main hall"
+            : "Take the lift to 1F, the social floor"
         }
       >
         <span className="sr-only">
-          {floor ? "↑ MAIN HALL" : "↓ SOCIAL FLOOR"}
+          {floor ? "↑ 2F · MAIN HALL" : "↓ 1F · SOCIAL FLOOR"}
         </span>
         <Sprite name="elevator-doors" />
       </button>
     </>
+  );
+  const sceneTools = (
+    <div className="scene-tools" aria-label="Game settings">
+      {soundControl}
+      <button
+        type="button"
+        className="icon-button"
+        onClick={onToggleMotion}
+        aria-pressed={ambientPaused}
+        aria-label={
+          ambientPaused ? "Resume venue ambience" : "Pause venue ambience"
+        }
+      >
+        <Icon name={ambientPaused ? "play" : "pause"} />
+      </button>
+    </div>
   );
   const prompt = (
     <div className="world-prompt" data-world-prompt hidden aria-hidden="true">
@@ -368,9 +427,42 @@ const World = forwardRef<WorldController, Props>(function World(
   return (
     <div
       ref={root}
+      style={
+        {
+          "--world-center": `${SCENE.booth}px`,
+          "--world-width": `${SCENE.width}px`,
+        } as CSSProperties
+      }
       inert={arriving}
       className={`world-stage ${handheld ? "is-handheld" : ""} ${reduced ? "reduced-motion" : ""}`}
     >
+      <svg
+        className="scene-color-filters"
+        aria-hidden="true"
+        width="0"
+        height="0"
+      >
+        <defs>
+          <filter id="sunset-city" colorInterpolationFilters="sRGB">
+            <feColorMatrix
+              type="matrix"
+              values=".90 0 .30 0 0 .15 .70 0 0 0 .15 0 .80 0 0 0 0 0 1 0"
+            />
+          </filter>
+          <filter id="sunset-distance" colorInterpolationFilters="sRGB">
+            <feColorMatrix
+              type="matrix"
+              values=".68 0 .30 0 .13 .12 .64 0 0 .06 .12 0 .73 0 .05 0 0 0 1 0"
+            />
+          </filter>
+          <filter id="sunset-clouds" colorInterpolationFilters="sRGB">
+            <feColorMatrix
+              type="matrix"
+              values=".80 0 0 0 .20 0 .65 0 0 .20 0 0 .60 0 .15 0 0 0 1 0"
+            />
+          </filter>
+        </defs>
+      </svg>
       {handheld && (
         <div className="handheld-top">
           <span>16-Bit Con</span>
@@ -380,7 +472,9 @@ const World = forwardRef<WorldController, Props>(function World(
               className="icon-button"
               onClick={onToggleMotion}
               aria-pressed={ambientPaused}
-              aria-label={ambientPaused ? "Resume background motion" : "Pause background motion"}
+              aria-label={
+                ambientPaused ? "Resume venue ambience" : "Pause venue ambience"
+              }
             >
               <Icon name={ambientPaused ? "play" : "pause"} />
             </button>
@@ -414,6 +508,20 @@ const World = forwardRef<WorldController, Props>(function World(
           <div className="steel-roof" aria-hidden="true" />
           <div className="venue-sign">JAVITS CENTER · NEW YORK</div>
           <div className="event-board" data-platform>
+            <div className="billboard-hardware" aria-hidden="true">
+              <span className="billboard-clamp clamp-left" />
+              <span className="billboard-clamp clamp-right" />
+              <span className="billboard-bolt bolt-left" />
+              <span className="billboard-bolt bolt-right" />
+              <span className="billboard-light light-left">
+                <i className="billboard-beam" />
+                <i className="lamp-head" />
+              </span>
+              <span className="billboard-light light-right">
+                <i className="billboard-beam" />
+                <i className="lamp-head" />
+              </span>
+            </div>
             <h1>16-Bit Con</h1>
             <p>
               The retro gaming convention for people who never stopped playing.
@@ -428,7 +536,7 @@ const World = forwardRef<WorldController, Props>(function World(
                 href="#social-floor"
                 onClick={(e) => {
                   e.preventDefault();
-                  engine.current?.reveal(1, 1440);
+                  engine.current?.reveal(1, SCENE.booth);
                 }}
               >
                 See the lineup ↓
@@ -442,29 +550,9 @@ const World = forwardRef<WorldController, Props>(function World(
               </button>
             </div>
           </div>
-          <div
-            className="platform-beam beam-left"
-            data-platform
-            aria-hidden="true"
-          />
-          <div
-            className="platform-beam beam-right"
-            data-platform
-            aria-hidden="true"
-          />
-          <div
-            className="upper-catwalk catwalk-left"
-            data-platform
-            aria-hidden="true"
-          />
-          <div
-            className="upper-catwalk catwalk-right"
-            data-platform
-            aria-hidden="true"
-          />
-          {prop("plant-flowers", 840)}
-          {prop("plant-flowers", 2000)}
-          {prop("plant-2", 2580)}
+          {prop("plant-flowers", 1050)}
+          {prop("plant-flowers", 2550)}
+          {prop("plant-2", 3470)}
           {MACHINES.map((machine) => {
             const game = GAMES.find((g) => g.id === machine.id)!;
             return (
@@ -529,13 +617,22 @@ const World = forwardRef<WorldController, Props>(function World(
           })}
           <button
             className="vega-booth"
-            style={{ left: 1440 }}
+            style={{ left: SCENE.booth }}
             data-target="registration"
             data-kind="register"
-            data-label="Make your player at Booth 630"
-            data-x="1440"
+            data-label={
+              player
+                ? "Edit your player at Booth 630"
+                : "Make your player at Booth 630"
+            }
+            data-action-label={player ? "EDIT PLAYER" : "REGISTER"}
+            data-x={SCENE.booth}
             onClick={onRegister}
-            aria-label="Register and create your player at Vega Booth 630"
+            aria-label={
+              player
+                ? "Edit your player at Vega Booth 630"
+                : "Register and create your player at Vega Booth 630"
+            }
           >
             <img
               className="booth-volume"
@@ -552,13 +649,19 @@ const World = forwardRef<WorldController, Props>(function World(
             <span className="booth-entry-light" aria-hidden="true" />
             <span className="booth-counter" data-platform aria-hidden="true" />
           </button>
-          {npc("host", "sam-idle", 1510)}
-          {npc("collector", "sam-idle", 1190, false, 65)}
-          {npc("racer", "sam-idle", 1790, true, 60)}
-          {npc("artist", "sam-idle", 2420, true, 70)}
-          {npc("coffee", "mole-coffee", 1640)}
+          {npc("host", "sam-idle", 1870)}
+          {npc("collector", "sam-idle", 1480, false, 65)}
+          {npc("racer", "sam-idle", 2200, true, 60)}
+          {npc("artist", "sam-idle", 3070, true, 70)}
+          {npc("coffee", "mole-coffee", 2070)}
+          <VenueLife
+            floor={0}
+            onRegister={onRegister}
+            onPizza={(el) => target("food", "pizza", "Pizza break", el)}
+          />
           {lift(0)}
           <div className="world-floor-art" aria-hidden="true" />
+          <div className="dust-layer" data-dust-layer aria-hidden="true" />
           {actor(0)}
         </div>
         <div className="foreground-life" aria-hidden="true">
@@ -576,12 +679,11 @@ const World = forwardRef<WorldController, Props>(function World(
         <div className="foreground-rail" aria-hidden="true" />
         {prompt}
         <div className="hall-controls">
+          {sceneTools}
           <span className="desktop-controls">
-            ← → Move Sam · Space Jump · Enter Interact · Esc Release
+            ← → Move Sam · Space Jump · Enter Interact · Esc Release · M Sound
           </span>
-          <span className="hall-hint">
-            Walk left or right to find all four games.
-          </span>
+          <span className="hall-hint">Tap the hall to explore.</span>
         </div>
       </section>
       <section
@@ -611,7 +713,7 @@ const World = forwardRef<WorldController, Props>(function World(
                     data-target={String(i)}
                     data-kind="session"
                     data-label={session.title}
-                    data-x="1440"
+                    data-x={SCENE.booth}
                     onClick={() => onSession(i)}
                     aria-pressed={interests.includes(i)}
                     aria-label={`${interests.includes(i) ? "Remove" : "Add"} ${session.title} ${interests.includes(i) ? "from" : "to"} my list`}
@@ -627,39 +729,40 @@ const World = forwardRef<WorldController, Props>(function World(
             <small>Featured sessions · New York time</small>
           </div>
           {prop("window", 160, 180)}
-          {prop("window", 2450, 180)}
+          {prop("window", 3500, 230)}
           {prop("plant-2", 160)}
-          {prop("plant-flowers", 1090)}
-          {prop("plant-1", 1840)}
+          {prop("plant-flowers", 1120)}
+          {prop("plant-1", 2940)}
           {prop("deck-chair", 280, 0, true)}
-          {npc("analyst", "mole-laptop", 2020)}
-          {npc("pingpong_jules", "moles-ping-pong", 2400)}
-          {npc("chess_nico", "moles-chess", 820)}
+          {npc("analyst", "mole-laptop", 2760)}
+          {npc("pingpong_jules", "moles-ping-pong", 3180)}
+          {npc("chess_nico", "moles-chess", 930)}
           <div
             className="world-prop pizza-guest"
-            style={{ left: 1710, bottom: 88 }}
+            style={{ left: 1930, bottom: 88 }}
           >
             <Sprite name="mole-pizza" />
           </div>
           <div className="social-sign ping-sign">PING. PONG. REPEAT.</div>
           <div className="social-sign chess-sign">ONE MORE MOVE.</div>
+          <VenueLife floor={1} />
           {lift(1)}
           <div className="world-floor-art" aria-hidden="true" />
+          <div className="dust-layer" data-dust-layer aria-hidden="true" />
           {actor(1)}
         </div>
         {prompt}
         <div className="hall-controls">
-          <span>The schedule is in the middle of this floor.</span>
-          <button
-            className="text-link"
-            onClick={() => engine.current?.reveal(0)}
-          >
-            Back to Booth 630 ↑
-          </button>
+          {sceneTools}
+          <span className="desktop-controls">
+            ← → Move Sam · Space Jump · Enter Interact · Esc Release · M Sound
+          </span>
+          <span className="hall-hint">Tap the hall to explore.</span>
         </div>
       </section>
       {handheld && (
         <Controls
+          disabled={paused || arriving}
           onPress={(key, down, source) =>
             engine.current?.virtual(key, down, source)
           }

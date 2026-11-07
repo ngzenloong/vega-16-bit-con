@@ -29,6 +29,7 @@ export interface GameEnvironment {
   rivals?: HTMLImageElement[];
   cars?: HTMLImageElement[];
   rivalCars?: readonly RivalCar[];
+  playerCar?: RivalCar;
   tapOffset?: number;
   sprites?: {
     idle: HTMLImageElement;
@@ -37,7 +38,10 @@ export interface GameEnvironment {
   };
   logo?: HTMLImageElement;
   logoLight?: HTMLImageElement;
+  mascot?: HTMLImageElement;
   backdrop?: HTMLImageElement;
+  cityBlocks?: HTMLImageElement;
+  cityBlocksDistant?: HTMLImageElement;
   reducedMotion?: boolean;
   inputMode?: "keyboard" | "touch";
   motor?: (speed: number) => void;
@@ -109,11 +113,16 @@ export function pixelText(
 }
 export function finishOnce(env: GameEnvironment, id: GameId) {
   let finished = false;
-  return (score: number, won: boolean, detail: string) => {
+  return (
+    score: number,
+    won: boolean,
+    detail: string,
+    race?: GameResult["race"],
+  ) => {
     if (!finished) {
       finished = true;
       env.sound(won ? "win" : "lose");
-      env.finish({ id, score, won, detail });
+      env.finish({ id, score, won, detail, ...(race ? { race } : {}) });
     }
   };
 }
@@ -152,4 +161,23 @@ export function drawBrand(
   const image = light ? env.logoLight : env.logo;
   if (image)
     ctx.drawImage(image, x, y, width, width * (image.height / image.width));
+}
+
+/** Four solid bands keep the dusk sky within the games' native pixel language. */
+export function drawDuskSky(
+  c: CanvasRenderingContext2D,
+  height: number,
+  width = 640,
+) {
+  const colors = ["#edc6ce", "#dc9eaf", "#ffdb94", "#a895c6"];
+  const stops = [0, 0.28, 0.58, 0.84, 1];
+  colors.forEach((color, i) => {
+    c.fillStyle = color;
+    c.fillRect(
+      0,
+      Math.floor(height * stops[i]),
+      width,
+      Math.ceil(height * (stops[i + 1] - stops[i])) + 1,
+    );
+  });
 }

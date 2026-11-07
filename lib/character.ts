@@ -174,7 +174,7 @@ export function characterSheets(
   }
   return pending;
 }
-const activityPortraits: Record<
+export const ACTIVITY_PORTRAITS: Record<
   string,
   { sprite: string; crop: [number, number, number, number] }
 > = {
@@ -187,7 +187,7 @@ export function characterPortrait(
   appearance: Appearance,
   characterId?: string,
 ): Promise<string> {
-  const activity = characterId ? activityPortraits[characterId] : undefined;
+  const activity = characterId ? ACTIVITY_PORTRAITS[characterId] : undefined;
   const key = activity ? `activity:${characterId}` : JSON.stringify(appearance);
   let pending = portraits.get(key);
   if (!pending) {

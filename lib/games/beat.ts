@@ -1,3 +1,4 @@
+import { drawFacade } from "./city-art.ts";
 import { rhythmJudgement, clamp } from "../math.ts";
 import { BEAT_CHART, SONG } from "./beat-chart.ts";
 import {
@@ -129,8 +130,13 @@ function arrow(
   color: string,
 ) {
   const bitmap = [
-    "0001000", "0011100", "0111110", "1111111",
-    "0001000", "0001000", "0001000",
+    "0001000",
+    "0011100",
+    "0111110",
+    "1111111",
+    "0001000",
+    "0001000",
+    "0001000",
   ];
   c.save();
   c.translate(Math.round(x), Math.round(y));
@@ -205,7 +211,14 @@ export const createGame: GameFactory = (env) => {
         : [216, 296, 376, 456];
       c.fillStyle = "#151514";
       c.fillRect(0, 0, width, height);
-      c.fillStyle = "#24351c";
+      c.save();
+      c.globalAlpha = 0.34;
+      drawFacade(c, env, 6, height - 278, 130, 225, 1, 0);
+      drawFacade(c, env, width - 136, height - 316, 130, 263, 3, 1, {
+        flip: true,
+      });
+      c.restore();
+      c.fillStyle = "#272623";
       c.fillRect(fieldLeft, fieldTop, fieldWidth, target - fieldTop + 50);
       drawBrand(c, env, 18, 14, 84, true);
       pixelText(
@@ -219,9 +232,9 @@ export const createGame: GameFactory = (env) => {
       );
       const beatPulse = env.reducedMotion ? 0 : Math.max(0, 1 - (t % 0.5) * 4);
       xs.forEach((x, lane) => {
-        c.fillStyle = lane % 2 ? "#20351c" : "#1b2d18";
+        c.fillStyle = lane % 2 ? "#272622" : "#21201e";
         c.fillRect(x - 31, fieldTop + 6, 62, target - fieldTop + 34);
-        c.fillStyle = "#40543b";
+        c.fillStyle = "#55534b";
         c.fillRect(x - 32, fieldTop + 6, 1, target - fieldTop + 34);
         const since = t - state.pressedAt[lane],
           recent = since >= 0 && since < 0.2,
@@ -240,7 +253,7 @@ export const createGame: GameFactory = (env) => {
               : 0,
           press = env.reducedMotion ? 0 : Math.round(6 * amount),
           bad = recent && ["bad", "miss"].includes(state.laneGrade[lane]);
-        c.fillStyle = "#080e06";
+        c.fillStyle = "#0c0c0b";
         c.fillRect(x - 30, target - 15, 60, 42);
         c.fillStyle = bad
           ? C.orange
@@ -376,7 +389,7 @@ export const createGame: GameFactory = (env) => {
         c.fillRect(center - 66, feedbackY + 12, 132, 22);
         pixelText(c, badge, center, feedbackY + 28, 14, C.paper, "center");
       }
-      c.fillStyle = "#45533e";
+      c.fillStyle = "#6f6a5b";
       c.fillRect(20, height - 22, width - 40, 5);
       c.fillStyle = C.yellow;
       c.fillRect(

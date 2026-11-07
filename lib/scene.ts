@@ -1,10 +1,10 @@
 import type { GameId } from "./types";
 
 export const SCENE = {
-  width: 2880,
+  width: 3600,
   scale: 2,
   walkline: 88,
-  booth: 1440,
+  booth: 1800,
   lift: 520,
   walkSpeed: 400,
 } as const;
@@ -20,7 +20,7 @@ export type Machine = {
 export const MACHINES: readonly Machine[] = [
   {
     id: "breaker",
-    x: 720,
+    x: 900,
     label: "16-BIT ARCADE",
     asset: "arcade-machine.png",
     width: 53,
@@ -29,7 +29,7 @@ export const MACHINES: readonly Machine[] = [
   },
   {
     id: "runner",
-    x: 1040,
+    x: 1240,
     label: "MEGA DRIVE",
     asset: "mega-drive-machine.svg",
     width: 58,
@@ -38,7 +38,7 @@ export const MACHINES: readonly Machine[] = [
   },
   {
     id: "kart",
-    x: 1860,
+    x: 2380,
     label: "SNES",
     asset: "snes-machine.svg",
     width: 72,
@@ -47,7 +47,7 @@ export const MACHINES: readonly Machine[] = [
   },
   {
     id: "beat",
-    x: 2240,
+    x: 2880,
     label: "MEGA-CD",
     asset: "mega-cd-machine.svg",
     width: 68,

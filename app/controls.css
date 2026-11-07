@@ -51,19 +51,8 @@ p {
   color: var(--paper);
   background: var(--cinema-bg);
 }
-.site-header nav > button:not(.pixel-button),
-.motion-toggle {
+.site-header nav > button:not(.pixel-button) {
   min-height: var(--control-hit);
-}
-.motion-toggle {
-  font: var(--text-sm) / 1.4 var(--font-mono);
-}
-.motion-symbol {
-  display: none;
-}
-.site-header .sound-toggle {
-  width: var(--control-hit);
-  min-width: var(--control-hit);
 }
 .sound-toggle {
   position: relative;
@@ -220,9 +209,6 @@ p {
   min-height: 185px;
   padding: 15px var(--space-2) var(--space-3);
 }
-.handheld-active .motion-toggle {
-  display: none;
-}
 .ticket-action {
   min-height: var(--control-hit);
   font-size: var(--text-sm);
@@ -245,18 +231,6 @@ p {
   min-height: 20px;
   margin-top: var(--space-3);
   font: var(--text-sm) / 1.5 var(--font-body);
-}
-.outfit-options .outfit-all {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.outfit-options .outfit-cycle {
-  display: none;
-}
-.outfit-option {
-  min-height: var(--control-hit);
-  font: var(--text-sm) / 1.4 var(--font-mono);
 }
 .form-note {
   font: var(--text-sm) / 1.5 var(--font-body);
@@ -408,78 +382,12 @@ p {
   font-size: var(--text-sm);
   min-height: var(--control-hit);
 }
-@media (min-width: 701px) and (max-height: 820px) {
-  .world-stage {
-    --floor-height: clamp(720px, calc(100svh - 76px), 920px);
-  }
-  .event-board {
-    top: 86px;
-    width: min(760px, calc(100vw - 64px));
-    display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-    column-gap: 24px;
-    padding: 18px 24px;
-    text-align: left;
-  }
-  .event-board h1 {
-    font-size: 64px;
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .event-board p {
-    grid-column: 1;
-    grid-row: 2;
-    font-size: 13px;
-    margin: 8px 0 0;
-    line-height: 1.4;
-  }
-  .event-date {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: end;
-    text-align: center;
-    margin: 0 0 12px;
-  }
-  .event-board .button-row {
-    grid-column: 2;
-    grid-row: 2;
-    gap: 8px;
-    align-self: start;
-    flex-wrap: nowrap;
-  }
-  .event-board .pixel-button {
-    font-size: 11px;
-    padding: 8px 12px;
-  }
-}
 @media (max-width: 700px) {
   .site-header {
     gap: var(--space-2);
   }
   .site-header nav {
     gap: var(--space-2);
-  }
-  .site-header .sound-toggle {
-    min-width: var(--control-hit);
-    width: var(--control-hit);
-  }
-  .motion-toggle {
-    min-height: var(--control-hit);
-    font: var(--text-xs) / 1.4 var(--font-mono);
-    position: static;
-    padding: var(--space-2);
-    width: var(--control-hit);
-    background: transparent;
-    color: var(--ink);
-    border: 0;
-    box-shadow: none;
-  }
-  .motion-label {
-    display: none;
-  }
-  .motion-symbol {
-    display: grid;
-    place-items: center;
   }
   .hero-explore {
     display: inline-flex;
@@ -514,31 +422,8 @@ p {
     align-items: center;
     white-space: nowrap;
   }
-  .registration-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
   .registration-preview .player-pass {
     margin: auto;
-  }
-  .outfit-options .outfit-all {
-    display: none;
-  }
-  .outfit-options .outfit-cycle {
-    display: grid;
-    grid-template-columns: 44px minmax(0, 1fr) 44px;
-    gap: var(--space-2);
-    align-items: center;
-    text-align: center;
-    font: var(--text-control) / 1.4 var(--font-mono);
-  }
-  .outfit-cycle button {
-    min-height: var(--control-hit);
-    border: 1px solid var(--ink);
-    background: var(--white);
-    font: 18px var(--font-mono);
-  }
-  .outfit-cycle button:active {
-    background: var(--yellow);
   }
   .conversation-frame {
     height: 352px;
@@ -814,6 +699,7 @@ p {
   color: var(--paper);
 }
 .game-dialog.is-touch.game-kart .game-top h2,
+.game-dialog.is-touch.game-runner .game-top h2,
 .game-dialog.is-touch.game-breaker .game-top h2 {
   color: var(--ink);
 }
@@ -891,10 +777,6 @@ p {
 .site-header {
   padding-block: 15px;
 }
-.game-dialog .game-message :focus-visible,
-.game-dialog .handheld-controls :focus-visible {
-  outline-color: var(--ink);
-}
 .game-kart .game-top :focus-visible,
 .game-breaker .game-top :focus-visible,
 .game-dialog.is-touch .game-top :focus-visible {
@@ -932,42 +814,6 @@ p {
 }
 .game-overlay {
   background: var(--game-curtain, var(--overlay-game));
-}
-.race-garage {
-  margin: 12px 0;
-  text-align: left;
-  border-block: 1px solid currentColor;
-}
-.race-garage summary {
-  cursor: pointer;
-  padding: 12px 4px;
-  min-height: 44px;
-  font: 18px/1.2 var(--font-game);
-}
-.race-garage ul {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
-  max-height: 240px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  list-style: none;
-  padding: 0 0 12px;
-  margin: 0;
-  gap: 8px;
-}
-.race-garage li {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font: 15px/1.2 var(--font-game);
-  text-align: center;
-}
-.garage-profile {
-  display: block;
-  width: 96px;
-  height: 96px;
-  background-size: 192px 96px;
-  image-rendering: pixelated;
 }
 .game-dialog.is-touch .game-message .game-menu-hint {
   font: 12px/1.6 var(--font-mono);

@@ -5,6 +5,7 @@ import { DEFAULT_APPEARANCE, GAMES, SESSIONS } from "@/lib/types";
 import type { WorldController, WorldTarget } from "@/lib/world";
 import type { LoreAction } from "@/lib/lore";
 import { MACHINES, SCENE } from "@/lib/scene";
+import { lockPageScroll } from "@/lib/dialog-focus";
 import { safePlayer } from "@/lib/math";
 import { audio } from "@/lib/audio";
 import { enterFromPass } from "@/lib/arrival";
@@ -15,6 +16,7 @@ import GameHost from "./GameHost";
 import SoundControl from "./SoundControl";
 import Icon from "./Icon";
 import { readScoreProgress, SCORE_RULES } from "@/lib/scores";
+import { hallAudioShouldPlay } from "@/lib/ambience";
 
 const STORE = "vega-16-bit-con-v1";
 type Panel =
@@ -24,6 +26,7 @@ type Panel =
   | null;
 export default function Convention() {
   const [player, setPlayer] = useState<Player | null>(null),
+    [scenePlayer, setScenePlayer] = useState<Player | null>(null),
     [scores, setScores] = useState<Scores>({}),
     [panel, setPanel] = useState<Panel>(null);
   const [sound, setSound] = useState(false),
@@ -43,16 +46,25 @@ export default function Convention() {
     panelRef = useRef(panel),
     handheldRef = useRef(handheld),
     arrivalRef = useRef(arrival),
+    pendingScene = useRef<Player | null>(null),
+    ambienceRef = useRef(ambientPaused),
     trigger = useRef<HTMLElement | null>(null);
   panelRef.current = panel;
   handheldRef.current = handheld;
   arrivalRef.current = arrival;
+  ambienceRef.current = ambientPaused;
   const desiredSound = useRef(false),
     soundIntent = useRef(0),
     handheldScroll = useRef(0),
     handoff = useRef(0),
     frames = useRef<number[]>([]),
     entrance = useRef<AbortController | null>(null);
+  const [activeFloor, setActiveFloor] = useState(0);
+  const floorRef = useRef(0);
+  const floorChanged = useCallback((floor: number) => {
+    floorRef.current = floor;
+    setActiveFloor(floor);
+  }, []);
   const previousScores = useRef<Scores>({});
   const announce = useCallback(
     (text: string) => setAnnouncement((s) => ({ text, id: s.id + 1 })),
@@ -75,7 +87,12 @@ export default function Convention() {
     const kind = panelRef.current?.kind,
       target = trigger.current;
     setPanel(null);
+    if (pendingScene.current) {
+      setScenePlayer(pendingScene.current);
+      pendingScene.current = null;
+    }
     afterLayout(() => {
+      world.current?.refresh();
       if (kind === "register" && target?.isConnected)
         target.focus({ preventScroll: true });
       else world.current?.focus();
@@ -119,7 +136,9 @@ export default function Convention() {
   useEffect(() => {
     try {
       const stored = JSON.parse(localStorage.getItem(STORE) || "null");
-      setPlayer(safePlayer(stored?.player));
+      const savedPlayer = safePlayer(stored?.player);
+      setPlayer(savedPlayer);
+      setScenePlayer(savedPlayer);
       const progress = readScoreProgress(stored);
       setScores(progress.scores);
       previousScores.current = progress.previousScores;
@@ -131,7 +150,6 @@ export default function Convention() {
       coarse = matchMedia("(pointer:coarse)");
     const update = () => {
       setReduced(motion.matches);
-      if (motion.matches) setAmbientPaused(true);
       setTouch(narrow.matches || coarse.matches);
     };
     update();
@@ -179,13 +197,25 @@ export default function Convention() {
       if (next && audio.enabled) {
         const active = panelRef.current;
         await audio.prepare(
-          active?.kind === "game" ? active.id : "hall",
+          active?.kind === "game"
+            ? active.id
+            : floorRef.current === 1
+              ? "office"
+              : "hall",
         );
       }
       if (token !== soundIntent.current) return;
       if (next && !audio.enabled) throw Error("Sound unavailable");
-      if (next && panelRef.current?.kind !== "game" && !document.hidden)
-        await audio.play("hall");
+      if (
+        hallAudioShouldPlay({
+          enabled: next,
+          paused: ambienceRef.current,
+          hidden: document.hidden,
+          focused: document.hasFocus(),
+          gameOpen: panelRef.current?.kind === "game",
+        })
+      )
+        await audio.play(floorRef.current === 1 ? "office" : "hall");
       if (token !== soundIntent.current) return;
       setSoundStatus(next ? "ready" : "off");
       if (next) audio.effect("click");
@@ -224,32 +254,60 @@ export default function Convention() {
   useEffect(() => {
     let active = true;
     const reconcile = () => {
-      if (document.hidden) {
+      if (document.hidden || !document.hasFocus()) {
         audio.pause();
         return;
       }
       const intent = soundIntent.current;
-      if (desiredSound.current && panelRef.current?.kind !== "game")
-        void audio.play("hall").catch(() => {
-          if (!active || intent !== soundIntent.current || !desiredSound.current || panelRef.current?.kind === "game") return;
-          setSoundStatus("error");
-          setSoundError(
-            "Music could not load. Turn sound off and on to retry.",
-          );
-        });
+      if (panelRef.current?.kind === "game") return;
+      if (
+        !hallAudioShouldPlay({
+          enabled: desiredSound.current,
+          paused: ambienceRef.current,
+          hidden: document.hidden,
+          focused: document.hasFocus(),
+          gameOpen: false,
+        })
+      ) {
+        audio.pause();
+        return;
+      }
+      if (desiredSound.current)
+        void audio
+          .play(floorRef.current === 1 ? "office" : "hall")
+          .catch(() => {
+            if (
+              !active ||
+              intent !== soundIntent.current ||
+              !desiredSound.current ||
+              panelRef.current?.kind === "game"
+            )
+              return;
+            setSoundStatus("error");
+            setSoundError(
+              "Music could not load. Turn sound off and on to retry.",
+            );
+          });
     };
     reconcile();
     document.addEventListener("visibilitychange", reconcile);
+    const suspend = () => audio.pause();
+    window.addEventListener("blur", suspend);
+    window.addEventListener("focus", reconcile);
     return () => {
       active = false;
       document.removeEventListener("visibilitychange", reconcile);
+      window.removeEventListener("blur", suspend);
+      window.removeEventListener("focus", reconcile);
     };
-  }, [panel, sound]);
+  }, [panel, sound, ambientPaused, activeFloor]);
   useEffect(() => {
     if (!handheld) return;
+    const unlockPage = lockPageScroll();
     const old = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
+      unlockPage();
       document.body.style.overflow = old;
       const html = document.documentElement,
         before = html.style.scrollBehavior;
@@ -292,7 +350,8 @@ export default function Convention() {
   const openTarget = useCallback(
     (target: WorldTarget) => {
       const show = () => {
-        if (target.kind === "register")
+        if (target.kind === "food") world.current?.eat();
+        else if (target.kind === "register")
           open({ kind: "register", interest: null }, target.element);
         else if (target.kind === "game")
           open({ kind: "game", id: target.id as GameId }, target.element);
@@ -349,10 +408,12 @@ export default function Convention() {
     [player, open, announce],
   );
   const submit = useCallback(
-    async (next: Player, card: HTMLElement) => {
+    async (next: Player, card: HTMLElement, updating = player !== null) => {
       if (arrivalRef.current) return;
-      const updating = player !== null;
-      const location = world.current?.position() || { floor: 0, x: SCENE.booth };
+      const location = world.current?.position() || {
+        floor: 0,
+        x: SCENE.booth,
+      };
       entrance.current?.abort();
       const owner = new AbortController();
       entrance.current = owner;
@@ -363,8 +424,8 @@ export default function Convention() {
         updating
           ? "Updating your player."
           : touch
-          ? "Entering the hall."
-          : "Entering the hall. Press Escape to skip the animation.",
+            ? "Entering the hall."
+            : "Entering the hall. Press Escape to skip the animation.",
       );
       await enterFromPass({
         card,
@@ -372,6 +433,8 @@ export default function Convention() {
         signal: owner.signal,
         prepare: async () => {
           setPlayer(next);
+          setScenePlayer(next);
+          pendingScene.current = null;
           setPanel(null);
           await new Promise<void>((resolve) =>
             requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
@@ -379,9 +442,7 @@ export default function Convention() {
           if (updating) world.current?.refresh();
           const floor = updating ? location.floor : 0;
           const actor = updating
-            ? document.querySelector<HTMLElement>(
-                `[data-player-floor="${floor}"]`,
-              )!
+            ? world.current!.reframe(floor, location.x)
             : world.current!.goTo(0, SCENE.booth, false);
           return {
             player: actor,
@@ -422,7 +483,7 @@ export default function Convention() {
         "_blank",
         "noopener,noreferrer",
       );
-    else if (action === "schedule") navigate(1, 1440);
+    else if (action === "schedule") navigate(1, SCENE.booth);
     else if (action === "explore") close();
     else close();
   };
@@ -444,7 +505,7 @@ export default function Convention() {
         href="#social-floor"
         onClick={(e) => {
           e.preventDefault();
-          navigate(1, 1440);
+          navigate(1, SCENE.booth);
         }}
       >
         Skip to schedule
@@ -462,7 +523,7 @@ export default function Convention() {
           <button onClick={explore} disabled={arrival}>
             Explore
           </button>
-          <button onClick={() => navigate(1, 1440)} disabled={arrival}>
+          <button onClick={() => navigate(1, SCENE.booth)} disabled={arrival}>
             Schedule
           </button>
           <button
@@ -477,43 +538,23 @@ export default function Convention() {
             <span className="nav-narrow">{player ? "Player" : "RSVP"}</span>
           </button>
         </nav>
-        <div className="access-controls">
-          {soundControl}
-          <button
-            className="motion-toggle"
-            onClick={() => setAmbientPaused((v) => !v)}
-            aria-pressed={ambientPaused}
-            aria-label={
-              ambientPaused
-                ? "Resume background motion"
-                : "Pause background motion"
-            }
-          >
-            <span className="motion-label">
-              {ambientPaused
-                ? "Resume background motion"
-                : "Pause background motion"}
-            </span>
-            <span className="motion-symbol">
-              <Icon name={ambientPaused ? "play" : "pause"} />
-            </span>
-          </button>
-        </div>
       </header>
-      {soundError && (
-        <p className="global-notice" role="status">
-          {soundError}
-        </p>
-      )}
-      {saveStatus === "session" && (
-        <p className="global-notice" role="status">
-          Your player is available for this visit only. Browser storage is
-          unavailable.
-        </p>
-      )}
+      <div className="global-notices">
+        {soundError && (
+          <p className="global-notice" role="status">
+            {soundError}
+          </p>
+        )}
+        {saveStatus === "session" && (
+          <p className="global-notice" role="status">
+            Your player is available for this visit only. Browser storage is
+            unavailable.
+          </p>
+        )}
+      </div>
       <World
         ref={world}
-        player={player}
+        player={scenePlayer}
         paused={!!panel || arrival}
         arriving={arrival}
         handheld={handheld}
@@ -526,27 +567,51 @@ export default function Convention() {
         onAnnounce={announce}
         onHandheld={explore}
         onEnterScene={enterScene}
+        onFloorChange={floorChanged}
         onExitHandheld={exitHandheld}
-        onToggleMotion={() => setAmbientPaused((v) => !v)}
+        onToggleMotion={() => {
+          const next = !ambienceRef.current;
+          ambienceRef.current = next;
+          setAmbientPaused(next);
+          audio.effect("click");
+          if (next) audio.pause();
+          announce(
+            next
+              ? "Venue music and background motion paused."
+              : "Venue ambience resumed.",
+          );
+        }}
         soundControl={soundControl}
       />
-      <footer className="site-footer" inert={handheld || arrival}>
-        <div>
+      <footer className="site-footer venue-footer" inert={handheld || arrival}>
+        <div className="footer-identity">
           <img src="/assets/vega/logo.svg" alt="Vega" width={110} height={36} />
-          <p>Meet Vega at Booth 630.</p>
+          <div>
+            <h2>Meet Vega at Booth 630.</h2>
+            <p className="footer-details">
+              <time dateTime="2026-10-03">October 3–5, 2026</time>
+              <span>Javits Center, New York</span>
+            </p>
+          </div>
         </div>
-        <button
-          className="pixel-button primary"
-          onClick={register}
-          disabled={arrival}
-        >
-          {player ? "Edit my player" : "Make my player"} ↗
-        </button>
-        <small>
+        <div className="footer-actions">
+          <button
+            className="pixel-button primary"
+            onClick={register}
+            disabled={arrival}
+          >
+            {player ? "Edit my player" : "Register now"} ↗
+          </button>
+          <button
+            className="text-link"
+            onClick={() => navigate(0, SCENE.booth)}
+          >
+            Back to Booth 630 ↑
+          </button>
+        </div>
+        <p className="footer-note">
           16-Bit Con is a fictional event and interactive demo.
-          <br />
-          October 3–5, 2026 · Javits Center, New York
-        </small>
+        </p>
       </footer>
       <div className="sr-only" role="status" aria-live="polite">
         <span key={announcement.id}>{announcement.text}</span>
@@ -557,9 +622,12 @@ export default function Convention() {
           interest={panel.interest}
           onClose={close}
           onSubmit={submit}
+          onSave={(next) => {
+            pendingScene.current = next;
+            setPlayer(next);
+          }}
           sessionOnly={saveStatus === "session"}
           soundControl={soundControl}
-          mobile={touch || handheld}
         />
       )}
       {panel?.kind === "npc" && (

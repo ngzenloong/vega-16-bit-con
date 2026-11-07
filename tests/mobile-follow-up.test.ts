@@ -11,16 +11,17 @@ import { createGame } from "../lib/games/kart.ts";
 import type { GameInput } from "../lib/games/types.ts";
 import type { GameResult } from "../lib/types.ts";
 
-test("every replay grid contains all twelve unique rival microcars", () => {
-  const grids = [0, 1, 2, 3].map(selectRivalCars);
-  assert.equal(new Set(grids.flat().map((car) => car.id)).size, 12);
+test("every replay grid contains all eleven unique rival microcars", () => {
+  const grids = [0, 1, 2, 3].map((seed) => selectRivalCars(seed));
+  assert.equal(new Set(grids.flat().map((car) => car.id)).size, 11);
   assert.ok(
     grids.every(
       (grid) =>
-        grid.length === 12 && new Set(grid.map((car) => car.id)).size === 12,
+        grid.length === 11 && new Set(grid.map((car) => car.id)).size === 11,
     ),
   );
-  assert.deepEqual(selectRivalCars(12), selectRivalCars(0));
+  assert.notDeepEqual(selectRivalCars(11), selectRivalCars(0));
+  assert.ok(!RIVAL_CARS.some((car) => car.id === "smart"));
   assert.ok(
     ["be1", "pao", "figaro", "scargo"].every((id) =>
       RIVAL_CARS.some((car) => car.id === id),
@@ -40,8 +41,10 @@ test("only the player's Fiat carries the campaign URL", () => {
       "utf8",
     );
     assert.match(svg, /width="288" height="96"/);
-    if (car.id === "scargo") { assert.match(svg, /茶|\\u8336/); assert.doesNotMatch(svg, /SIEM/i); }
-    else assert.match(svg, /SIEM/);
+    if (car.id === "scargo") {
+      assert.match(svg, /茶|\\u8336/);
+      assert.doesNotMatch(svg, /SIEM/i);
+    } else assert.match(svg, /SIEM/);
     assert.doesNotMatch(svg, /PostSIEM|Fiat/i);
     assert.doesNotMatch(svg, /<image\b/);
   }
@@ -93,7 +96,7 @@ test("the tougher first-place race remains winnable on a clean controlled line",
     secondary: false,
     axis: 0,
   };
-  assert.match(game.hud().message!, /^13\/13/);
+  assert.match(game.hud().message!, /^12\/12/);
   for (let i = 0; i < 57 * 120 && !result; i++) {
     const time = i / 120;
     game.update(
@@ -104,4 +107,9 @@ test("the tougher first-place race remains winnable on a clean controlled line",
   }
   assert.equal(result?.won, true);
   assert.match(result!.detail, /Finished 1st/);
+  assert.deepEqual(result!.race, {
+    carId: "fiat-player",
+    place: 1,
+    finished: true,
+  });
 });

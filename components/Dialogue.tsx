@@ -2,15 +2,18 @@
 
 import {
   useEffect,
+  useMemo,
   useRef,
   useState,
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import { CHARACTERS, type LoreCharacter } from "@/lib/lore";
+import { CHARACTERS, dialoguePages, type LoreCharacter } from "@/lib/lore";
 import { characterPortrait } from "@/lib/character";
 import { NPC_APPEARANCES } from "@/lib/characters";
 import Icon from "./Icon";
+import { SCENE } from "@/lib/scene";
+import { retainDialogFocus } from "@/lib/dialog-focus";
 import { audio } from "@/lib/audio";
 
 type Action = NonNullable<LoreCharacter["choices"]>[number]["action"];
@@ -32,16 +35,25 @@ export default function Dialogue({
   const character = CHARACTERS.find((c) => c.id === id) || CHARACTERS[0];
   const ref = useRef<HTMLDialogElement>(null),
     typing = useRef(0),
+    typingStopped = useRef(false),
     leaving = useRef(false),
     exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [line, setLine] = useState(0),
+    [page, setPage] = useState(0),
     [length, setLength] = useState(0),
     [selected, setSelected] = useState(0),
     [closing, setClosing] = useState(false);
   const [portrait, setPortrait] = useState("/assets/vega/sam-portrait.png");
-  const text = character.lines[line],
+  const pagesByLine = useMemo(
+    () => character.lines.map((text) => (touch ? dialoguePages(text) : [text])),
+    [character, touch],
+  );
+  const pageIndex = Math.min(page, pagesByLine[line].length - 1);
+  const text = pagesByLine[line][pageIndex],
     complete = length >= text.length,
-    last = line === character.lines.length - 1;
+    last =
+      line === character.lines.length - 1 &&
+      pageIndex === pagesByLine[line].length - 1;
   const choices = character.choices || [
     { label: "Back to the floor", action: "close" as const },
   ];
@@ -49,6 +61,11 @@ export default function Dialogue({
   const motion = useRef(reduced);
   motion.current = reduced;
   closeCallback.current = onClose;
+  useEffect(() => {
+    const d = ref.current;
+    if (d?.open && !d.contains(document.activeElement))
+      d.focus({ preventScroll: true });
+  }, [complete, last]);
 
   function leave(action: Action = "close") {
     if (leaving.current) return;
@@ -93,15 +110,17 @@ export default function Dialogue({
       world = actor?.closest<HTMLElement>(".world-stage");
     const oldHeight = world?.style.height || "";
     d.showModal();
+    const releaseFocus = retainDialogFocus(d);
     d.focus({ preventScroll: true });
     document.body.style.overflow = "hidden";
     audio.duck(0.25);
     const frameScene = () => {
       if (!actor || !floor || !world) return;
-      const speakerX = Number(actor.dataset.x),
+      const speakerX =
+          Number(actor.dataset.x) + Number(actor.dataset.headX || 0),
         camera = Math.max(
           0,
-          Math.min(2880 - innerWidth, speakerX - innerWidth / 2),
+          Math.min(SCENE.width - innerWidth, speakerX - innerWidth / 2),
         );
       const bottom = d
         .querySelector(".conversation-frame")!
@@ -126,6 +145,7 @@ export default function Dialogue({
       cancelAnimationFrame(typing.current);
       if (exitTimer.current) clearTimeout(exitTimer.current);
       d.removeEventListener("cancel", cancel);
+      releaseFocus();
       window.removeEventListener("resize", frameScene);
       d.close();
       document.body.style.overflow = oldOverflow;
@@ -154,31 +174,68 @@ export default function Dialogue({
   useEffect(() => {
     setLength(reduced ? text.length : 0);
     setSelected(0);
+    typingStopped.current = reduced;
     if (reduced) return;
-    const started = performance.now();
-    let previousVoice = 0;
+    let elapsed = 0,
+      lastTick = 0,
+      previousCount = -1,
+      previousVoice = 0;
     const reveal = (now: number) => {
-      const next = Math.min(text.length, Math.floor((now - started) * 0.045));
-      setLength(next);
+      if (typingStopped.current || leaving.current) return;
+      if (lastTick) elapsed += Math.min(100, now - lastTick);
+      lastTick = now;
+      const next = Math.min(text.length, Math.floor(elapsed * 0.045));
+      if (next !== previousCount) {
+        setLength(next);
+        previousCount = next;
+      }
       if (next - previousVoice >= 5) {
         audio.effect("talk");
         previousVoice = next;
       }
       if (next < text.length) typing.current = requestAnimationFrame(reveal);
+      else typingStopped.current = true;
     };
-    typing.current = requestAnimationFrame(reveal);
-    return () => cancelAnimationFrame(typing.current);
+    const suspend = () => {
+      cancelAnimationFrame(typing.current);
+      lastTick = 0;
+    };
+    const resume = () => {
+      suspend();
+      if (
+        !document.hidden &&
+        document.hasFocus() &&
+        !typingStopped.current &&
+        !leaving.current
+      )
+        typing.current = requestAnimationFrame(reveal);
+    };
+    resume();
+    window.addEventListener("blur", suspend);
+    window.addEventListener("focus", resume);
+    document.addEventListener("visibilitychange", resume);
+    return () => {
+      suspend();
+      window.removeEventListener("blur", suspend);
+      window.removeEventListener("focus", resume);
+      document.removeEventListener("visibilitychange", resume);
+    };
   }, [text, reduced]);
 
   function advance() {
     if (leaving.current) return;
     audio.effect("click");
     if (!complete) {
+      typingStopped.current = true;
       cancelAnimationFrame(typing.current);
       setLength(text.length);
     } else if (!last) {
       setLength(0);
-      setLine((n) => n + 1);
+      if (pageIndex < pagesByLine[line].length - 1) setPage(pageIndex + 1);
+      else {
+        setPage(0);
+        setLine((n) => n + 1);
+      }
     } else leave(choices[selected].action);
   }
   function keyboard(event: KeyboardEvent<HTMLDialogElement>) {
@@ -269,7 +326,7 @@ export default function Dialogue({
           }
         >
           <span className="dialogue-text-stack" aria-hidden="true">
-            {character.lines.map((full, i) => (
+            {pagesByLine.flat().map((full, i) => (
               <span className="dialogue-text-measure" key={i}>
                 {full}
               </span>

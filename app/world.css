@@ -1,7 +1,7 @@
 /* Scene geometry uses one 2x pixel scale. Buildings are opaque depth layers. */
 .world-stage {
   position: relative;
-  --camera-x: max(0px, calc(1440px - 50vw));
+  --camera-x: max(0px, calc(var(--world-center, 1800px) - 50vw));
   --floor-height: clamp(760px, calc(100svh - 76px), 920px);
 }
 .world-floor {
@@ -21,7 +21,7 @@
 .world-inner {
   position: absolute;
   inset: 0 auto 0 0;
-  width: 2880px;
+  width: var(--world-width, 3600px);
   transform: translate3d(calc(-1 * var(--camera-x)), 0, 0);
   will-change: transform;
 }
@@ -149,7 +149,7 @@
 }
 .venue-sign {
   position: absolute;
-  left: 1440px;
+  left: var(--world-center, 1800px);
   top: 30px;
   transform: translateX(-50%);
   z-index: 2;
@@ -161,7 +161,7 @@
 }
 .event-board {
   position: absolute;
-  left: 1440px;
+  left: var(--world-center, 1800px);
   top: 100px;
   transform: translateX(-50%);
   width: 560px;
@@ -206,21 +206,7 @@
   font-size: 12px;
   padding: var(--space-2) var(--space-4);
 }
-.platform-beam {
-  position: absolute;
-  top: calc(50% + 6px);
-  height: 12px;
-  width: 230px;
-  border: 2px solid var(--frame-dark);
-  background: var(--platform-face);
-  z-index: 2;
-}
-.beam-left {
-  left: 920px;
-}
-.beam-right {
-  left: 1730px;
-}
+
 .world-floor-art {
   position: absolute;
   inset: auto 0 0;
@@ -244,7 +230,7 @@
 .foreground-life {
   position: absolute;
   bottom: 40px;
-  width: 2880px;
+  width: var(--world-width, 3600px);
   height: 160px;
   z-index: 12;
   pointer-events: none;
@@ -291,7 +277,7 @@
   background: var(--frame-dark);
 }
 .game-machine.is-near .machine-lightbox,
-.game-machine:hover .machine-lightbox,
+.world-stage[data-pointer-active="true"] .game-machine:hover .machine-lightbox,
 .game-machine:focus-visible .machine-lightbox {
   background: var(--yellow);
   box-shadow: 3px 3px 0 var(--ink);
@@ -326,7 +312,7 @@
   opacity: 0;
   pointer-events: none;
 }
-.game-machine:hover .machine-key,
+.world-stage[data-pointer-active="true"] .game-machine:hover .machine-key,
 .game-machine:focus-visible .machine-key {
   opacity: 1;
 }
@@ -342,7 +328,7 @@
   transition: opacity 120ms;
 }
 .game-machine.is-near .attract-screen,
-.game-machine:hover .attract-screen,
+.world-stage[data-pointer-active="true"] .game-machine:hover .attract-screen,
 .game-machine:focus-visible .attract-screen {
   opacity: 1;
 }
@@ -404,7 +390,8 @@
   height: 60px;
   pointer-events: none;
 }
-.vega-booth:is(:hover, :focus-visible, .is-near) .booth-entry-light {
+.world-stage[data-pointer-active="true"] .vega-booth:hover .booth-entry-light,
+.vega-booth:is(:focus-visible, .is-near) .booth-entry-light {
   background: var(--yellow);
 }
 .service-wall {
@@ -463,7 +450,7 @@
   background-position: 0 0;
   transition: background-position 0.32s steps(7);
 }
-.world-lift.is-near .sprite {
+.world-lift.is-near:not([data-arrived="true"]) .sprite {
   background-position: -1274px 0;
 }
 .npc {
@@ -524,7 +511,7 @@
   opacity: 0;
   pointer-events: none;
 }
-.npc:hover .npc-focus-name,
+.world-stage[data-pointer-active="true"] .npc:hover .npc-focus-name,
 .npc:focus-visible .npc-focus-name {
   opacity: 1;
 }
@@ -686,17 +673,16 @@
   left: 0;
   right: 0;
   top: 0;
-  height: 72px;
+  height: 100px;
   overflow: hidden;
   background: url("/assets/vega/pipes-tile.png") repeat-x left -78px/768px 174px;
   image-rendering: pixelated;
-  border-bottom: 2px solid var(--ceiling-rule);
   pointer-events: none;
 }
 .schedule-board {
   position: absolute;
   top: 120px;
-  left: 1440px;
+  left: var(--world-center, 1800px);
   transform: translateX(-50%);
   width: 920px;
   z-index: 4;
@@ -768,7 +754,7 @@
 }
 .social-sign {
   position: absolute;
-  bottom: 342px;
+  bottom: 420px;
   padding: 6px 13px;
   background: var(--paper);
   border: 1px solid var(--ink);
@@ -836,21 +822,7 @@
     display: none;
   }
 }
-.upper-catwalk {
-  position: absolute;
-  top: calc(25% + 53px);
-  height: 10px;
-  width: 170px;
-  border: 2px solid var(--frame-dark);
-  background: var(--platform-face);
-  z-index: 2;
-}
-.catwalk-left {
-  left: 980px;
-}
-.catwalk-right {
-  left: 1730px;
-}
+
 @keyframes cloud-drift {
   to {
     translate: var(--drift) 0;
@@ -1002,9 +974,6 @@
   .schedule-board small {
     font-size: 10px;
     line-height: 1.8;
-  }
-  .concourse-ceiling {
-    height: 60px;
   }
   .ambient-bubble {
     width: 170px;

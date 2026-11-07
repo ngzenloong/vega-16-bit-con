@@ -6,6 +6,18 @@ import {
 
 export const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(max, value));
+/** Put the gray floor-brick baseline at the viewport bottom, independent of actor pose. */
+export function floorFrameScroll(
+  floorPageBottom: number,
+  viewportHeight: number,
+  maxScroll: number,
+) {
+  return clamp(
+    floorPageBottom - 24 - viewportHeight,
+    0,
+    Math.max(0, maxScroll),
+  );
+}
 export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 export function overlaps(
   a: { x: number; y: number; w: number; h: number },
@@ -67,6 +79,9 @@ export function safePlayer(value: unknown) {
   for (const part of OUTFIT_PARTS) appearance[part] = Number(a[part] ?? 0);
   return {
     name: p.name.trim().slice(0, 24),
+    ...(typeof p.email === "string" && /^[^\s@]+@[^\s@]+$/.test(p.email.trim())
+      ? { email: p.email.trim().slice(0, 254) }
+      : {}),
     appearance,
     interests: Array.isArray(p.interests)
       ? p.interests.filter(

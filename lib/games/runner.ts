@@ -1,6 +1,8 @@
+import { drawFacade } from "./city-art.ts";
 import { clamp, overlaps, landingSurface } from "../math.ts";
 import {
   COLORS as C,
+  drawDuskSky,
   drawCharacter,
   drawBrand,
   pixelText,
@@ -233,8 +235,7 @@ export const createGame: GameFactory = (env) => {
     },
     draw(c, t) {
       const { width, height } = viewport;
-      c.fillStyle = C.sky;
-      c.fillRect(0, 0, width, height);
+      drawDuskSky(c, height, width);
       const cam = clamp(state.x - width * 0.35, 0, 2250 - width);
       if (env.backdrop) {
         const w = env.backdrop.width,
@@ -242,15 +243,21 @@ export const createGame: GameFactory = (env) => {
         c.drawImage(env.backdrop, x, height - 62 - env.backdrop.height);
         c.drawImage(env.backdrop, x + w, height - 62 - env.backdrop.height);
       }
-      c.fillStyle = "#718779";
+      for (let i = 0; i < 5; i++) {
+        const x = i * 390 + 90 - cam * 0.32;
+        drawFacade(c, env, x, height - 362, 160, 300, i, i % 2, {
+          flip: i % 2 === 0,
+        });
+      }
+      c.fillStyle = "#7e7376";
       for (let i = 0; i < 12; i++)
         c.fillRect(i * 140 - cam * 0.45, 52, 3, height - 112);
       c.fillRect(0, height - 215, width, 3);
       c.save();
       c.translate(-cam, height - 400);
-      c.fillStyle = "#d5c69a";
+      c.fillStyle = "#d2bea1";
       c.fillRect(0, 338, 2250, 62);
-      c.fillStyle = C.green;
+      c.fillStyle = "#897574";
       c.fillRect(0, 338, 2250, 8);
       c.fillStyle = "#b99863";
       for (let i = 0; i < 45; i++)
@@ -267,7 +274,7 @@ export const createGame: GameFactory = (env) => {
         c.fillRect(p.x, p.y, p.w, 12);
         c.fillStyle = C.yellow;
         c.fillRect(p.x + 2, p.y, p.w - 4, 4);
-        c.fillStyle = "#8fa96a";
+        c.fillStyle = "#bba888";
         c.fillRect(p.x + 4, p.y + 6, p.w - 8, 3);
       }
       state.cards.forEach((card, i) => {
@@ -286,6 +293,8 @@ export const createGame: GameFactory = (env) => {
           c.fillStyle = C.ink;
           c.fillRect(card.x - 4, card.y - 4, 8, 5);
         }
+        c.fillStyle = C.paper;
+        c.fillRect(card.x - 48, card.y - 39, 96, 20);
         pixelText(
           c,
           card.collected ? "POST-SIEM" : `SOURCE ${i + 1}`,
@@ -327,6 +336,8 @@ export const createGame: GameFactory = (env) => {
         c.fillStyle = C.ink;
         c.fillRect(x - 11, 334, 6, 4);
         c.fillRect(x + 5, 334, 6, 4);
+        c.fillStyle = C.paper;
+        c.fillRect(x - 24, 293, 48, 20);
         pixelText(c, "SIEM", x, 309, 13, C.ink, "center");
       }
       c.fillStyle = C.green;

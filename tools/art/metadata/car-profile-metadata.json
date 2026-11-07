@@ -927,136 +927,6 @@
     ]
   },
   {
-    "id": "smart",
-    "model": "Smart Fortwo 450",
-    "file": "car-smart-side.svg",
-    "frameWidth": 96,
-    "frameHeight": 96,
-    "frames": [
-      "side-left",
-      "side-right"
-    ],
-    "frameOffsets": [
-      0,
-      96
-    ],
-    "fps": 0,
-    "groundAnchor": [
-      48,
-      90
-    ],
-    "frameBounds": [
-      [
-        16,
-        32,
-        65,
-        59
-      ],
-      [
-        15,
-        32,
-        65,
-        59
-      ]
-    ],
-    "bodyBounds": [
-      [
-        16,
-        32,
-        65,
-        53
-      ],
-      [
-        15,
-        32,
-        65,
-        53
-      ]
-    ],
-    "wheels": [
-      {
-        "front": [
-          29,
-          82
-        ],
-        "rear": [
-          68,
-          82
-        ],
-        "radius": 8
-      },
-      {
-        "front": [
-          66,
-          82
-        ],
-        "rear": [
-          27,
-          82
-        ],
-        "radius": 8
-      }
-    ],
-    "sideWindowBoxes": [
-      [
-        [
-          24,
-          41,
-          29,
-          19
-        ],
-        [
-          55,
-          41,
-          14,
-          20
-        ]
-      ],
-      [
-        [
-          43,
-          41,
-          29,
-          19
-        ],
-        [
-          27,
-          41,
-          14,
-          20
-        ]
-      ]
-    ],
-    "doorBoxes": [
-      [
-        24,
-        60,
-        40,
-        20
-      ],
-      [
-        32,
-        60,
-        40,
-        20
-      ]
-    ],
-    "bodyTop": 32,
-    "bodyBottom": 84,
-    "identity": "Very short two-seat coupe with an exposed contrasting safety cell and large triangular side glazing.",
-    "frontEnd": [
-      "left",
-      "right"
-    ],
-    "rearEnd": [
-      "right",
-      "left"
-    ],
-    "rearPlateVisible": false,
-    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
-    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts."
-  },
-  {
     "id": "be1",
     "model": "Nissan Be-1",
     "file": "car-be1-side.svg",
@@ -1584,7 +1454,7 @@
         43
       ]
     ],
-    "rearPlateGlyph": "茶",
+    "rearPlateGlyph": "\u8336",
     "livery": "User-supplied Yokohama Version reference. Blue side panels; white bumper/arches; narrow white trim only at the rear edge. Rear plate is not visible from an orthographic side.",
     "sourcePhotos": [
       "91DE6246-D45D-4898-9559-780AA18A3652/1-Photo-1.jpg",

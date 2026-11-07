@@ -1,5 +1,5 @@
 {
-  "provenance": "Separately credited composer-made CC0 recordings; see each track for its source. Hall uses Zane Little's acoustic life-sim loop. Rhythm retains congusbongus's FM recording. No music-generation provider was used.",
+  "provenance": "Separately credited composer-made CC0 recordings. The main hall shares the rhythm score; the lower office uses the former hall's acoustic life-sim loop. No music-generation provider was used.",
   "license": "CC0-1.0",
   "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
   "playback": "Decode once with Web Audio, set loop=true, loopStart=0, and loopEnd to the selected track duration. The beat track is exactly 32 seconds at 120 BPM; beat n is startTime + n * 0.5 seconds.",
@@ -7,7 +7,7 @@
     "hall": {
       "title": "Apple Cider",
       "artist": "Zane Little",
-      "purpose": "Convention hall background",
+      "purpose": "Lower office / social floor background",
       "files": {
         "ogg": "/audio/hall.ogg",
         "wav": "/audio/hall.wav"
@@ -66,7 +66,7 @@
     "beat": {
       "title": "Welcome to the Item Shop",
       "artist": "congusbongus",
-      "purpose": "Rhythm-game music",
+      "purpose": "Main hall background and rhythm-game music (independent playback clocks)",
       "files": {
         "ogg": "/audio/beat.ogg",
         "wav": "/audio/beat.wav"
@@ -312,5 +312,13 @@
     "tools/audio/prepare.py",
     "tools/audio/prepare_games.py",
     "tools/audio/prepare_hall_life.py"
-  ]
+  ],
+  "routing": {
+    "mainHall": "beat",
+    "office": "hall",
+    "breaker": "breaker",
+    "runner": "runner",
+    "kart": "kart",
+    "beat": "beat"
+  }
 }

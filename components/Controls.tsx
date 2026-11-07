@@ -83,6 +83,7 @@ export default function Controls({
         release(`pad-pointer:${e.pointerId}`, e.timeStamp)
       }
       onKeyDown={(e) => {
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
         if (e.key === "Tab") releaseAll();
         if ((e.key === "Enter" || e.key === " ") && !e.repeat) {
           e.preventDefault();
