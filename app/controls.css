@@ -382,50 +382,6 @@ p {
   font-size: var(--text-sm);
   min-height: var(--control-hit);
 }
-@media (min-width: 701px) and (max-height: 820px) {
-  .world-stage {
-    --floor-height: clamp(720px, calc(100svh - 76px), 920px);
-  }
-  .event-board {
-    top: 86px;
-    width: min(760px, calc(100vw - 64px));
-    display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-    column-gap: 24px;
-    padding: 18px 24px;
-    text-align: left;
-  }
-  .event-board h1 {
-    font-size: 64px;
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .event-board p {
-    grid-column: 1;
-    grid-row: 2;
-    font-size: 13px;
-    margin: 8px 0 0;
-    line-height: 1.4;
-  }
-  .event-date {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: end;
-    text-align: center;
-    margin: 0 0 12px;
-  }
-  .event-board .button-row {
-    grid-column: 2;
-    grid-row: 2;
-    gap: 8px;
-    align-self: start;
-    flex-wrap: nowrap;
-  }
-  .event-board .pixel-button {
-    font-size: 11px;
-    padding: 8px 12px;
-  }
-}
 @media (max-width: 700px) {
   .site-header {
     gap: var(--space-2);
@@ -858,42 +814,6 @@ p {
 }
 .game-overlay {
   background: var(--game-curtain, var(--overlay-game));
-}
-.race-garage {
-  margin: 12px 0;
-  text-align: left;
-  border-block: 1px solid currentColor;
-}
-.race-garage summary {
-  cursor: pointer;
-  padding: 12px 4px;
-  min-height: 44px;
-  font: 18px/1.2 var(--font-game);
-}
-.race-garage ul {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
-  max-height: 240px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  list-style: none;
-  padding: 0 0 12px;
-  margin: 0;
-  gap: 8px;
-}
-.race-garage li {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font: 15px/1.2 var(--font-game);
-  text-align: center;
-}
-.garage-profile {
-  display: block;
-  width: 96px;
-  height: 96px;
-  background-size: 192px 96px;
-  image-rendering: pixelated;
 }
 .game-dialog.is-touch .game-message .game-menu-hint {
   font: 12px/1.6 var(--font-mono);

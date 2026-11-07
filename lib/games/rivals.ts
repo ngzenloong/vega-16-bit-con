@@ -1,6 +1,6 @@
 import { clamp } from "../math.ts";
 import { trackCurve } from "./track.ts";
-import { DRIVER_PROFILES, SPEED_UNITS, type RivalCar } from "./cars.ts";
+import { driverProfile, SPEED_UNITS, type RivalCar } from "./cars.ts";
 import { advanceImpact } from "./impact.ts";
 
 const LINES = [-0.7, -0.35, 0, 0.35, 0.7] as const;
@@ -19,7 +19,7 @@ export function createRivals(cars: readonly RivalCar[]) {
       0,
     );
     const lane = [-0.7, 0, 0.7][i % 3];
-    const profile = DRIVER_PROFILES[car.id];
+    const profile = driverProfile(car.id);
     const pace = profile.topSpeed * SPEED_UNITS,
       acceleration = profile.acceleration,
       confidence = profile.handling,
@@ -27,7 +27,7 @@ export function createRivals(cars: readonly RivalCar[]) {
     return {
       id: car.id,
       name: car.label,
-      faction: car.id === "scargo" ? "" : "SIEM",
+      faction: car.id === "scargo" || car.id === "fiat-player" ? "" : "SIEM",
       bodyWidth: car.bodyWidth,
       car: i + 1,
       passed: false,

@@ -29,6 +29,7 @@ export interface GameResult {
   score: number;
   won: boolean;
   detail: string;
+  race?: { carId: string; place: number; finished: boolean };
 }
 export type Scores = Partial<Record<GameId, number>>;
 export const GAME_DURATION = {
@@ -81,7 +82,7 @@ export const GAMES: {
     machine: "16-BIT / SNES",
     name: "Sam Circuit",
     instructions:
-      "Beat all 11 rivals in 55 seconds. Drive the PostSIEM.com Fiat, use yellow boosts to catch S-Cargo, and avoid heavy collision slowdowns.",
+      "Race through the city. Find a clean line, catch the yellow boosts and finish first before time runs out. Collisions cost speed. Every win opens more cars.",
     controls: "← → Steer · ↑ / Space Gas · ↓ Brake",
     action: "GAS",
     secondary: "BRAKE",

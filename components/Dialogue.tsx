@@ -116,7 +116,8 @@ export default function Dialogue({
     audio.duck(0.25);
     const frameScene = () => {
       if (!actor || !floor || !world) return;
-      const speakerX = Number(actor.dataset.x),
+      const speakerX =
+          Number(actor.dataset.x) + Number(actor.dataset.headX || 0),
         camera = Math.max(
           0,
           Math.min(SCENE.width - innerWidth, speakerX - innerWidth / 2),

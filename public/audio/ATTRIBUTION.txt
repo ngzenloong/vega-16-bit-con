@@ -4,7 +4,7 @@ All five delivered tracks use author-published CC0 1.0 recordings.
 License: https://creativecommons.org/publicdomain/zero/1.0/
 These credits do not imply endorsement by any composer.
 
-HALL: hall.ogg / hall.wav
+LOWER OFFICE / SOCIAL FLOOR: hall.ogg / hall.wav
 Work: Apple Cider
 Composer: Zane Little
 Source: https://opengameart.org/content/apple-cider-juiced
@@ -14,7 +14,7 @@ Edits: full author-provided 86.4-second loop, original tempo, gentle EQ,
 reduced level, 16-bit PCM conversion and a short loop splice.
 This is an independent work; no Animal Crossing recording or melody is used.
 
-RHYTHM GAME: beat.ogg / beat.wav
+MAIN HALL AND RHYTHM GAME: beat.ogg / beat.wav
 Work: Welcome to the Item Shop
 Composer: congusbongus
 Source: https://opengameart.org/content/welcome-to-the-item-shop

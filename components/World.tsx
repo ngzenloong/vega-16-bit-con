@@ -15,7 +15,11 @@ import {
 } from "@/lib/world";
 import { SPRITES } from "@/lib/assets";
 import { GAMES, SESSIONS, DEFAULT_APPEARANCE, type Player } from "@/lib/types";
-import { characterSheets, type CharacterSheets } from "@/lib/character";
+import {
+  characterSheets,
+  ACTIVITY_PORTRAITS,
+  type CharacterSheets,
+} from "@/lib/character";
 import { CHARACTERS, AMBIENT_CONVERSATIONS } from "@/lib/lore";
 import Sprite from "./Sprite";
 import Controls from "./Controls";
@@ -47,6 +51,7 @@ type Props = {
   onAnnounce: (text: string) => void;
   onHandheld: () => void;
   onEnterScene: (floor: number) => void;
+  onFloorChange: (floor: number) => void;
   onExitHandheld: () => void;
   onToggleMotion: () => void;
 };
@@ -65,6 +70,7 @@ const World = forwardRef<WorldController, Props>(function World(
     onAnnounce,
     onHandheld,
     onEnterScene,
+    onFloorChange,
     onExitHandheld,
     onToggleMotion,
     soundControl,
@@ -73,8 +79,20 @@ const World = forwardRef<WorldController, Props>(function World(
 ) {
   const root = useRef<HTMLDivElement>(null),
     engine = useRef<WorldController | null>(null),
-    callbacks = useRef({ onTarget, onAnnounce, onSession, onEnterScene });
-  callbacks.current = { onTarget, onAnnounce, onSession, onEnterScene };
+    callbacks = useRef({
+      onTarget,
+      onAnnounce,
+      onSession,
+      onEnterScene,
+      onFloorChange,
+    });
+  callbacks.current = {
+    onTarget,
+    onAnnounce,
+    onSession,
+    onEnterScene,
+    onFloorChange,
+  };
   const [sheets, setSheets] = useState<CharacterSheets>(defaultSheets),
     [snackSrc, setSnackSrc] = useState(""),
     [chatter, setChatter] = useState<{ index: number; turn: number } | null>(
@@ -109,6 +127,7 @@ const World = forwardRef<WorldController, Props>(function World(
       },
       (text) => callbacks.current.onAnnounce(text),
       (floor) => callbacks.current.onEnterScene(floor),
+      (floor) => callbacks.current.onFloorChange(floor),
     );
     engine.current = controller;
     return () => {
@@ -269,6 +288,11 @@ const World = forwardRef<WorldController, Props>(function World(
     roam = 0,
   ) => {
     const c = CHARACTERS.find((c) => c.id === id)!;
+    const head = ACTIVITY_PORTRAITS[id]?.crop;
+    const headX = head
+      ? (head[0] + head[2] / 2 - SPRITES[sprite].width / 2) * 2
+      : 0;
+    const headY = head ? head[1] * 2 : 16;
     return (
       <button
         key={id}
@@ -278,12 +302,16 @@ const World = forwardRef<WorldController, Props>(function World(
             left: at,
             bottom: 88 + (id === "host" ? 60 : 0),
             "--npc-world-x": `${at}px`,
+            "--npc-head-x": `${headX}px`,
+            "--npc-head-y": `${headY}px`,
           } as CSSProperties
         }
         data-target={id}
         data-kind="npc"
         data-label={c.name}
         data-x={at}
+        data-head-x={headX}
+        data-head-y={headY}
         data-home-x={at}
         data-roam={roam || undefined}
         data-pose="idle"

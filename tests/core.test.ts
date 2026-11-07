@@ -123,3 +123,18 @@ test("phone dialogue pages preserve every word while fitting the fixed text area
       assert.ok(pages.every((page) => page.length <= 86));
     }
 });
+
+test("floor framing keeps the brick baseline at the bottom instead of centering Sam", async () => {
+  const { floorFrameScroll } = await import("../lib/math.ts");
+  for (const height of [650, 780, 900]) {
+    const scroll = floorFrameScroll(1024, height, 2400);
+    assert.equal(1024 - 24 - scroll, height);
+    assert.equal(
+      1024 - 88 - scroll,
+      height - 64,
+      "Sam's feet stay low in the viewport",
+    );
+  }
+  assert.equal(floorFrameScroll(900, 1080, 1000), 0);
+  assert.equal(floorFrameScroll(2400, 900, 1200), 1200);
+});

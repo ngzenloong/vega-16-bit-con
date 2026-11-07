@@ -29,6 +29,7 @@ export interface GameEnvironment {
   rivals?: HTMLImageElement[];
   cars?: HTMLImageElement[];
   rivalCars?: readonly RivalCar[];
+  playerCar?: RivalCar;
   tapOffset?: number;
   sprites?: {
     idle: HTMLImageElement;
@@ -112,11 +113,16 @@ export function pixelText(
 }
 export function finishOnce(env: GameEnvironment, id: GameId) {
   let finished = false;
-  return (score: number, won: boolean, detail: string) => {
+  return (
+    score: number,
+    won: boolean,
+    detail: string,
+    race?: GameResult["race"],
+  ) => {
     if (!finished) {
       finished = true;
       env.sound(won ? "win" : "lose");
-      env.finish({ id, score, won, detail });
+      env.finish({ id, score, won, detail, ...(race ? { race } : {}) });
     }
   };
 }

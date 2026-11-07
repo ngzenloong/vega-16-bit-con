@@ -16,11 +16,19 @@ import { audio } from "@/lib/audio";
 import { HeldInput } from "@/lib/input";
 import Controls from "./Controls";
 import Icon from "./Icon";
-import RaceGarage from "./RaceGarage";
+import CarSelection, { type CarSelectionController } from "./CarSelection";
+import {
+  readRaceProgress,
+  saveRaceProgress,
+  recordRaceResult,
+  unlockedCars,
+  normalizeProgress,
+} from "@/lib/games/progression";
 import { retainDialogFocus } from "@/lib/dialog-focus";
 
 type Mode =
   | "loading"
+  | "garage"
   | "intro"
   | "starting"
   | "playing"
@@ -76,6 +84,13 @@ export default function GameHost({
   bestScore?: number;
 }) {
   const info = GAMES.find((g) => g.id === id)!;
+  const [progress, setProgress] = useState(readRaceProgress);
+  const progressRef = useRef(progress);
+  progressRef.current = progress;
+  const [sessionOnly, setSessionOnly] = useState(false);
+  const [carId, setCarId] = useState(progress.selected);
+  const [unlocks, setUnlocks] = useState<string[]>([]);
+  const garage = useRef<CarSelectionController>(null);
   const dialog = useRef<HTMLDialogElement>(null),
     canvas = useRef<HTMLCanvasElement>(null),
     controller = useRef<GameController | null>(null);
@@ -158,46 +173,69 @@ export default function GameHost({
     audio.effect("click");
     onClose();
   }, [onClose]);
-  const start = useCallback(async () => {
-    if (!["intro", "paused"].includes(modeRef.current)) return;
-    if (document.hidden || !document.hasFocus()) {
-      changeMode("paused");
+  const start = useCallback(
+    async (confirmedCar = false) => {
+      if (!["intro", "paused"].includes(modeRef.current)) return;
+      if (id === "kart" && modeRef.current === "intro" && !confirmedCar) {
+        changeMode("garage");
+        clearInput();
+        return;
+      }
+      if (document.hidden || !document.hasFocus()) {
+        changeMode("paused");
+        clearInput();
+        return;
+      }
+      const resuming = modeRef.current === "paused";
+      const offset = resuming ? elapsed.current : 0,
+        ticket = ++launch.current;
+      changeMode("starting");
       clearInput();
-      return;
-    }
-    const resuming = modeRef.current === "paused";
-    const offset = resuming ? elapsed.current : 0,
-      ticket = ++launch.current;
-    changeMode("starting");
-    clearInput();
-    audio.duck(1);
-    setAudioError("");
-    try {
-      await audio.play(id, id === "beat" || !resuming ? offset : undefined);
-    } catch {
-      setAudioError(
-        "Music is unavailable. You can keep playing with visual cues.",
-      );
-    }
-    if (ticket !== launch.current || !dialog.current?.open || document.hidden)
-      return;
-    song.current = { offset, started: performance.now() };
-    elapsed.current = offset;
-    lastFrame.current = 0;
-    audio.effect("start");
-    changeMode("playing");
-  }, [id, changeMode, clearInput]);
+      audio.duck(1);
+      setAudioError("");
+      try {
+        await audio.play(id, id === "beat" || !resuming ? offset : undefined);
+      } catch {
+        setAudioError(
+          "Music is unavailable. You can keep playing with visual cues.",
+        );
+      }
+      if (ticket !== launch.current || !dialog.current?.open || document.hidden)
+        return;
+      song.current = { offset, started: performance.now() };
+      elapsed.current = offset;
+      lastFrame.current = 0;
+      audio.effect("start");
+      changeMode("playing");
+    },
+    [id, changeMode, clearInput],
+  );
   const restart = useCallback(() => {
     soundRequest.current++;
     launch.current++;
     audio.pause();
     audio.effect("click");
-    replay.current = true;
     clearInput();
     setResult(null);
     setNewBest(false);
+    if (id === "kart") changeMode("garage");
+    else {
+      replay.current = true;
+      setRound((n) => n + 1);
+    }
+  }, [id, clearInput, changeMode]);
+  const selectCar = useCallback((selected: string) => {
+    const next = normalizeProgress({ ...progressRef.current, selected });
+    if (next.selected !== selected) return;
+    progressRef.current = next;
+    setProgress(next);
+    setSessionOnly(!saveRaceProgress(next));
+    setCarId(selected);
+    setResult(null);
+    setUnlocks([]);
+    replay.current = true;
     setRound((n) => n + 1);
-  }, [clearInput]);
+  }, []);
   const toggleSound = useCallback(async () => {
     const request = ++soundRequest.current;
     const enabling = !audio.enabled;
@@ -205,7 +243,13 @@ export default function GameHost({
     song.current = { offset: before, started: performance.now() };
     elapsed.current = before;
     await onSound();
-    if (request !== soundRequest.current || !dialog.current?.open) return;
+    if (
+      request !== soundRequest.current ||
+      !dialog.current?.open ||
+      document.hidden ||
+      !document.hasFocus()
+    )
+      return;
     if (enabling && !audio.enabled) {
       setAudioError(
         "Music is unavailable. You can keep playing with visual cues.",
@@ -227,7 +271,12 @@ export default function GameHost({
             : "Music could not load. Turn sound on to retry.",
         );
       }
-      canvas.current?.focus({ preventScroll: true });
+      if (
+        modeRef.current === "playing" &&
+        !document.hidden &&
+        document.hasFocus()
+      )
+        canvas.current?.focus({ preventScroll: true });
     } else if (modeRef.current === "paused") audio.pause();
     else if (audio.enabled)
       void audio
@@ -295,13 +344,20 @@ export default function GameHost({
     return () => cancelAnimationFrame(frame);
   }, [mode]);
   useEffect(() => {
+    let windowWidth = innerWidth,
+      windowHeight = innerHeight;
     const element = canvas.current!,
       resize = new ResizeObserver(() => {
+        const viewportChanged =
+          windowWidth !== innerWidth || windowHeight !== innerHeight;
+        windowWidth = innerWidth;
+        windowHeight = innerHeight;
         const rect = element.parentElement!.getBoundingClientRect();
         const size = gameViewport(id, rect.width, rect.height);
         if (element.width !== size.width || element.height !== size.height) {
           if (
             controller.current &&
+            viewportChanged &&
             ["playing", "starting"].includes(modeRef.current)
           )
             pause();
@@ -330,7 +386,7 @@ export default function GameHost({
       try {
         const [{ createGame }, resources] = await Promise.all([
           gameLoaders[id](),
-          gameResources(appearance, id === "kart", gridSeed + round),
+          gameResources(appearance, id === "kart", gridSeed + round, carId),
         ]);
         if (disposed) return;
         const context = canvas.current!.getContext("2d")!;
@@ -339,6 +395,23 @@ export default function GameHost({
           if (done.current) return;
           done.current = true;
           setResult(next);
+          if (next.id === "kart") {
+            const before = progressRef.current;
+            const updated = recordRaceResult(before, next);
+            if (updated !== before) {
+              const oldCars = new Set(
+                unlockedCars(before.wins).map((car) => car.id),
+              );
+              setUnlocks(
+                unlockedCars(updated.wins)
+                  .filter((car) => !oldCars.has(car.id))
+                  .map((car) => car.model),
+              );
+              progressRef.current = updated;
+              setProgress(updated);
+              setSessionOnly(!saveRaceProgress(updated));
+            }
+          }
           setHud({ ...controller.current!.hud(), score: next.score });
           setNewBest(next.score > 0 && next.score > (record.current ?? 0));
           record.current = Math.max(record.current ?? 0, next.score);
@@ -434,7 +507,7 @@ export default function GameHost({
         changeMode("intro");
         if (replay.current) {
           replay.current = false;
-          void start();
+          void start(true);
         }
       } catch {
         if (!disposed) changeMode("error");
@@ -458,6 +531,7 @@ export default function GameHost({
     appearance,
     round,
     gridSeed,
+    carId,
     changeMode,
     clearInput,
     readTime,
@@ -476,6 +550,10 @@ export default function GameHost({
         if (!down) return;
         if (button === "secondary") {
           exit();
+          return;
+        }
+        if (current === "garage") {
+          garage.current?.press(button);
           return;
         }
         if (button === "action") {
@@ -561,12 +639,12 @@ export default function GameHost({
         if (!e.repeat) void toggleSound();
         return;
       }
-      if (
-        current !== "playing" &&
-        e.code === "Space" &&
-        target?.closest(".race-garage ul")
-      )
+      if (current === "garage" && (keyMap[e.code] || e.code === "Enter")) {
+        e.preventDefault();
+        if (!e.repeat)
+          garage.current?.press(e.code === "Enter" ? "action" : keyMap[e.code]);
         return;
+      }
       if (e.code === "KeyX") {
         e.preventDefault();
         if (!e.repeat) exit();
@@ -600,7 +678,6 @@ export default function GameHost({
       if (
         ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)
       ) {
-        if (target?.closest(".race-garage")) return;
         if (
           target?.closest(".game-message-content") &&
           [
@@ -642,26 +719,44 @@ export default function GameHost({
       const key = keyMap[e.code];
       if (key) control(key, false, e.code, e.timeStamp);
     };
+    const resumeMenu = () => {
+      if (
+        !document.hidden &&
+        document.hasFocus() &&
+        audio.enabled &&
+        ["intro", "garage", "result"].includes(modeRef.current)
+      )
+        void audio
+          .play(id)
+          .catch(() =>
+            setAudioError(
+              "Music could not load. Turn sound off and on to retry.",
+            ),
+          );
+      paint.current();
+    };
     const visibility = () => {
       if (document.hidden) {
         pause();
         cancelAnimationFrame(raf.current);
         raf.current = 0;
-      } else paint.current();
+      } else resumeMenu();
     };
     d.addEventListener("keydown", down);
     d.addEventListener("keyup", up);
     document.addEventListener("visibilitychange", visibility);
     window.addEventListener("blur", pause);
+    window.addEventListener("focus", resumeMenu);
     window.screen.orientation?.addEventListener("change", pause);
     return () => {
       d.removeEventListener("keydown", down);
       d.removeEventListener("keyup", up);
       document.removeEventListener("visibilitychange", visibility);
       window.removeEventListener("blur", pause);
+      window.removeEventListener("focus", resumeMenu);
       window.screen.orientation?.removeEventListener("change", pause);
     };
-  }, [control, exit, toggleSound, pause, restart, start, clearInput]);
+  }, [id, control, exit, toggleSound, pause, restart, start, clearInput]);
 
   const isTouch = touch && !keyboardHelp;
   const menuHint =
@@ -673,13 +768,15 @@ export default function GameHost({
           ? "Enter Retry"
           : "Enter Start";
   const action =
-    mode === "playing"
-      ? info.action
-      : mode === "paused"
-        ? "RESUME"
-        : mode === "result" || mode === "error"
-          ? "RETRY"
-          : "START";
+    mode === "garage"
+      ? "RACE"
+      : mode === "playing"
+        ? info.action
+        : mode === "paused"
+          ? "RESUME"
+          : mode === "result" || mode === "error"
+            ? "RETRY"
+            : "START";
   const lifeLabel =
     hud.lives === undefined
       ? hud.message
@@ -743,7 +840,17 @@ export default function GameHost({
                 : `${info.name}. ${info.controls}. Enter or P pauses. R restarts. Escape returns to the hall.`
             }
           />
-          {mode !== "playing" && (
+          {mode === "garage" && (
+            <div className="game-overlay car-selection-overlay">
+              <CarSelection
+                ref={garage}
+                progress={progress}
+                sessionOnly={sessionOnly}
+                onRace={selectCar}
+              />
+            </div>
+          )}
+          {mode !== "playing" && mode !== "garage" && (
             <div className="game-overlay">
               <div className="game-message">
                 <div
@@ -769,7 +876,7 @@ export default function GameHost({
                       <p className="control-legend">
                         {isTouch ? touchHelp[id] : info.controls}
                       </p>
-                      {id === "kart" && <RaceGarage />}
+
                       {best !== undefined && (
                         <p className="best-score">
                           Personal best: {best.toLocaleString()} points
@@ -787,6 +894,11 @@ export default function GameHost({
                     <>
                       <h3>{result.won ? "Round cleared" : "Round over"}</h3>
                       <p>{result.detail}</p>
+                      {unlocks.length > 0 && (
+                        <p className="garage-unlocks">
+                          Unlocked: {unlocks.join(", ")}.
+                        </p>
+                      )}
                       <strong className="result-score">
                         {result.score.toLocaleString()} points
                       </strong>
@@ -844,11 +956,13 @@ export default function GameHost({
                     }
                   >
                     {mode === "intro"
-                      ? "Start playing"
+                      ? "Play game"
                       : mode === "paused"
                         ? "Resume"
                         : mode === "result"
-                          ? "Play again"
+                          ? id === "kart"
+                            ? "Choose a car"
+                            : "Play again"
                           : mode === "error"
                             ? "Try again"
                             : "Back to the hall"}
@@ -880,9 +994,19 @@ export default function GameHost({
           </div>
         )}
         <footer className="game-hud" aria-live="off">
-          <span>{hud.score.toLocaleString()} PTS</span>
-          <span>{lifeLabel}</span>
-          <span>{hud.time}s</span>
+          <span>
+            {mode === "garage"
+              ? "SAM CIRCUIT"
+              : `${hud.score.toLocaleString()} PTS`}
+          </span>
+          <span>{mode === "garage" ? `${progress.wins} WINS` : lifeLabel}</span>
+          <span>
+            {mode === "garage"
+              ? isTouch
+                ? "× Hall"
+                : "Esc Hall"
+              : `${hud.time}s`}
+          </span>
         </footer>
         <div className="game-mobile-controls">
           <Controls
@@ -908,7 +1032,7 @@ export default function GameHost({
         </div>
         <span className="sr-only" role="status">
           {mode === "result" && result
-            ? `${result.won ? "Round cleared" : "Round over"}. ${result.score} points. ${newBest ? "New personal best." : ""}`
+            ? `${result.won ? "Round cleared" : "Round over"}. ${result.score} points. ${newBest ? "New personal best." : ""} ${unlocks.length ? `Unlocked: ${unlocks.join(", ")}.` : ""}`
             : mode === "paused"
               ? "Game paused."
               : ""}

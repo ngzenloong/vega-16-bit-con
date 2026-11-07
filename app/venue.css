@@ -105,40 +105,36 @@
 .registration-content,
 .wardrobe-rows,
 .accessory-strip,
-.race-garage ul,
 .game-message {
   scrollbar-width: thin;
   scrollbar-color: var(--scroll-thumb) var(--scroll-track);
 }
 :is(
-  .registration-dialog,
-  .registration-content,
-  .wardrobe-rows,
-  .accessory-strip,
-  .race-garage ul,
-  .game-message
-)::-webkit-scrollbar {
+    .registration-dialog,
+    .registration-content,
+    .wardrobe-rows,
+    .accessory-strip,
+    .game-message
+  )::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 :is(
-  .registration-dialog,
-  .registration-content,
-  .wardrobe-rows,
-  .accessory-strip,
-  .race-garage ul,
-  .game-message
-)::-webkit-scrollbar-track {
+    .registration-dialog,
+    .registration-content,
+    .wardrobe-rows,
+    .accessory-strip,
+    .game-message
+  )::-webkit-scrollbar-track {
   background: var(--scroll-track);
 }
 :is(
-  .registration-dialog,
-  .registration-content,
-  .wardrobe-rows,
-  .accessory-strip,
-  .race-garage ul,
-  .game-message
-)::-webkit-scrollbar-thumb {
+    .registration-dialog,
+    .registration-content,
+    .wardrobe-rows,
+    .accessory-strip,
+    .game-message
+  )::-webkit-scrollbar-thumb {
   background: var(--scroll-thumb);
   border: 2px solid var(--scroll-track);
 }
@@ -370,6 +366,29 @@ html {
 @media (min-width: 701px) and (max-height: 820px) {
   .event-board {
     --hero-cta-width: 128px;
+    --billboard-top: clamp(
+      238px,
+      calc(var(--floor-height) - 100svh + 16px),
+      calc(var(--floor-height) - 630px)
+    );
+    --cable-length: calc(var(--billboard-top) - 150px);
+    top: var(--billboard-top);
+    width: min(560px, calc(100vw - 64px));
+    padding: 14px 24px;
+  }
+  .event-board h1 {
+    font-size: 56px;
+  }
+  .event-board p {
+    font-size: 13px;
+    line-height: 1.4;
+    margin: 8px auto;
+  }
+  .event-date {
+    margin-bottom: 10px;
+  }
+  .event-board .button-row {
+    gap: 8px;
   }
 }
 @media (max-width: 380px) {
@@ -504,7 +523,9 @@ html {
   cursor: pointer;
   pointer-events: auto;
 }
-.venue-stall:has(.stall-hotspot:hover) .stall-sign,
+.world-stage[data-pointer-active="true"]
+  .venue-stall:has(.stall-hotspot:hover)
+  .stall-sign,
 .venue-stall:has(.stall-hotspot:focus-visible) .stall-sign,
 .venue-stall:has(.stall-hotspot.is-near) .stall-sign {
   background: var(--yellow);
@@ -558,11 +579,16 @@ html {
     background 120ms ease-out;
   pointer-events: none;
 }
-.game-machine:is(.is-near, :hover, :focus-visible) .machine-lightbox,
-.venue-stall:has(.stall-hotspot:is(.is-near, :hover, :focus-visible))
+.world-stage[data-pointer-active="true"] .game-machine:hover .machine-lightbox,
+.game-machine:is(.is-near, :focus-visible) .machine-lightbox,
+.world-stage[data-pointer-active="true"]
+  .venue-stall:has(.stall-hotspot:hover)
   .stall-sign,
-.npc-chess_nico:is(.is-near, :hover, :focus-visible) ~ .chess-sign,
-.npc-pingpong_jules:is(.is-near, :hover, :focus-visible) ~ .ping-sign {
+.venue-stall:has(.stall-hotspot:is(.is-near, :focus-visible)) .stall-sign,
+.world-stage[data-pointer-active="true"] .npc-chess_nico:hover ~ .chess-sign,
+.npc-chess_nico:is(.is-near, :focus-visible) ~ .chess-sign,
+.world-stage[data-pointer-active="true"] .npc-pingpong_jules:hover ~ .ping-sign,
+.npc-pingpong_jules:is(.is-near, :focus-visible) ~ .ping-sign {
   opacity: 1;
 }
 .world-prompt span,
@@ -679,30 +705,6 @@ html {
 }
 .game-beat {
   --game-accent: var(--color-lime);
-}
-.race-garage ul {
-  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
-  gap: 16px 8px;
-}
-.garage-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  width: 100%;
-  max-width: 150px;
-  margin: 10px 0 0;
-}
-.garage-stats dt {
-  font: 10px/1.3 var(--font-mono);
-}
-.garage-stats dd {
-  margin: 3px 0 0;
-  font: 14px/1.2 var(--font-game);
-}
-.garage-note {
-  display: block;
-  padding: 8px 4px;
-  font: 11px/1.5 var(--font-body);
 }
 .world-stage:not(.is-handheld) .social-floor > .hall-controls {
   top: 112px;
@@ -991,4 +993,591 @@ html {
 .game-message-content::-webkit-scrollbar-thumb {
   background: var(--scroll-thumb);
   border: 2px solid var(--scroll-track);
+}
+
+/* Character interaction stays attached to the head, rather than the room sign. */
+.world-prompt[data-kind="npc"]:not([hidden]) {
+  bottom: auto;
+  transform: translate(-50%, -100%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: min(210px, calc(100% - 16px));
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+.world-prompt[data-kind="npc"] strong {
+  margin: 0;
+  font: var(--scene-label-size) / 1.2 var(--font-game);
+}
+.world-prompt[data-kind="npc"] span {
+  font: var(--scene-command-size) / 1.4 var(--font-mono);
+}
+.world-prompt[data-kind="npc"]::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: calc(50% + var(--prompt-tip, 0px) - 4px);
+  width: 8px;
+  height: 6px;
+  background: var(--ink);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.world-stage .npc .npc-focus-name {
+  left: clamp(
+    calc(
+      50% + var(--camera-x) - var(--npc-world-x) - var(--npc-shift, 0px) + 90px
+    ),
+    calc(50% + var(--npc-head-x, 0px)),
+    calc(
+      50% + var(--camera-x) - var(--npc-world-x) - var(--npc-shift, 0px) +
+        var(--viewport-width, 100vw) - 90px
+    )
+  );
+  top: var(--npc-head-y, 16px);
+  bottom: auto;
+  translate: -50% calc(-100% - 12px);
+}
+.world-stage[data-control="manual"][data-near-kind="npc"] .ambient-bubble,
+.world-stage[data-pointer-active="true"]:has(.npc:hover) .ambient-bubble,
+.world-stage:has(.npc:focus-visible) .ambient-bubble,
+.world-stage[data-control="manual"] .npc.is-near .npc-focus-name {
+  visibility: hidden;
+}
+
+/* Sam Circuit's garage occupies the game screen; its sprite frames stay whole. */
+.car-selection-overlay {
+  padding: 0;
+  background: var(--color-outline);
+}
+.car-selection {
+  display: grid;
+  grid-template-areas: "heading" "preview" "cars" "actions";
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: clamp(16px, 3vw, 32px);
+  background: var(--color-outline);
+  color: var(--paper);
+  font-family: var(--font-game);
+}
+.car-selection-heading {
+  grid-area: heading;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: min(840px, 100%);
+  margin: auto;
+}
+.car-selection-heading h3 {
+  color: var(--yellow);
+  font: 36px/1 var(--font-game);
+  margin: 0;
+}
+.car-selection-heading p {
+  margin: 0;
+  font: 20px/1 var(--font-game);
+  font-variant-numeric: tabular-nums;
+}
+.car-preview {
+  grid-area: preview;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  min-height: 0;
+  width: min(800px, 100%);
+  margin: auto;
+}
+.car-display {
+  --car-caption: 64px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  text-align: center;
+}
+.car-display::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 5%;
+  right: 5%;
+  bottom: var(--car-caption);
+  height: 32px;
+  background: var(--color-grey-dark);
+  border-bottom: 4px solid var(--yellow);
+  clip-path: polygon(12% 0, 88% 0, 100% 100%, 0 100%);
+}
+.car-display figcaption {
+  order: 1;
+  min-height: var(--car-caption);
+  display: grid;
+  place-items: center;
+}
+.car-display h4 {
+  margin: 0;
+  font: 28px/1.15 var(--font-game);
+}
+.car-side {
+  display: block;
+  background-repeat: no-repeat;
+  background-position: left top;
+  background-size: 200% 100%;
+  image-rendering: pixelated;
+}
+.car-display .car-side {
+  width: 192px;
+  height: 192px;
+  margin: 0 auto;
+}
+.car-preview-copy {
+  min-width: 0;
+}
+.car-unlock {
+  min-height: 20px;
+  margin: 0 0 16px;
+  color: var(--yellow);
+  font: 16px/1.2 var(--font-game);
+}
+.car-stats {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+.car-stats > div {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+.car-stats dt {
+  font: 19px/1 var(--font-game);
+}
+.car-stats dd {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+.car-meter {
+  display: flex;
+  gap: 3px;
+  height: 12px;
+}
+.car-meter i {
+  flex: 1;
+  background: var(--color-grey-dark);
+}
+.car-meter i[data-filled="true"] {
+  background: var(--yellow);
+}
+.car-stat-value {
+  font: 20px/1 var(--font-game);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.car-stat-value small {
+  font-size: 12px;
+  margin-left: 3px;
+}
+.car-grid {
+  grid-area: cars;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  min-height: 0;
+  width: min(800px, 100%);
+  margin: auto;
+  padding: 4px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-grey) var(--color-outline);
+}
+.car-grid button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 64px;
+  padding: 0;
+  border: 2px solid transparent;
+  background: var(--color-grey-dark);
+  color: var(--paper);
+  cursor: pointer;
+}
+.car-grid button[data-current="true"] {
+  border-color: var(--yellow);
+  background: var(--ink);
+  box-shadow: inset 0 0 0 2px var(--color-outline);
+}
+.car-grid button[aria-checked="true"]::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  bottom: -2px;
+  left: calc(50% - 4px);
+  background: var(--yellow);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.car-grid button:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 2px;
+}
+.car-grid .car-side {
+  width: 64px;
+  height: 64px;
+}
+.car-grid button[data-locked="true"] .car-side {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+.car-lock {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  line-height: 0;
+}
+.car-selection-actions {
+  grid-area: actions;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: min(800px, 100%);
+  margin: auto;
+}
+.car-selection-actions p {
+  margin: 0;
+  font: 16px/1.2 var(--font-game);
+}
+.car-selection-actions small {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+}
+.car-race-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 0;
+  background: var(--yellow);
+  color: var(--ink);
+  box-shadow: 0 4px 0 var(--color-orange);
+  font: 20px/1 var(--font-game);
+  cursor: pointer;
+}
+.car-race-button kbd {
+  font: inherit;
+}
+.car-race-button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--color-orange);
+}
+.car-race-button:disabled {
+  background: var(--color-grey-dark);
+  color: var(--color-grey);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.car-race-button:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 4px;
+}
+.game-dialog.is-touch .car-selection-overlay {
+  padding: 0;
+}
+@media (max-width: 700px) and (min-height: 561px) {
+  .car-selection {
+    padding: 12px;
+    gap: 10px;
+    grid-template-rows: auto minmax(112px, 1fr) minmax(0, auto) auto;
+  }
+  .car-selection-heading h3 {
+    font-size: 26px;
+  }
+  .car-selection-heading p {
+    font-size: 16px;
+  }
+  .car-preview {
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .car-display h4 {
+    font-size: 19px;
+    min-height: 42px;
+  }
+  .car-display .car-side {
+    width: 96px;
+    height: 96px;
+  }
+  .car-display::before {
+    height: 16px;
+  }
+  .car-unlock {
+    font-size: 12px;
+    margin-bottom: 8px;
+    min-height: 28px;
+  }
+  .car-stats {
+    gap: 8px;
+  }
+  .car-stats > div {
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 8px;
+  }
+  .car-stats dt {
+    font-size: 14px;
+  }
+  .car-stats dd {
+    grid-template-columns: minmax(0, 1fr) 43px;
+    gap: 6px;
+  }
+  .car-meter {
+    gap: 2px;
+    height: 8px;
+  }
+  .car-stat-value {
+    font-size: 15px;
+  }
+  .car-stat-value small {
+    font-size: 9px;
+    margin-left: 1px;
+  }
+  .car-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .car-grid button {
+    min-height: 52px;
+  }
+  .car-grid .car-side {
+    width: 48px;
+    height: 48px;
+  }
+  .car-selection-actions p {
+    font-size: 12px;
+    max-width: 90px;
+  }
+  .car-race-button {
+    font-size: 17px;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+}
+@media (max-height: 600px) {
+  .game-dialog.is-touch[data-mode="garage"] .game-screen {
+    margin-inline: 0;
+  }
+  .game-dialog.is-touch[data-mode="garage"] .game-hud {
+    padding-inline: 8px;
+  }
+  .game-dialog.is-touch[data-mode="garage"] .game-mobile-controls {
+    display: none;
+  }
+  .game-dialog.is-touch[data-mode="garage"] .game-overlay {
+    padding: 0;
+  }
+}
+@media (max-height: 560px) {
+  .car-selection {
+    grid-template-areas: "heading heading" "preview cars" "actions actions";
+    grid-template-columns: 1.1fr 1fr;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    padding: 10px;
+    gap: 8px 16px;
+  }
+  .car-selection-heading h3 {
+    font-size: 24px;
+  }
+  .car-selection-heading p {
+    font-size: 16px;
+  }
+  .car-preview {
+    grid-template-columns: 80px minmax(0, 1fr);
+    gap: 8px;
+    height: 100%;
+  }
+  .car-display h4 {
+    font-size: 15px;
+    min-height: 30px;
+  }
+  .car-display .car-side {
+    width: 64px;
+    height: 64px;
+  }
+  .car-display::before {
+    height: 12px;
+    border-bottom-width: 2px;
+  }
+  .car-unlock {
+    font-size: 11px;
+    margin-bottom: 6px;
+    min-height: 24px;
+  }
+  .car-stats {
+    gap: 5px;
+  }
+  .car-stats > div {
+    grid-template-columns: 26px minmax(0, 1fr);
+    gap: 4px;
+  }
+  .car-stats dt {
+    font-size: 12px;
+  }
+  .car-stats dd {
+    grid-template-columns: minmax(0, 1fr) 36px;
+    gap: 4px;
+  }
+  .car-meter {
+    height: 7px;
+    gap: 1px;
+  }
+  .car-stat-value {
+    font-size: 13px;
+  }
+  .car-stat-value small {
+    font-size: 8px;
+    margin-left: 1px;
+  }
+  .car-grid {
+    grid-template-columns: repeat(4, minmax(44px, 1fr));
+    gap: 4px;
+    height: 100%;
+    align-content: start;
+  }
+  .car-grid button {
+    min-height: 48px;
+  }
+  .car-grid .car-side {
+    width: 44px;
+    height: 44px;
+  }
+  .car-selection-actions p {
+    font-size: 12px;
+  }
+  .car-race-button {
+    font-size: 16px;
+    min-height: 44px;
+    padding: 6px 12px;
+  }
+}
+.game-dialog[data-mode="garage"] .game-hud,
+.game-dialog[data-mode="garage"] .desktop-game-help {
+  display: none;
+}
+
+.car-race-button {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.car-selection-actions p {
+  min-width: 0;
+}
+@media (max-width: 700px) {
+  .car-display {
+    --car-caption: 44px;
+  }
+}
+@media (min-width: 701px) and (min-height: 820px) {
+  .car-display .car-side {
+    width: 288px;
+    height: 288px;
+  }
+  .car-grid button {
+    min-height: 100px;
+  }
+  .car-grid .car-side {
+    width: 96px;
+    height: 96px;
+  }
+}
+@media (max-height: 560px) {
+  .car-display {
+    --car-caption: 30px;
+  }
+}
+
+@media (max-width: 380px) and (min-height: 561px) {
+  .car-stats dd {
+    grid-template-columns: 1fr;
+  }
+  .car-stat-value[data-unit="rating"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .car-stats dd:has([data-unit="km/h"]) .car-meter {
+    display: none;
+  }
+  .car-stat-value small {
+    font-size: 11px;
+  }
+}
+
+/* A full-screen game owns the scrollbar gutter as well as the page surface. */
+html:has(.game-dialog[open], .handheld-active) {
+  scrollbar-gutter: auto;
+}
+/* Tablet handhelds have less game-screen height than their browser viewport. */
+.game-screen {
+  container-type: size;
+  container-name: game-screen;
+}
+@container game-screen (min-width: 701px) and (max-height: 650px) {
+  .car-selection {
+    padding: 12px;
+    gap: 10px;
+  }
+  .car-selection-heading h3 {
+    font-size: 26px;
+  }
+  .car-display {
+    --car-caption: 42px;
+  }
+  .car-display .car-side {
+    width: 192px;
+    height: 192px;
+  }
+  .car-grid button {
+    min-height: 64px;
+  }
+  .car-grid .car-side {
+    width: 64px;
+    height: 64px;
+  }
+}
+@container game-screen (min-width: 701px) and (max-height: 480px) {
+  .car-display .car-side {
+    width: 96px;
+    height: 96px;
+  }
+  .car-display h4 {
+    font-size: 22px;
+  }
+  .car-unlock {
+    margin-bottom: 8px;
+  }
+  .car-stats {
+    gap: 8px;
+  }
+}
+
+/* The active NPC prompt takes priority over Sam's nearby nameplate. */
+.world-stage[data-control="manual"][data-near-kind="npc"]
+  .world-player
+  .player-name {
+  visibility: hidden;
 }

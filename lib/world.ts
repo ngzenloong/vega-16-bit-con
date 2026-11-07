@@ -1,4 +1,4 @@
-import { clamp, landingSurface } from "./math";
+import { clamp, landingSurface, floorFrameScroll } from "./math";
 import { HeldInput, isSceneTap, type ScenePress } from "./input";
 import { audio } from "./audio";
 import { SCENE } from "./scene";
@@ -7,6 +7,7 @@ import { SpriteClock } from "./sprite-clock";
 import { SnackSequence } from "./snack";
 import { advanceWalk } from "./walk";
 import { createFootDust } from "./dust";
+import { PointerIntent } from "./pointer-intent";
 import type { GameButton } from "./games/types";
 
 export const WORLD_WIDTH = SCENE.width;
@@ -105,6 +106,7 @@ export function createWorld(
   onTarget: (target: WorldTarget) => void,
   announce: (text: string) => void,
   onSceneTap: (floor: number) => void = () => {},
+  onFloorChange: (floor: number) => void = () => {},
 ): WorldController {
   const floors = [...root.querySelectorAll<HTMLElement>("[data-floor]")];
   const inners = floors.map(
@@ -125,6 +127,18 @@ export function createWorld(
   const targets = inners.map((i) => [
     ...i.querySelectorAll<HTMLElement>("[data-target]"),
   ]);
+  const heads = new Map<HTMLElement, { x: number; y: number }>();
+  const pointer = new PointerIntent();
+  const syncPointer = () => {
+    const value = String(pointer.active);
+    if (root.dataset.pointerActive !== value)
+      root.dataset.pointerActive = value;
+  };
+  const suppressHover = () => {
+    pointer.suppress();
+    syncPointer();
+  };
+  syncPointer();
   const platforms = inners.map((i) => [
     ...i.querySelectorAll<HTMLElement>("[data-platform]"),
   ]);
@@ -286,17 +300,21 @@ export function createWorld(
     }
     floors[floor].focus({ preventScroll: true });
   }
-  function framePlayer() {
+  function framePlayer(force = false) {
     if (root.classList.contains("is-handheld")) return;
-    const rect = players[floor].getBoundingClientRect();
-    if (rect.top < 0 || rect.bottom > innerHeight - 76)
+    const actor = players[floor].getBoundingClientRect();
+    if (force || actor.top < 8 || actor.bottom > innerHeight - 64) {
+      const floorBottom =
+        scrollY + floors[floor].getBoundingClientRect().bottom;
       window.scrollTo({
-        top: Math.max(
-          0,
-          scrollY + rect.top - (innerHeight - rect.height) * 0.62,
+        top: floorFrameScroll(
+          floorBottom,
+          innerHeight,
+          document.documentElement.scrollHeight - innerHeight,
         ),
         behavior: reduced.matches ? "instant" : "smooth",
       });
+    }
   }
   function clearHeld() {
     input.clear();
@@ -332,6 +350,7 @@ export function createWorld(
     paused.delete("navigation");
     document.documentElement.style.scrollBehavior = oldScrollBehavior;
     travelState(false);
+    if (!destroyed) onFloorChange(floor);
     current().tracking = current().x - current().camera;
     last = 0;
     schedule();
@@ -355,7 +374,10 @@ export function createWorld(
     navigationPausedAt = 0;
     navFrame = requestAnimationFrame(navigationStep);
   }
+  let measuredViewportHeight = innerHeight;
   function measure() {
+    const viewportHeightChanged = measuredViewportHeight !== innerHeight;
+    measuredViewportHeight = innerHeight;
     refreshSprites();
     // Cinematic scaling is presentation-only; it must not alter collision geometry.
     if (root.dataset.conversation === "true") {
@@ -385,6 +407,17 @@ export function createWorld(
           target.dataset.x = String(
             (rect.left - base.left + rect.width / 2) / sx,
           );
+        }
+      const floorTop = el.getBoundingClientRect().top;
+      for (const target of targets[i])
+        if (target.dataset.kind === "npc") {
+          heads.set(target, {
+            x: Number(target.dataset.headX || 0),
+            y:
+              target.getBoundingClientRect().top -
+              floorTop +
+              Number(target.dataset.headY || 0),
+          });
         }
       geometry[i].surfaces = [
         { x: 0, y: geometry[i].ground, w: WORLD_WIDTH, node: null },
@@ -435,11 +468,20 @@ export function createWorld(
       if (navigationPausedAt) navigationPausedAt = flight.started;
     }
     render(0);
+    if (
+      viewportHeightChanged &&
+      manual &&
+      !flight &&
+      !paused.size &&
+      root.dataset.conversation !== "true"
+    )
+      framePlayer(true);
     schedule();
   }
-  function activate(index: number, px?: number) {
+  function activate(index: number, px?: number, notify = true) {
     clearHeld();
     floor = clamp(index, 0, floors.length - 1);
+    if (notify) onFloorChange(floor);
     const v = current();
     floors.forEach((el, i) => (el.dataset.current = String(i === floor)));
     if (px !== undefined) {
@@ -464,7 +506,11 @@ export function createWorld(
       top = scrollY + el.getBoundingClientRect().top;
     return clamp(
       lift && el.offsetHeight > innerHeight
-        ? top + el.offsetHeight - innerHeight
+        ? floorFrameScroll(
+            top + el.offsetHeight,
+            innerHeight,
+            document.documentElement.scrollHeight - innerHeight,
+          )
         : top - Math.max(0, (innerHeight - el.offsetHeight) / 2),
       0,
       Math.max(0, document.documentElement.scrollHeight - innerHeight),
@@ -479,6 +525,7 @@ export function createWorld(
     onArrive?: () => void,
   ) {
     finishSnack(false);
+    suppressHover();
     if (lift && flight) return players[floor];
     const previousFloor = floor;
     const fromX = current().x;
@@ -489,7 +536,10 @@ export function createWorld(
       current().support === null &&
       !lift;
     cancelTravel();
-    activate(index, movePlayer ? px : undefined);
+    activate(index, movePlayer ? px : undefined, false);
+    if (lift)
+      floors[floor].querySelector<HTMLElement>(".world-lift")!.dataset.arrived =
+        "true";
     const v = current(),
       toCamera = clamp(
         px - floors[floor].clientWidth / 2,
@@ -512,6 +562,7 @@ export function createWorld(
       }
       render(0);
       focus();
+      onFloorChange(floor);
       onArrive?.();
       return players[floor];
     }
@@ -584,6 +635,7 @@ export function createWorld(
         last = 0;
         focus();
         schedule();
+        onFloorChange(active.floor);
         active.onArrive?.();
       }
     };
@@ -591,6 +643,8 @@ export function createWorld(
     navFrame = requestAnimationFrame(advance);
     return players[floor];
   }
+  const targetX = (element: HTMLElement) =>
+    Number(element.dataset.x) + Number(element.dataset.headX || 0);
   function nearest(): WorldTarget | null {
     const v = current();
     if (!v.grounded || Math.abs(v.y - geometry[floor].ground) > 115 || flight)
@@ -598,10 +652,10 @@ export function createWorld(
     let closest: HTMLElement | null = null,
       distance = Infinity;
     for (const element of targets[floor]) {
-      const gap = Math.abs(Number(element.dataset.x) - v.x),
+      const gap = Math.abs(targetX(element) - v.x),
         radius =
           element.dataset.kind === "npc"
-            ? Math.max(96, element.offsetWidth / 2 + 32)
+            ? 96
             : element.dataset.kind === "food"
               ? 144
               : 80;
@@ -632,11 +686,8 @@ export function createWorld(
     const index = Number(
       target.element.closest<HTMLElement>("[data-floor]")?.dataset.floor || 0,
     );
-    const x = Number(target.element.dataset.x);
-    const distance =
-      target.kind === "food"
-        ? 100
-        : Math.max(72, target.element.offsetWidth / 2 + 24);
+    const x = targetX(target.element);
+    const distance = target.kind === "food" ? 100 : 72;
     const side = target.kind === "food" ? 1 : views[index].x < x ? -1 : 1;
     if (index === floor && Math.abs(current().x - x) <= distance + 20) {
       clearHeld();
@@ -708,7 +759,7 @@ export function createWorld(
         floors[floor].clientWidth * 0.75,
       );
       root.dataset.control = "manual";
-      framePlayer();
+      framePlayer(true);
     }
   }
   function press(source: string, button: GameButton, down: boolean) {
@@ -725,6 +776,7 @@ export function createWorld(
       return;
     }
     if (paused.size || document.hidden) return;
+    suppressHover();
     if (snack.active) {
       if (button === "action") return;
       finishSnack(false);
@@ -763,6 +815,13 @@ export function createWorld(
     "keydown",
     (e) => {
       if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (
+        e.key === "Tab" ||
+        e.key === "Escape" ||
+        codes[e.code] ||
+        fallback[e.key.toLowerCase()]
+      )
+        suppressHover();
       if (document.querySelector("dialog[open]")) return;
       if (e.key === "Escape") {
         if (e.repeat) return;
@@ -818,6 +877,7 @@ export function createWorld(
         focus();
       }
       e.preventDefault();
+      if (e.target !== floors[floor]) focus();
       if (!e.repeat) press(e.code || e.key.toLowerCase(), button, true);
     },
     { signal },
@@ -832,10 +892,34 @@ export function createWorld(
   );
   document.addEventListener(
     "pointerdown",
-    () => {
+    (event) => {
       pointerFocusUntil = performance.now() + 300;
+      pointer.press(
+        event.clientX,
+        event.clientY,
+        event.pointerType !== "touch",
+      );
+      if (!root.contains(event.target as Node) || paused.size || flight)
+        pointer.suppress();
+      syncPointer();
     },
     { signal, capture: true },
+  );
+  document.addEventListener(
+    "pointermove",
+    (event) => {
+      if (event.pointerType === "touch") return;
+      pointer.move(
+        event.clientX,
+        event.clientY,
+        event.movementX,
+        event.movementY,
+      );
+      if (!root.contains(event.target as Node) || paused.size || flight)
+        pointer.suppress();
+      syncPointer();
+    },
+    { signal, passive: true },
   );
   let scenePress: (ScenePress & { pointer: number; floor: number }) | null =
     null;
@@ -1076,7 +1160,7 @@ export function createWorld(
       if (
         floors[walker.floor].dataset.visible === "false" ||
         document.activeElement === walker.el ||
-        walker.el.matches(":hover")
+        (pointer.active && walker.el.matches(":hover"))
       ) {
         walker.el.dataset.pose = "idle";
         continue;
@@ -1288,19 +1372,29 @@ export function createWorld(
       if (i !== floor) prompts[i].hidden = true;
     }
     renderSpriteFrames();
+    const lift = targets[floor].find((node) => node.dataset.kind === "lift");
+    if (lift?.dataset.arrived && Math.abs(v.x - Number(lift.dataset.x)) > 190)
+      delete lift.dataset.arrived;
     const target = nearest(),
       prompt = prompts[floor],
       id = target?.id || "";
     prompt.hidden = (!manual && target?.kind !== "lift") || !target || !!flight;
-    if (target)
-      setStyle(
-        prompt,
-        "left",
-        `${clamp(Number(target.element.dataset.x) - v.camera, 110, width - 110)}px`,
-      );
+    prompt.dataset.kind = target?.kind || "";
+    if (target) {
+      const head =
+        target.kind === "npc" ? heads.get(target.element) : undefined;
+      if (head) setStyle(prompt, "top", `${Math.round(head.y - 12)}px`);
+      else prompt.style.removeProperty("top");
+      const edge = Math.min(110, width / 2);
+      const anchor = targetX(target.element) - v.camera;
+      const labelX = clamp(anchor, edge, width - edge);
+      setStyle(prompt, "left", `${labelX}px`);
+      setStyle(prompt, "--prompt-tip", `${clamp(anchor - labelX, -60, 60)}px`);
+    }
     if (id !== near) {
       near = id;
       root.dataset.near = id;
+      root.dataset.nearKind = target?.kind || "";
       for (const group of targets)
         for (const node of group)
           node.classList.toggle("is-near", node === target?.element);
@@ -1403,6 +1497,7 @@ export function createWorld(
   return {
     pause(reason, value) {
       if (value) {
+        suppressHover();
         finishSnack(false);
         cancelTravel();
         paused.add(reason);

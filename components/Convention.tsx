@@ -59,6 +59,12 @@ export default function Convention() {
     handoff = useRef(0),
     frames = useRef<number[]>([]),
     entrance = useRef<AbortController | null>(null);
+  const [activeFloor, setActiveFloor] = useState(0);
+  const floorRef = useRef(0);
+  const floorChanged = useCallback((floor: number) => {
+    floorRef.current = floor;
+    setActiveFloor(floor);
+  }, []);
   const previousScores = useRef<Scores>({});
   const announce = useCallback(
     (text: string) => setAnnouncement((s) => ({ text, id: s.id + 1 })),
@@ -190,7 +196,13 @@ export default function Convention() {
       await audio.setEnabled(next);
       if (next && audio.enabled) {
         const active = panelRef.current;
-        await audio.prepare(active?.kind === "game" ? active.id : "hall");
+        await audio.prepare(
+          active?.kind === "game"
+            ? active.id
+            : floorRef.current === 1
+              ? "office"
+              : "hall",
+        );
       }
       if (token !== soundIntent.current) return;
       if (next && !audio.enabled) throw Error("Sound unavailable");
@@ -203,7 +215,7 @@ export default function Convention() {
           gameOpen: panelRef.current?.kind === "game",
         })
       )
-        await audio.play("hall");
+        await audio.play(floorRef.current === 1 ? "office" : "hall");
       if (token !== soundIntent.current) return;
       setSoundStatus(next ? "ready" : "off");
       if (next) audio.effect("click");
@@ -261,19 +273,21 @@ export default function Convention() {
         return;
       }
       if (desiredSound.current)
-        void audio.play("hall").catch(() => {
-          if (
-            !active ||
-            intent !== soundIntent.current ||
-            !desiredSound.current ||
-            panelRef.current?.kind === "game"
-          )
-            return;
-          setSoundStatus("error");
-          setSoundError(
-            "Music could not load. Turn sound off and on to retry.",
-          );
-        });
+        void audio
+          .play(floorRef.current === 1 ? "office" : "hall")
+          .catch(() => {
+            if (
+              !active ||
+              intent !== soundIntent.current ||
+              !desiredSound.current ||
+              panelRef.current?.kind === "game"
+            )
+              return;
+            setSoundStatus("error");
+            setSoundError(
+              "Music could not load. Turn sound off and on to retry.",
+            );
+          });
     };
     reconcile();
     document.addEventListener("visibilitychange", reconcile);
@@ -286,7 +300,7 @@ export default function Convention() {
       window.removeEventListener("blur", suspend);
       window.removeEventListener("focus", reconcile);
     };
-  }, [panel, sound, ambientPaused]);
+  }, [panel, sound, ambientPaused, activeFloor]);
   useEffect(() => {
     if (!handheld) return;
     const unlockPage = lockPageScroll();
@@ -553,6 +567,7 @@ export default function Convention() {
         onAnnounce={announce}
         onHandheld={explore}
         onEnterScene={enterScene}
+        onFloorChange={floorChanged}
         onExitHandheld={exitHandheld}
         onToggleMotion={() => {
           const next = !ambienceRef.current;

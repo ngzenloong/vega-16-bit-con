@@ -1,6 +1,6 @@
 import { characterSheets, loadImage } from "../character";
 import type { Appearance } from "../types";
-import { selectRivalCars } from "./cars";
+import { selectRivalCars, ALL_CARS, FIAT } from "./cars";
 import { duskBackdrop } from "./scenery";
 let fontReady: Promise<FontFace[]> | null = null;
 let fontFailed = false;
@@ -26,8 +26,14 @@ export async function gameResources(
   appearance: Appearance,
   racing = false,
   grid = 0,
+  carId = FIAT.id,
 ) {
-  const rivalCars = racing ? selectRivalCars(grid) : [];
+  const playerCar = ALL_CARS.find((car) => car.id === carId) || FIAT;
+  const rivalCars = racing ? selectRivalCars(grid, playerCar.id) : [];
+  const playerAsset =
+    playerCar.id === FIAT.id || playerCar.id === "scargo"
+      ? playerCar.asset
+      : playerCar.asset.replace(".svg", "-player.svg");
   const [
     sheets,
     logo,
@@ -44,8 +50,8 @@ export async function gameResources(
     duskBackdrop(),
     racing
       ? Promise.all(
-          ["fiat-player.svg", ...rivalCars.map((car) => car.asset)].map(
-            (asset) => loadImage(`/assets/vega/${asset}`),
+          [playerAsset, ...rivalCars.map((car) => car.asset)].map((asset) =>
+            loadImage(`/assets/vega/${asset}`),
           ),
         )
       : Promise.resolve([]),
@@ -68,5 +74,6 @@ export async function gameResources(
     mascot,
     cars,
     rivalCars,
+    playerCar,
   };
 }

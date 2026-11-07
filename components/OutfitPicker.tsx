@@ -117,7 +117,7 @@ export default function OutfitPicker({
           </button>
         </p>
       )}
-      {rows.map((part) => (
+      {rows.map((part, rowIndex) => (
         <div
           className="accessory-strip"
           role="radiogroup"
@@ -168,13 +168,39 @@ export default function OutfitPicker({
               className="accessory-option"
               role="radio"
               aria-label={label}
-              title={label}
               aria-checked={value[part] === i}
               tabIndex={value[part] === i ? 0 : -1}
               disabled={disabled}
               onClick={() => choose(part, i)}
               onKeyDown={(event) => {
                 if (event.ctrlKey || event.metaKey || event.altKey) return;
+                if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                  event.preventDefault();
+                  const nextRow =
+                    rowIndex + (event.key === "ArrowDown" ? 1 : -1);
+                  const strips =
+                    root.current!.querySelectorAll(".accessory-strip");
+                  const next =
+                    nextRow === rows.length
+                      ? root
+                          .current!.closest("form")
+                          ?.querySelector<HTMLButtonElement>(
+                            ".register-submit:not(:disabled)",
+                          )
+                      : strips[nextRow]?.querySelector<HTMLButtonElement>(
+                          '[aria-checked="true"]',
+                        );
+                  if (next) {
+                    audio.effect("click");
+                    next.focus({ preventScroll: true });
+                    next.scrollIntoView({
+                      block: "nearest",
+                      inline: "center",
+                      behavior: "instant",
+                    });
+                  }
+                  return;
+                }
                 if (
                   !["ArrowLeft", "ArrowRight", "Home", "End"].includes(
                     event.key,
@@ -197,7 +223,7 @@ export default function OutfitPicker({
                 button.focus({ preventScroll: true });
                 button.scrollIntoView({
                   block: "nearest",
-                  inline: "nearest",
+                  inline: "center",
                   behavior: "instant",
                 });
               }}

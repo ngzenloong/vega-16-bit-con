@@ -1,5 +1,13 @@
 import type { CSSProperties } from "react";
-type Name = "close" | "pause" | "sound" | "muted" | "play" | "loading" | "check";
+type Name =
+  | "lock"
+  | "close"
+  | "pause"
+  | "sound"
+  | "muted"
+  | "play"
+  | "loading"
+  | "check";
 export default function Icon({
   name,
   size = 20,
@@ -22,6 +30,9 @@ export default function Icon({
       focusable="false"
       style={style}
     >
+      {name === "lock" && (
+        <path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5zM12 14v3" />
+      )}
       {name === "close" && <path d="m6 6 12 12M18 6 6 18" />}
       {name === "pause" && <path d="M8 5v14M16 5v14" />}
       {name === "check" && <path d="m5 12 5 5L20 6" />}

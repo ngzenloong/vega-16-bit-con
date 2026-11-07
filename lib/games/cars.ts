@@ -121,9 +121,20 @@ export const RIVAL_CARS: readonly RivalCar[] = [
     asset: "car-scargo.svg",
   },
 ];
-export function selectRivalCars(round: number) {
+export const FIAT: RivalCar = {
+  id: "fiat-player",
+  label: "FIAT 500",
+  model: "Fiat 500",
+  bodyWidth: 74,
+  asset: "fiat-player.svg",
+};
+export const ALL_CARS: readonly RivalCar[] = [FIAT, ...RIVAL_CARS];
+export function driverProfile(id: string): DriverProfile {
+  return DRIVER_PROFILES[id] || PLAYER_PROFILE;
+}
+export function selectRivalCars(round: number, playerCar = FIAT.id) {
   const start = Math.floor(round) >>> 0;
-  const grid = [...RIVAL_CARS];
+  const grid = ALL_CARS.filter((car) => car.id !== playerCar);
   let seed = Math.imul(start + 1, 2654435761) >>> 0;
   for (let i = grid.length - 1; i > 0; i--) {
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
@@ -134,6 +145,6 @@ export function selectRivalCars(round: number) {
 }
 
 /** Scale the previous two-Fiat contact width to the new rival's actual silhouette. */
-export function carContactWidth(bodyWidth = 74) {
-  return (0.27 * (74 + bodyWidth)) / 148;
+export function carContactWidth(bodyWidth = 74, playerWidth = 74) {
+  return (0.27 * (playerWidth + bodyWidth)) / 148;
 }

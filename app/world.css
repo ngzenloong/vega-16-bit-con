@@ -207,8 +207,6 @@
   padding: var(--space-2) var(--space-4);
 }
 
-
-
 .world-floor-art {
   position: absolute;
   inset: auto 0 0;
@@ -279,7 +277,7 @@
   background: var(--frame-dark);
 }
 .game-machine.is-near .machine-lightbox,
-.game-machine:hover .machine-lightbox,
+.world-stage[data-pointer-active="true"] .game-machine:hover .machine-lightbox,
 .game-machine:focus-visible .machine-lightbox {
   background: var(--yellow);
   box-shadow: 3px 3px 0 var(--ink);
@@ -314,7 +312,7 @@
   opacity: 0;
   pointer-events: none;
 }
-.game-machine:hover .machine-key,
+.world-stage[data-pointer-active="true"] .game-machine:hover .machine-key,
 .game-machine:focus-visible .machine-key {
   opacity: 1;
 }
@@ -330,7 +328,7 @@
   transition: opacity 120ms;
 }
 .game-machine.is-near .attract-screen,
-.game-machine:hover .attract-screen,
+.world-stage[data-pointer-active="true"] .game-machine:hover .attract-screen,
 .game-machine:focus-visible .attract-screen {
   opacity: 1;
 }
@@ -392,7 +390,8 @@
   height: 60px;
   pointer-events: none;
 }
-.vega-booth:is(:hover, :focus-visible, .is-near) .booth-entry-light {
+.world-stage[data-pointer-active="true"] .vega-booth:hover .booth-entry-light,
+.vega-booth:is(:focus-visible, .is-near) .booth-entry-light {
   background: var(--yellow);
 }
 .service-wall {
@@ -451,7 +450,7 @@
   background-position: 0 0;
   transition: background-position 0.32s steps(7);
 }
-.world-lift.is-near .sprite {
+.world-lift.is-near:not([data-arrived="true"]) .sprite {
   background-position: -1274px 0;
 }
 .npc {
@@ -512,7 +511,7 @@
   opacity: 0;
   pointer-events: none;
 }
-.npc:hover .npc-focus-name,
+.world-stage[data-pointer-active="true"] .npc:hover .npc-focus-name,
 .npc:focus-visible .npc-focus-name {
   opacity: 1;
 }
@@ -674,11 +673,10 @@
   left: 0;
   right: 0;
   top: 0;
-  height: 72px;
+  height: 100px;
   overflow: hidden;
   background: url("/assets/vega/pipes-tile.png") repeat-x left -78px/768px 174px;
   image-rendering: pixelated;
-  border-bottom: 2px solid var(--ceiling-rule);
   pointer-events: none;
 }
 .schedule-board {
@@ -756,7 +754,7 @@
 }
 .social-sign {
   position: absolute;
-  bottom: 342px;
+  bottom: 420px;
   padding: 6px 13px;
   background: var(--paper);
   border: 1px solid var(--ink);
@@ -824,8 +822,6 @@
     display: none;
   }
 }
-
-
 
 @keyframes cloud-drift {
   to {
@@ -978,9 +974,6 @@
   .schedule-board small {
     font-size: 10px;
     line-height: 1.8;
-  }
-  .concourse-ceiling {
-    height: 60px;
   }
   .ambient-bubble {
     width: 170px;

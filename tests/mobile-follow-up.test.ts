@@ -12,7 +12,7 @@ import type { GameInput } from "../lib/games/types.ts";
 import type { GameResult } from "../lib/types.ts";
 
 test("every replay grid contains all eleven unique rival microcars", () => {
-  const grids = [0, 1, 2, 3].map(selectRivalCars);
+  const grids = [0, 1, 2, 3].map((seed) => selectRivalCars(seed));
   assert.equal(new Set(grids.flat().map((car) => car.id)).size, 11);
   assert.ok(
     grids.every(
@@ -107,4 +107,9 @@ test("the tougher first-place race remains winnable on a clean controlled line",
   }
   assert.equal(result?.won, true);
   assert.match(result!.detail, /Finished 1st/);
+  assert.deepEqual(result!.race, {
+    carId: "fiat-player",
+    place: 1,
+    finished: true,
+  });
 });

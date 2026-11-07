@@ -4,6 +4,8 @@ import {
   carContactWidth,
   RIVAL_CARS,
   PLAYER_PROFILE,
+  FIAT,
+  driverProfile,
   SPEED_UNITS,
 } from "./cars.ts";
 import { createRivals, updateRivals } from "./rivals.ts";
@@ -28,9 +30,14 @@ import {
   finishOnce,
   type GameFactory,
 } from "./types.ts";
-const MAX_SPEED = PLAYER_PROFILE.topSpeed * SPEED_UNITS,
-  COUNTDOWN = 1.5;
+const COUNTDOWN = 1.5;
 export const createGame: GameFactory = (env) => {
+  const playerCar = env.playerCar || FIAT;
+  const profile = driverProfile(playerCar.id);
+  const MAX_SPEED = profile.topSpeed * SPEED_UNITS;
+  const limit = Math.ceil(
+    (GAME_DURATION.kart * PLAYER_PROFILE.topSpeed) / profile.topSpeed,
+  );
   let distance = 0,
     speed = 0,
     lateral = 0,
@@ -105,7 +112,8 @@ export const createGame: GameFactory = (env) => {
       if (
         traffic.some(
           (r) =>
-            Math.abs(r.lane - demoLane) < carContactWidth(r.bodyWidth) + 0.02,
+            Math.abs(r.lane - demoLane) <
+            carContactWidth(r.bodyWidth, playerCar.bodyWidth) + 0.02,
         )
       ) {
         const clearance = (lane: number) =>
@@ -120,7 +128,7 @@ export const createGame: GameFactory = (env) => {
           axis: clamp(
             (lane - lateral) * 4 +
               (trackCurve(distance) * ratio * 0.68) /
-                (0.6 + ratio * (1.4 + PLAYER_PROFILE.handling * 0.25)),
+                (0.6 + ratio * (1.4 + profile.handling * 0.25)),
             -1,
             1,
           ),
@@ -149,11 +157,11 @@ export const createGame: GameFactory = (env) => {
       }
       const curve = trackCurve(distance),
         activeBoost = time < boostUntil,
-        cap = activeBoost ? 1650 : MAX_SPEED;
+        cap = activeBoost ? MAX_SPEED * 1.25 : MAX_SPEED;
       speed = clamp(
         speed +
-          (throttle ? PLAYER_PROFILE.acceleration : -290) * dt -
-          (braking ? PLAYER_PROFILE.braking * dt : 0),
+          (throttle ? profile.acceleration : -290) * dt -
+          (braking ? profile.braking * dt : 0),
         0,
         cap,
       );
@@ -161,7 +169,7 @@ export const createGame: GameFactory = (env) => {
       const knock = advanceImpact(impact, dt);
       lateral = clamp(
         lateral +
-          steer * dt * (0.6 + ratio * (1.4 + PLAYER_PROFILE.handling * 0.25)) -
+          steer * dt * (0.6 + ratio * (1.4 + profile.handling * 0.25)) -
           curve * ratio * 0.68 * dt +
           knock.offset,
         -1.25,
@@ -179,7 +187,8 @@ export const createGame: GameFactory = (env) => {
         const r = rivals[i];
         if (
           Math.abs(r.distance - distance) < 110 &&
-          Math.abs(r.lane - lateral) < carContactWidth(r.bodyWidth) &&
+          Math.abs(r.lane - lateral) <
+            carContactWidth(r.bodyWidth, playerCar.bodyWidth) &&
           time > collisionUntil
         ) {
           speed *= 0.48;
@@ -207,7 +216,7 @@ export const createGame: GameFactory = (env) => {
         ) {
           pad.used = true;
           boostUntil = time + 1.6;
-          speed = 1650;
+          speed = MAX_SPEED * 1.25;
           env.sound("boost");
           say("POST-SIEM BOOST", 1.6);
         }
@@ -228,20 +237,22 @@ export const createGame: GameFactory = (env) => {
         end(
           Math.max(
             0,
-            Math.round((GAME_DURATION.kart - raceTime()) * 120) +
+            Math.round((limit - raceTime()) * 120) +
               passes * 250 +
               (gridSize + 1 - place) * 200,
           ),
-          place === 1 && raceTime() <= GAME_DURATION.kart,
-          `Finished ${place}${place < 4 ? ["", "st", "nd", "rd"][place] : "th"} in ${raceTime().toFixed(2)} seconds. ${place === 1 && raceTime() <= GAME_DURATION.kart ? "Post-SIEM victory." : "Finish first within 55 seconds to clear."}`,
+          place === 1 && raceTime() <= limit,
+          `Finished ${place}${place < 4 ? ["", "st", "nd", "rd"][place] : "th"} in ${raceTime().toFixed(2)} seconds. ${place === 1 && raceTime() <= limit ? "Post-SIEM victory." : `Finish first within ${limit} seconds to clear.`}`,
+          { carId: playerCar.id, place, finished: true },
         );
-      } else if (raceTime() >= GAME_DURATION.kart) {
+      } else if (raceTime() >= limit) {
         finished = true;
         env.motor?.(0);
         end(
           Math.round((distance / TRACK_LENGTH) * 1000) + passes * 250,
           false,
           `Time's up. ${Math.round((distance / TRACK_LENGTH) * 100)}% of the route completed.`,
+          { carId: playerCar.id, place: rank(), finished: false },
         );
       }
     },
@@ -436,16 +447,6 @@ export const createGame: GameFactory = (env) => {
           );
         }
       }
-      if (portrait)
-        pixelText(
-          c,
-          "PostSIEM.com",
-          player.x,
-          Math.min(viewHeight - 24, player.y + 26),
-          26,
-          C.paper,
-          "center",
-        );
       c.fillStyle = C.ink;
       c.fillRect(14, 13, portrait ? 110 : 100, portrait ? 76 : 58);
       pixelText(
@@ -491,18 +492,25 @@ export const createGame: GameFactory = (env) => {
         "right",
       );
       c.fillStyle = C.ink;
-      c.fillRect(12, 84, 16, 96);
+      const railTop = 13 + (portrait ? 76 : 58) + 16;
+      const railBottom = railTop + 92;
+      c.fillRect(14, railTop, 16, 96);
       c.fillStyle = C.paper;
       rivals.forEach((r, i) => {
         c.fillRect(
-          14 + (i % 3) * 4,
-          176 - Math.min(1, r.distance / TRACK_LENGTH) * 90,
+          16 + (i % 3) * 4,
+          railBottom - Math.min(1, r.distance / TRACK_LENGTH) * 90,
           3,
           4,
         );
       });
       c.fillStyle = C.yellow;
-      c.fillRect(10, 176 - Math.min(1, distance / TRACK_LENGTH) * 90, 20, 4);
+      c.fillRect(
+        12,
+        railBottom - Math.min(1, distance / TRACK_LENGTH) * 90,
+        20,
+        4,
+      );
       if (t < COUNTDOWN) {
         pixelText(
           c,
@@ -570,7 +578,7 @@ export const createGame: GameFactory = (env) => {
     },
     hud: () => ({
       score: Math.round((distance / TRACK_LENGTH) * 1000) + passes * 250,
-      time: Math.max(0, GAME_DURATION.kart - Math.floor(raceTime())),
+      time: Math.max(0, limit - Math.floor(raceTime())),
       progress: Math.min(1, distance / TRACK_LENGTH),
       message: `${rank()}/${gridSize} · CP ${checkpoint}/3`,
     }),

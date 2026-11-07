@@ -59,7 +59,19 @@ export default function Registration({
     [error, setError] = useState("");
   const [retry, setRetry] = useState(0);
   useEffect(() => {
-    dialog.current?.focus({ preventScroll: true });
+    const frame = requestAnimationFrame(() => {
+      const d = dialog.current;
+      const target =
+        step === "look"
+          ? d?.querySelector<HTMLElement>(
+              '.accessory-option[aria-checked="true"]',
+            )
+          : step === "details"
+            ? d?.querySelector<HTMLElement>("input")
+            : d;
+      target?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
   }, [step]);
   useEffect(() => {
     let active = true;
@@ -108,7 +120,8 @@ export default function Registration({
   }, [onClose]);
   useEffect(() => {
     const viewport = window.visualViewport;
-    let frame = 0, fieldFrame = 0;
+    let frame = 0,
+      fieldFrame = 0;
     const measure = () => {
       setCompact(matchMedia("(max-width: 700px), (max-height: 600px)").matches);
       dialog.current?.style.setProperty(
@@ -122,8 +135,17 @@ export default function Registration({
       cancelAnimationFrame(fieldFrame);
       fieldFrame = requestAnimationFrame(() => {
         const active = document.activeElement;
-        if (!document.hidden && document.hasFocus() && active instanceof HTMLInputElement && dialog.current?.contains(active))
-          active.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
+        if (
+          !document.hidden &&
+          document.hasFocus() &&
+          active instanceof HTMLInputElement &&
+          dialog.current?.contains(active)
+        )
+          active.scrollIntoView({
+            block: "nearest",
+            inline: "nearest",
+            behavior: "instant",
+          });
       });
     };
     const update = () => {
@@ -248,6 +270,42 @@ export default function Registration({
       data-step={step}
       data-error={Boolean(error)}
       aria-labelledby="registration-title"
+      onKeyDown={(event) => {
+        if (
+          event.defaultPrevented ||
+          event.ctrlKey ||
+          event.metaKey ||
+          event.altKey
+        )
+          return;
+        const target = event.target as HTMLElement;
+        if (step !== "look" || !target.closest(".registration-actions")) return;
+        if (event.key === "ArrowUp") {
+          event.preventDefault();
+          const options = dialog.current!.querySelectorAll<HTMLElement>(
+            '.accessory-option[aria-checked="true"]',
+          );
+          const last = options[options.length - 1];
+          last?.focus({ preventScroll: true });
+          last?.scrollIntoView({
+            block: "nearest",
+            inline: "center",
+            behavior: "instant",
+          });
+        } else if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+          event.preventDefault();
+          const buttons = [
+            ...dialog.current!.querySelectorAll<HTMLButtonElement>(
+              ".registration-actions button:not(:disabled)",
+            ),
+          ];
+          const index = buttons.indexOf(target as HTMLButtonElement);
+          buttons[
+            (index + (event.key === "ArrowRight" ? 1 : -1) + buttons.length) %
+              buttons.length
+          ]?.focus();
+        }
+      }}
     >
       <header className="window-title">
         <span>Player pass</span>
