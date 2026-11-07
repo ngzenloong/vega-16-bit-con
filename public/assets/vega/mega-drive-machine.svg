@@ -1,0 +1,346 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="58" height="90" viewBox="0 0 58 90" shape-rendering="crispEdges" role="img" aria-label="16-bit Mega Drive Model 1 station with a Leaf Green and Daisy CRT and complete Vega logo" data-screen-box="21 12 28 21" data-screen-polygon="22,12 48,12 48,13 49,13 49,32 48,32 48,33 22,33 22,32 21,32 21,13 22,13" data-front-ground="90" data-rear-ground="85" data-brand-box="21 35 28 8" data-brand-source="arcade-machine.png pixel mask 18,48,28,8" data-brand-pair-box="9 34 40 9" data-brand-daisy-source="logo.svg / Subtract native pixel sampling" data-hardware-era="16-bit">
+  <title>Mega Drive Model 1 station</title>
+  <metadata>Original pixel interpretation of Mega Drive Model 1: circular cartridge ring, gold 16-BIT and three-button pad. Hardware reference: https://www.sega.jp/history/hard/megadrive/index.html. The Vega wordmark uses the original arcade pixel mask and is always paired with the real Vega daisy.</metadata>
+  <g id="wood-cart">
+    <g fill="#82533C">
+      <rect x="5" y="49" width="40" height="1" />
+      <rect x="5" y="50" width="42" height="1" />
+      <rect x="5" y="51" width="44" height="1" />
+      <rect x="5" y="52" width="46" height="1" />
+      <rect x="6" y="53" width="47" height="1" />
+      <rect x="8" y="54" width="47" height="1" />
+      <rect x="10" y="55" width="46" height="1" />
+      <rect x="13" y="56" width="43" height="1" />
+      <rect x="15" y="57" width="41" height="1" />
+    </g>
+    <g fill="#BF8957">
+      <rect x="7" y="50" width="37" height="1" />
+      <rect x="10" y="51" width="36" height="1" />
+      <rect x="12" y="52" width="37" height="1" />
+      <rect x="15" y="53" width="36" height="1" />
+    </g>
+    <rect x="16" y="55" width="39" height="2" fill="#E4B47C" />
+    <g fill="#82533C">
+      <rect x="6" y="54" width="1" height="1" />
+      <rect x="6" y="55" width="3" height="1" />
+      <rect x="6" y="56" width="4" height="27" />
+      <rect x="7" y="83" width="3" height="1" />
+      <rect x="9" y="84" width="1" height="1" />
+    </g>
+    <rect x="16" y="58" width="4" height="28" fill="#82533C" />
+    <rect x="51" y="58" width="4" height="28" fill="#82533C" />
+    <rect x="17" y="58" width="1" height="27" fill="#BF8957" />
+    <rect x="52" y="58" width="1" height="27" fill="#BF8957" />
+    <g fill="#82533C">
+      <rect x="6" y="72" width="39" height="1" />
+      <rect x="6" y="73" width="41" height="1" />
+      <rect x="6" y="74" width="43" height="1" />
+      <rect x="6" y="75" width="45" height="1" />
+      <rect x="7" y="76" width="46" height="1" />
+      <rect x="9" y="77" width="46" height="1" />
+      <rect x="11" y="78" width="45" height="1" />
+      <rect x="13" y="79" width="43" height="1" />
+      <rect x="15" y="80" width="41" height="1" />
+    </g>
+    <g fill="#BF8957">
+      <rect x="9" y="73" width="35" height="1" />
+      <rect x="11" y="74" width="35" height="1" />
+      <rect x="14" y="75" width="35" height="1" />
+      <rect x="16" y="76" width="35" height="1" />
+    </g>
+    <rect x="17" y="78" width="38" height="2" fill="#E4B47C" />
+    <rect x="17" y="86" width="5" height="4" fill="#4B2730" />
+    <rect x="50" y="86" width="5" height="4" fill="#4B2730" />
+    <rect x="18" y="87" width="2" height="1" fill="#C4B18D" />
+    <rect x="51" y="87" width="2" height="1" fill="#C4B18D" />
+  </g>
+  <g id="compact-crt">
+    <g fill="#0F3301">
+      <rect x="9" y="1" width="35" height="1" />
+      <rect x="8" y="2" width="38" height="1" />
+      <rect x="7" y="3" width="41" height="1" />
+      <rect x="7" y="4" width="43" height="1" />
+      <rect x="6" y="5" width="46" height="1" />
+      <rect x="6" y="6" width="48" height="1" />
+      <rect x="6" y="7" width="49" height="34" />
+      <rect x="7" y="41" width="48" height="1" />
+      <rect x="9" y="42" width="46" height="1" />
+      <rect x="11" y="43" width="44" height="1" />
+      <rect x="13" y="44" width="41" height="1" />
+      <rect x="15" y="45" width="38" height="1" />
+      <rect x="17" y="46" width="35" height="1" />
+    </g>
+    <g fill="#083D01">
+      <rect x="8" y="6" width="1" height="1" />
+      <rect x="8" y="7" width="3" height="1" />
+      <rect x="8" y="8" width="6" height="1" />
+      <rect x="8" y="9" width="8" height="1" />
+      <rect x="8" y="10" width="9" height="30" />
+      <rect x="9" y="40" width="8" height="1" />
+      <rect x="11" y="41" width="6" height="1" />
+      <rect x="14" y="42" width="3" height="1" />
+      <rect x="16" y="43" width="1" height="1" />
+    </g>
+    <g fill="#276A14">
+      <rect x="11" y="2" width="32" height="1" />
+      <rect x="13" y="3" width="32" height="1" />
+      <rect x="15" y="4" width="32" height="1" />
+      <rect x="17" y="5" width="32" height="1" />
+    </g>
+    <g fill="#FFFAEB">
+      <rect x="13" y="3" width="29" height="1" />
+      <rect x="15" y="4" width="29" height="1" />
+      <rect x="17" y="5" width="29" height="1" />
+    </g>
+    <g fill="#0D5500">
+      <rect x="19" y="7" width="32" height="1" />
+      <rect x="18" y="8" width="34" height="1" />
+      <rect x="18" y="9" width="35" height="34" />
+      <rect x="18" y="43" width="34" height="1" />
+      <rect x="19" y="44" width="32" height="1" />
+    </g>
+    <rect x="20" y="8" width="31" height="2" fill="#FFFAEB" />
+    <rect x="51" y="11" width="1" height="31" fill="#276A14" />
+    <rect x="20" y="11" width="30" height="23" fill="#FFFAEB" />
+    <polygon id="attract-screen" points="22,12 48,12 48,13 49,13 49,32 48,32 48,33 22,33 22,32 21,32 21,13 22,13" fill="#102719" />
+    <rect x="21" y="47" width="5" height="3" fill="#0F3301" />
+    <rect x="46" y="47" width="5" height="3" fill="#0F3301" />
+    <rect x="20" y="35" width="30" height="8" fill="#0F3301" />
+    <rect x="10" y="14" width="5" height="1" fill="#276A14" />
+    <rect x="10" y="18" width="5" height="1" fill="#276A14" />
+    <rect x="10" y="22" width="5" height="1" fill="#276A14" />
+    <rect x="10" y="26" width="5" height="1" fill="#276A14" />
+    <rect x="10" y="30" width="5" height="1" fill="#276A14" />
+    <rect x="51" y="36" width="2" height="2" fill="#FFD11B" />
+    <rect x="51" y="40" width="2" height="2" fill="#FFFAEB" />
+    <g id="vega-logo-pair" data-pair-box="9 34 40 9">
+      <g id="vega-brand-mark" fill="#FFFAEB" data-source="arcade-machine.png" data-source-rect="18 48 28 8" data-box="21 35 28 8">
+        <rect x="21" y="35" width="2" height="1" />
+        <rect x="26" y="35" width="2" height="1" />
+        <rect x="29" y="35" width="5" height="1" />
+        <rect x="36" y="35" width="5" height="1" />
+        <rect x="42" y="35" width="4" height="1" />
+        <rect x="21" y="36" width="2" height="1" />
+        <rect x="26" y="36" width="2" height="1" />
+        <rect x="29" y="36" width="5" height="1" />
+        <rect x="35" y="36" width="6" height="1" />
+        <rect x="42" y="36" width="4" height="1" />
+        <rect x="22" y="37" width="2" height="1" />
+        <rect x="26" y="37" width="2" height="1" />
+        <rect x="35" y="37" width="2" height="1" />
+        <rect x="42" y="37" width="2" height="1" />
+        <rect x="45" y="37" width="2" height="1" />
+        <rect x="22" y="38" width="2" height="1" />
+        <rect x="26" y="38" width="2" height="1" />
+        <rect x="29" y="38" width="3" height="1" />
+        <rect x="35" y="38" width="2" height="1" />
+        <rect x="38" y="38" width="3" height="1" />
+        <rect x="42" y="38" width="2" height="1" />
+        <rect x="45" y="38" width="2" height="1" />
+        <rect x="23" y="39" width="2" height="1" />
+        <rect x="26" y="39" width="2" height="1" />
+        <rect x="29" y="39" width="3" height="1" />
+        <rect x="35" y="39" width="2" height="1" />
+        <rect x="38" y="39" width="3" height="1" />
+        <rect x="42" y="39" width="6" height="1" />
+        <rect x="23" y="40" width="2" height="1" />
+        <rect x="26" y="40" width="2" height="1" />
+        <rect x="35" y="40" width="2" height="1" />
+        <rect x="39" y="40" width="2" height="1" />
+        <rect x="42" y="40" width="6" height="1" />
+        <rect x="24" y="41" width="4" height="1" />
+        <rect x="29" y="41" width="5" height="1" />
+        <rect x="35" y="41" width="6" height="1" />
+        <rect x="42" y="41" width="2" height="1" />
+        <rect x="47" y="41" width="2" height="1" />
+        <rect x="24" y="42" width="4" height="1" />
+        <rect x="29" y="42" width="5" height="1" />
+        <rect x="36" y="42" width="4" height="1" />
+        <rect x="42" y="42" width="2" height="1" />
+        <rect x="47" y="42" width="2" height="1" />
+      </g>
+      <g id="vega-brand-daisy" fill="#FFFAEB" data-source="logo.svg / Subtract" data-native-box="9 34 10 9">
+        <rect x="12" y="34" width="2" height="1" />
+        <rect x="15" y="34" width="2" height="1" />
+        <rect x="11" y="35" width="7" height="1" />
+        <rect x="11" y="36" width="6" height="1" />
+        <rect x="10" y="37" width="3" height="1" />
+        <rect x="15" y="37" width="4" height="1" />
+        <rect x="9" y="38" width="3" height="1" />
+        <rect x="16" y="38" width="3" height="1" />
+        <rect x="9" y="39" width="4" height="1" />
+        <rect x="15" y="39" width="3" height="1" />
+        <rect x="11" y="40" width="6" height="1" />
+        <rect x="10" y="41" width="7" height="1" />
+        <rect x="11" y="42" width="2" height="1" />
+        <rect x="14" y="42" width="2" height="1" />
+      </g>
+    </g>
+  </g>
+  <g id="mega-drive-model-1">
+    <g fill="#151D12">
+      <rect x="14" y="57" width="26" height="1" />
+      <rect x="13" y="58" width="30" height="1" />
+      <rect x="12" y="59" width="34" height="1" />
+      <rect x="12" y="60" width="36" height="1" />
+      <rect x="12" y="61" width="37" height="1" />
+      <rect x="12" y="62" width="38" height="1" />
+      <rect x="12" y="63" width="39" height="2" />
+      <rect x="13" y="65" width="38" height="2" />
+      <rect x="14" y="67" width="37" height="1" />
+      <rect x="15" y="68" width="36" height="1" />
+      <rect x="17" y="69" width="33" height="1" />
+      <rect x="19" y="70" width="30" height="1" />
+      <rect x="21" y="71" width="27" height="1" />
+    </g>
+    <g fill="#30382A">
+      <rect x="15" y="58" width="24" height="1" />
+      <rect x="14" y="59" width="27" height="1" />
+      <rect x="15" y="60" width="29" height="1" />
+      <rect x="17" y="61" width="28" height="1" />
+      <rect x="20" y="62" width="26" height="1" />
+      <rect x="22" y="63" width="13" height="1" />
+    </g>
+    <g fill="#20271C">
+      <rect x="14" y="61" width="1" height="1" />
+      <rect x="13" y="62" width="4" height="1" />
+      <rect x="13" y="63" width="5" height="1" />
+      <rect x="13" y="64" width="7" height="1" />
+      <rect x="14" y="65" width="7" height="1" />
+      <rect x="15" y="66" width="6" height="1" />
+      <rect x="16" y="67" width="5" height="1" />
+      <rect x="18" y="68" width="3" height="1" />
+      <rect x="20" y="69" width="1" height="1" />
+    </g>
+    <g fill="#30382A">
+      <rect x="36" y="63" width="13" height="1" />
+      <rect x="23" y="64" width="26" height="5" />
+      <rect x="23" y="69" width="25" height="1" />
+      <rect x="23" y="70" width="24" height="1" />
+    </g>
+    <g fill="#59634D">
+      <rect x="24" y="57" width="12" height="1" />
+      <rect x="22" y="58" width="18" height="1" />
+      <rect x="21" y="59" width="20" height="1" />
+      <rect x="21" y="60" width="21" height="1" />
+      <rect x="22" y="61" width="20" height="1" />
+      <rect x="23" y="62" width="18" height="1" />
+      <rect x="25" y="63" width="15" height="1" />
+      <rect x="28" y="64" width="6" height="1" />
+    </g>
+    <g fill="#151D12">
+      <rect x="24" y="58" width="12" height="1" />
+      <rect x="23" y="59" width="15" height="1" />
+      <rect x="23" y="60" width="16" height="1" />
+      <rect x="24" y="61" width="15" height="1" />
+      <rect x="26" y="62" width="12" height="1" />
+      <rect x="29" y="63" width="5" height="1" />
+    </g>
+    <g fill="#A7AD98">
+      <rect x="24" y="59" width="12" height="1" />
+      <rect x="26" y="60" width="12" height="1" />
+    </g>
+    <g fill="#151D12">
+      <rect x="25" y="60" width="11" height="1" />
+    </g>
+    <rect x="15" y="62" width="3" height="1" fill="#A7AD98" />
+    <rect x="16" y="64" width="3" height="1" fill="#151D12" />
+    <rect x="45" y="62" width="3" height="1" fill="#A7AD98" />
+    <rect x="23" y="70" width="4" height="1" fill="#151D12" />
+    <rect x="45" y="70" width="3" height="1" fill="#151D12" />
+    <g fill="#151D12">
+      <rect x="27" y="53" width="9" height="1" />
+      <rect x="27" y="54" width="11" height="1" />
+      <rect x="26" y="55" width="13" height="3" />
+      <rect x="27" y="58" width="12" height="1" />
+      <rect x="28" y="59" width="11" height="1" />
+    </g>
+    <rect x="29" y="55" width="8" height="3" fill="#30382A" />
+    <rect x="30" y="55" width="6" height="1" fill="#D4B04C" />
+    <rect x="26" y="65" width="1" height="1" fill="#D4B04C" />
+    <rect x="25" y="66" width="1" height="1" fill="#D4B04C" />
+    <rect x="26" y="66" width="1" height="1" fill="#D4B04C" />
+    <rect x="26" y="67" width="1" height="1" fill="#D4B04C" />
+    <rect x="26" y="68" width="1" height="1" fill="#D4B04C" />
+    <rect x="25" y="69" width="1" height="1" fill="#D4B04C" />
+    <rect x="26" y="69" width="1" height="1" fill="#D4B04C" />
+    <rect x="27" y="69" width="1" height="1" fill="#D4B04C" />
+    <rect x="29" y="65" width="1" height="1" fill="#D4B04C" />
+    <rect x="30" y="65" width="1" height="1" fill="#D4B04C" />
+    <rect x="31" y="65" width="1" height="1" fill="#D4B04C" />
+    <rect x="29" y="66" width="1" height="1" fill="#D4B04C" />
+    <rect x="29" y="67" width="1" height="1" fill="#D4B04C" />
+    <rect x="30" y="67" width="1" height="1" fill="#D4B04C" />
+    <rect x="31" y="67" width="1" height="1" fill="#D4B04C" />
+    <rect x="29" y="68" width="1" height="1" fill="#D4B04C" />
+    <rect x="31" y="68" width="1" height="1" fill="#D4B04C" />
+    <rect x="29" y="69" width="1" height="1" fill="#D4B04C" />
+    <rect x="30" y="69" width="1" height="1" fill="#D4B04C" />
+    <rect x="31" y="69" width="1" height="1" fill="#D4B04C" />
+    <rect x="33" y="67" width="1" height="1" fill="#D4B04C" />
+    <rect x="35" y="65" width="1" height="1" fill="#D4B04C" />
+    <rect x="36" y="65" width="1" height="1" fill="#D4B04C" />
+    <rect x="35" y="66" width="1" height="1" fill="#D4B04C" />
+    <rect x="37" y="66" width="1" height="1" fill="#D4B04C" />
+    <rect x="35" y="67" width="1" height="1" fill="#D4B04C" />
+    <rect x="36" y="67" width="1" height="1" fill="#D4B04C" />
+    <rect x="35" y="68" width="1" height="1" fill="#D4B04C" />
+    <rect x="37" y="68" width="1" height="1" fill="#D4B04C" />
+    <rect x="35" y="69" width="1" height="1" fill="#D4B04C" />
+    <rect x="36" y="69" width="1" height="1" fill="#D4B04C" />
+    <rect x="39" y="65" width="1" height="1" fill="#D4B04C" />
+    <rect x="39" y="66" width="1" height="1" fill="#D4B04C" />
+    <rect x="39" y="67" width="1" height="1" fill="#D4B04C" />
+    <rect x="39" y="68" width="1" height="1" fill="#D4B04C" />
+    <rect x="39" y="69" width="1" height="1" fill="#D4B04C" />
+    <rect x="41" y="65" width="1" height="1" fill="#D4B04C" />
+    <rect x="42" y="65" width="1" height="1" fill="#D4B04C" />
+    <rect x="43" y="65" width="1" height="1" fill="#D4B04C" />
+    <rect x="42" y="66" width="1" height="1" fill="#D4B04C" />
+    <rect x="42" y="67" width="1" height="1" fill="#D4B04C" />
+    <rect x="42" y="68" width="1" height="1" fill="#D4B04C" />
+    <rect x="42" y="69" width="1" height="1" fill="#D4B04C" />
+  </g>
+  <g id="sega-three-button-pad">
+    <rect x="35" y="71" width="1" height="3" fill="#151D12" />
+    <g fill="#151D12">
+      <rect x="28" y="72" width="13" height="1" />
+      <rect x="24" y="73" width="19" height="1" />
+      <rect x="23" y="74" width="23" height="1" />
+      <rect x="22" y="75" width="25" height="1" />
+      <rect x="22" y="76" width="26" height="1" />
+      <rect x="22" y="77" width="27" height="1" />
+      <rect x="21" y="78" width="29" height="2" />
+      <rect x="21" y="80" width="28" height="1" />
+      <rect x="22" y="81" width="10" height="1" />
+      <rect x="36" y="81" width="13" height="1" />
+      <rect x="23" y="82" width="8" height="1" />
+      <rect x="41" y="82" width="7" height="1" />
+      <rect x="26" y="83" width="4" height="1" />
+      <rect x="44" y="83" width="2" height="1" />
+    </g>
+    <g fill="#30382A">
+      <rect x="28" y="74" width="12" height="1" />
+      <rect x="25" y="75" width="18" height="1" />
+      <rect x="24" y="76" width="21" height="1" />
+      <rect x="24" y="77" width="22" height="1" />
+      <rect x="23" y="78" width="24" height="1" />
+      <rect x="23" y="79" width="8" height="1" />
+      <rect x="36" y="79" width="12" height="1" />
+      <rect x="24" y="80" width="6" height="1" />
+      <rect x="41" y="80" width="6" height="1" />
+      <rect x="26" y="81" width="3" height="1" />
+      <rect x="43" y="81" width="2" height="1" />
+    </g>
+    <rect x="27" y="76" width="2" height="5" fill="#151D12" />
+    <rect x="25" y="78" width="6" height="1" fill="#151D12" />
+    <rect x="27" y="76" width="2" height="1" fill="#59634D" />
+    <rect x="34" y="75" width="3" height="1" fill="#A7AD98" />
+    <rect x="39" y="79" width="3" height="2" fill="#59634D" />
+    <rect x="43" y="77" width="3" height="2" fill="#59634D" />
+    <rect x="46" y="75" width="3" height="2" fill="#59634D" />
+    <rect x="39" y="79" width="2" height="1" fill="#A7AD98" />
+    <rect x="43" y="77" width="2" height="1" fill="#A7AD98" />
+    <rect x="46" y="75" width="2" height="1" fill="#A7AD98" />
+  </g>
+</svg>

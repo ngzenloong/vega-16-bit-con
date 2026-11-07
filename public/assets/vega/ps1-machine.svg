@@ -1,0 +1,323 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="68" height="94" viewBox="0 0 68 94" shape-rendering="crispEdges" role="img" aria-label="Original oblique pixel-art Deep Ink and Leaf Green speaker CRT with a silver disc console on an AV rack" data-screen-box="25 14 32 24" data-screen-polygon="26,14 56,14 56,15 57,15 57,37 56,37 56,38 26,38 26,37 25,37 25,15 26,15" data-front-ground="94" data-rear-ground="89" data-brand-box="27 39 28 8" data-brand-source="arcade-machine.png pixel mask 18,48,28,8">
+  <title>Deep Ink and Leaf Green speaker CRT with a silver disc console on an AV rack</title>
+  <g id="tall-av-rack">
+    <g fill="#25272B">
+      <rect x="5" y="47" width="51" height="1" />
+      <rect x="5" y="48" width="53" height="1" />
+      <rect x="5" y="49" width="55" height="1" />
+      <rect x="6" y="50" width="57" height="1" />
+      <rect x="8" y="51" width="57" height="1" />
+      <rect x="10" y="52" width="56" height="1" />
+      <rect x="12" y="53" width="54" height="1" />
+      <rect x="14" y="54" width="52" height="1" />
+    </g>
+    <g fill="#727980">
+      <rect x="8" y="48" width="47" height="1" />
+      <rect x="10" y="49" width="47" height="1" />
+      <rect x="13" y="50" width="46" height="1" />
+      <rect x="15" y="51" width="46" height="1" />
+    </g>
+    <rect x="16" y="53" width="49" height="1" fill="#CACDCA" />
+    <g fill="#45494F">
+      <rect x="5" y="51" width="1" height="1" />
+      <rect x="5" y="52" width="3" height="1" />
+      <rect x="5" y="53" width="4" height="33" />
+      <rect x="6" y="86" width="3" height="1" />
+      <rect x="8" y="87" width="1" height="1" />
+    </g>
+    <rect x="15" y="55" width="5" height="37" fill="#25272B" />
+    <rect x="61" y="55" width="5" height="37" fill="#25272B" />
+    <rect x="17" y="55" width="1" height="35" fill="#727980" />
+    <rect x="63" y="55" width="1" height="35" fill="#727980" />
+    <g fill="#25272B">
+      <rect x="5" y="69" width="51" height="1" />
+      <rect x="5" y="70" width="53" height="1" />
+      <rect x="5" y="71" width="55" height="1" />
+      <rect x="6" y="72" width="57" height="1" />
+      <rect x="8" y="73" width="57" height="1" />
+      <rect x="10" y="74" width="56" height="1" />
+      <rect x="12" y="75" width="54" height="1" />
+      <rect x="14" y="76" width="52" height="1" />
+    </g>
+    <g fill="#45494F">
+      <rect x="8" y="70" width="47" height="1" />
+      <rect x="10" y="71" width="47" height="1" />
+      <rect x="13" y="72" width="46" height="1" />
+      <rect x="15" y="73" width="46" height="1" />
+    </g>
+    <rect x="16" y="75" width="49" height="1" fill="#CACDCA" />
+    <g fill="#25272B">
+      <rect x="5" y="84" width="51" height="1" />
+      <rect x="5" y="85" width="53" height="1" />
+      <rect x="5" y="86" width="55" height="1" />
+      <rect x="6" y="87" width="57" height="1" />
+      <rect x="8" y="88" width="57" height="1" />
+      <rect x="10" y="89" width="56" height="1" />
+      <rect x="12" y="90" width="54" height="1" />
+      <rect x="14" y="91" width="52" height="1" />
+    </g>
+    <g fill="#45494F">
+      <rect x="8" y="85" width="47" height="1" />
+      <rect x="10" y="86" width="47" height="1" />
+      <rect x="13" y="87" width="46" height="1" />
+      <rect x="15" y="88" width="46" height="1" />
+    </g>
+    <rect x="16" y="90" width="49" height="1" fill="#727980" />
+    <rect x="16" y="92" width="6" height="2" fill="#25272B" />
+    <rect x="60" y="92" width="6" height="2" fill="#25272B" />
+  </g>
+  <g id="speaker-crt">
+    <g fill="#082300">
+      <rect x="8" y="1" width="47" height="1" />
+      <rect x="7" y="2" width="50" height="1" />
+      <rect x="6" y="3" width="53" height="1" />
+      <rect x="5" y="4" width="57" height="1" />
+      <rect x="4" y="5" width="60" height="1" />
+      <rect x="4" y="6" width="62" height="1" />
+      <rect x="4" y="7" width="63" height="35" />
+      <rect x="5" y="42" width="62" height="1" />
+      <rect x="7" y="43" width="60" height="1" />
+      <rect x="9" y="44" width="58" height="1" />
+      <rect x="10" y="45" width="56" height="1" />
+      <rect x="12" y="46" width="53" height="1" />
+      <rect x="14" y="47" width="50" height="1" />
+    </g>
+    <g fill="#061E00">
+      <rect x="6" y="6" width="1" height="1" />
+      <rect x="6" y="7" width="3" height="1" />
+      <rect x="6" y="8" width="5" height="1" />
+      <rect x="6" y="9" width="7" height="1" />
+      <rect x="6" y="10" width="8" height="30" />
+      <rect x="7" y="40" width="7" height="1" />
+      <rect x="8" y="41" width="6" height="1" />
+      <rect x="10" y="42" width="4" height="1" />
+      <rect x="12" y="43" width="2" height="1" />
+      <rect x="13" y="44" width="1" height="1" />
+    </g>
+    <g fill="#0D5500">
+      <rect x="11" y="2" width="43" height="1" />
+      <rect x="12" y="3" width="44" height="1" />
+      <rect x="14" y="4" width="45" height="1" />
+      <rect x="15" y="5" width="46" height="1" />
+    </g>
+    <g fill="#0F3301">
+      <rect x="14" y="3" width="38" height="1" />
+      <rect x="15" y="4" width="39" height="1" />
+      <rect x="16" y="5" width="40" height="1" />
+    </g>
+    <g fill="#0F3301">
+      <rect x="16" y="8" width="47" height="1" />
+      <rect x="15" y="9" width="49" height="1" />
+      <rect x="15" y="10" width="50" height="34" />
+      <rect x="15" y="44" width="49" height="1" />
+      <rect x="16" y="45" width="47" height="1" />
+    </g>
+    <rect x="17" y="9" width="45" height="1" fill="#245D0D" />
+    <rect x="24" y="12" width="34" height="28" fill="#D5FB19" />
+    <rect x="25" y="13" width="32" height="26" fill="#082300" />
+    <polygon id="attract-screen" points="26,14 56,14 56,15 57,15 57,37 56,37 56,38 26,38 26,37 25,37 25,15 26,15" fill="#102719" />
+    <rect x="17" y="14" width="5" height="25" fill="#082300" />
+    <rect x="60" y="14" width="4" height="25" fill="#082300" />
+    <rect x="18" y="16" width="3" height="1" fill="#245D0D" />
+    <rect x="18" y="19" width="3" height="1" fill="#245D0D" />
+    <rect x="18" y="22" width="3" height="1" fill="#245D0D" />
+    <rect x="18" y="25" width="3" height="1" fill="#245D0D" />
+    <rect x="18" y="28" width="3" height="1" fill="#245D0D" />
+    <rect x="18" y="31" width="3" height="1" fill="#245D0D" />
+    <rect x="18" y="34" width="3" height="1" fill="#245D0D" />
+    <rect x="60" y="16" width="3" height="1" fill="#245D0D" />
+    <rect x="60" y="19" width="3" height="1" fill="#245D0D" />
+    <rect x="60" y="22" width="3" height="1" fill="#245D0D" />
+    <rect x="60" y="25" width="3" height="1" fill="#245D0D" />
+    <rect x="60" y="28" width="3" height="1" fill="#245D0D" />
+    <rect x="60" y="31" width="3" height="1" fill="#245D0D" />
+    <rect x="60" y="34" width="3" height="1" fill="#245D0D" />
+    <rect x="60" y="43" width="2" height="1" fill="#FFD11B" />
+    <rect x="20" y="48" width="6" height="3" fill="#082300" />
+    <rect x="58" y="48" width="6" height="3" fill="#082300" />
+    <rect x="25" y="39" width="32" height="9" fill="#0D5500" />
+    <rect x="19" y="42" width="3" height="2" fill="#D5FB19" />
+    <g id="vega-brand-mark" fill="#FFD11B" data-source="arcade-machine.png" data-source-rect="18 48 28 8" data-box="27 39 28 8">
+      <rect x="27" y="39" width="2" height="1" />
+      <rect x="32" y="39" width="2" height="1" />
+      <rect x="35" y="39" width="5" height="1" />
+      <rect x="42" y="39" width="5" height="1" />
+      <rect x="48" y="39" width="4" height="1" />
+      <rect x="27" y="40" width="2" height="1" />
+      <rect x="32" y="40" width="2" height="1" />
+      <rect x="35" y="40" width="5" height="1" />
+      <rect x="41" y="40" width="6" height="1" />
+      <rect x="48" y="40" width="4" height="1" />
+      <rect x="28" y="41" width="2" height="1" />
+      <rect x="32" y="41" width="2" height="1" />
+      <rect x="41" y="41" width="2" height="1" />
+      <rect x="48" y="41" width="2" height="1" />
+      <rect x="51" y="41" width="2" height="1" />
+      <rect x="28" y="42" width="2" height="1" />
+      <rect x="32" y="42" width="2" height="1" />
+      <rect x="35" y="42" width="3" height="1" />
+      <rect x="41" y="42" width="2" height="1" />
+      <rect x="44" y="42" width="3" height="1" />
+      <rect x="48" y="42" width="2" height="1" />
+      <rect x="51" y="42" width="2" height="1" />
+      <rect x="29" y="43" width="2" height="1" />
+      <rect x="32" y="43" width="2" height="1" />
+      <rect x="35" y="43" width="3" height="1" />
+      <rect x="41" y="43" width="2" height="1" />
+      <rect x="44" y="43" width="3" height="1" />
+      <rect x="48" y="43" width="6" height="1" />
+      <rect x="29" y="44" width="2" height="1" />
+      <rect x="32" y="44" width="2" height="1" />
+      <rect x="41" y="44" width="2" height="1" />
+      <rect x="45" y="44" width="2" height="1" />
+      <rect x="48" y="44" width="6" height="1" />
+      <rect x="30" y="45" width="4" height="1" />
+      <rect x="35" y="45" width="5" height="1" />
+      <rect x="41" y="45" width="6" height="1" />
+      <rect x="48" y="45" width="2" height="1" />
+      <rect x="53" y="45" width="2" height="1" />
+      <rect x="30" y="46" width="4" height="1" />
+      <rect x="35" y="46" width="5" height="1" />
+      <rect x="42" y="46" width="4" height="1" />
+      <rect x="48" y="46" width="2" height="1" />
+      <rect x="53" y="46" width="2" height="1" />
+    </g>
+  </g>
+  <g id="disc-console">
+    <g fill="#25272B">
+      <rect x="18" y="58" width="29" height="1" />
+      <rect x="17" y="59" width="32" height="1" />
+      <rect x="16" y="60" width="35" height="1" />
+      <rect x="16" y="61" width="38" height="1" />
+      <rect x="16" y="62" width="40" height="1" />
+      <rect x="16" y="63" width="41" height="2" />
+      <rect x="16" y="65" width="42" height="2" />
+      <rect x="17" y="67" width="41" height="2" />
+      <rect x="18" y="69" width="40" height="1" />
+      <rect x="20" y="70" width="38" height="1" />
+      <rect x="22" y="71" width="36" height="1" />
+      <rect x="25" y="72" width="25" height="1" />
+      <rect x="27" y="73" width="8" height="1" />
+    </g>
+    <g fill="#CACDCA">
+      <rect x="19" y="59" width="27" height="1" />
+      <rect x="18" y="60" width="30" height="1" />
+      <rect x="18" y="61" width="33" height="1" />
+      <rect x="19" y="62" width="34" height="1" />
+      <rect x="22" y="63" width="32" height="1" />
+      <rect x="24" y="64" width="30" height="1" />
+      <rect x="27" y="65" width="14" height="1" />
+    </g>
+    <g fill="#727980">
+      <rect x="18" y="63" width="1" height="1" />
+      <rect x="18" y="64" width="3" height="1" />
+      <rect x="18" y="65" width="6" height="1" />
+      <rect x="18" y="66" width="8" height="1" />
+      <rect x="18" y="67" width="9" height="1" />
+      <rect x="19" y="68" width="8" height="1" />
+      <rect x="21" y="69" width="6" height="1" />
+      <rect x="24" y="70" width="3" height="1" />
+      <rect x="26" y="71" width="1" height="1" />
+    </g>
+    <g fill="#CACDCA">
+      <rect x="49" y="65" width="7" height="1" />
+      <rect x="36" y="66" width="20" height="1" />
+      <rect x="29" y="67" width="27" height="4" />
+      <rect x="29" y="71" width="20" height="1" />
+      <rect x="29" y="72" width="7" height="1" />
+    </g>
+    <g fill="#727980">
+      <rect x="27" y="59" width="12" height="1" />
+      <rect x="25" y="60" width="17" height="1" />
+      <rect x="24" y="61" width="20" height="1" />
+      <rect x="24" y="62" width="21" height="2" />
+      <rect x="25" y="64" width="19" height="1" />
+      <rect x="27" y="65" width="16" height="1" />
+      <rect x="30" y="66" width="11" height="1" />
+    </g>
+    <g fill="#EEF0E9">
+      <rect x="28" y="60" width="11" height="1" />
+      <rect x="27" y="61" width="14" height="1" />
+      <rect x="26" y="62" width="17" height="1" />
+      <rect x="27" y="63" width="16" height="1" />
+      <rect x="29" y="64" width="13" height="1" />
+      <rect x="31" y="65" width="9" height="1" />
+    </g>
+    <rect x="30" y="61" width="8" height="1" fill="#CACDCA" />
+    <g fill="#96A582">
+      <rect x="21" y="62" width="3" height="1" />
+    </g>
+    <g fill="#EEF0E9">
+      <rect x="48" y="63" width="3" height="1" />
+    </g>
+    <rect x="30" y="70" width="8" height="1" fill="#25272B" />
+    <rect x="45" y="69" width="8" height="1" fill="#25272B" />
+    <rect x="39" y="71" width="2" height="1" fill="#727980" />
+  </g>
+  <g id="disc-cases">
+    <g fill="#25272B">
+      <rect x="14" y="78" width="12" height="1" />
+      <rect x="14" y="79" width="14" height="1" />
+      <rect x="14" y="80" width="16" height="1" />
+      <rect x="14" y="81" width="17" height="3" />
+      <rect x="15" y="84" width="16" height="1" />
+      <rect x="17" y="85" width="14" height="1" />
+      <rect x="19" y="86" width="12" height="1" />
+    </g>
+    <g fill="#CACDCA">
+      <rect x="16" y="79" width="9" height="1" />
+      <rect x="19" y="80" width="8" height="1" />
+    </g>
+    <rect x="20" y="82" width="10" height="2" fill="#EEF0E9" />
+    <rect x="20" y="85" width="10" height="1" fill="#CACDCA" />
+    <rect x="22" y="82" width="2" height="2" fill="#96A582" />
+  </g>
+  <g id="twin-grip-controller">
+    <rect x="42" y="72" width="1" height="6" fill="#25272B" />
+    <g fill="#25272B">
+      <rect x="38" y="77" width="6" height="1" />
+      <rect x="37" y="78" width="9" height="1" />
+      <rect x="52" y="78" width="6" height="1" />
+      <rect x="37" y="79" width="22" height="1" />
+      <rect x="36" y="80" width="24" height="1" />
+      <rect x="36" y="81" width="25" height="2" />
+      <rect x="36" y="83" width="26" height="1" />
+      <rect x="35" y="84" width="27" height="1" />
+      <rect x="35" y="85" width="9" height="1" />
+      <rect x="49" y="85" width="13" height="1" />
+      <rect x="35" y="86" width="8" height="1" />
+      <rect x="54" y="86" width="9" height="1" />
+      <rect x="36" y="87" width="6" height="1" />
+      <rect x="55" y="87" width="8" height="1" />
+      <rect x="37" y="88" width="4" height="1" />
+      <rect x="56" y="88" width="8" height="1" />
+      <rect x="57" y="89" width="6" height="1" />
+      <rect x="60" y="90" width="2" height="1" />
+    </g>
+    <g fill="#CACDCA">
+      <rect x="39" y="79" width="5" height="1" />
+      <rect x="38" y="80" width="7" height="1" />
+      <rect x="53" y="80" width="5" height="1" />
+      <rect x="38" y="81" width="21" height="1" />
+      <rect x="38" y="82" width="22" height="1" />
+      <rect x="37" y="83" width="6" height="1" />
+      <rect x="49" y="83" width="11" height="1" />
+      <rect x="37" y="84" width="5" height="1" />
+      <rect x="55" y="84" width="5" height="1" />
+      <rect x="37" y="85" width="4" height="1" />
+      <rect x="56" y="85" width="4" height="1" />
+      <rect x="38" y="86" width="2" height="1" />
+      <rect x="57" y="86" width="3" height="1" />
+      <rect x="58" y="87" width="3" height="1" />
+      <rect x="59" y="88" width="3" height="1" />
+    </g>
+    <rect x="40" y="80" width="2" height="5" fill="#25272B" />
+    <rect x="39" y="82" width="5" height="1" fill="#25272B" />
+    <rect x="47" y="82" width="2" height="1" fill="#727980" />
+    <rect x="51" y="82" width="2" height="1" fill="#727980" />
+    <rect x="55" y="80" width="2" height="2" fill="#879A71" />
+    <rect x="58" y="82" width="2" height="2" fill="#A87979" />
+    <rect x="53" y="82" width="2" height="2" fill="#727980" />
+    <rect x="56" y="84" width="2" height="2" fill="#8D789D" />
+  </g>
+</svg>

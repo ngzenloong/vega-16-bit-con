@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="148" height="136" viewBox="0 0 148 136" shape-rendering="crispEdges">
+  <title>Vega convention booth with a canopy, side wall, and registration counter</title>
+  <style>
+    svg{--ink:#0f3301;--roof:#ffd11b;--roof-top:#ffe16c;--roof-side:#bea01f;--wall:#eef0d8;--wall-side:#b9c69a;--frame:#647b4a;--counter:#e3dfb9;--counter-top:#fff4c7;--counter-side:#a5ac82;--paper:#fffaeb}
+  </style>
+  <g id="interior">
+    <path fill="var(--ink)" d="M0 35h128l20 10v91H20L0 126Z"/>
+    <path fill="var(--wall)" d="M4 39h124v77H4Z"/>
+    <path fill="var(--wall-side)" d="m4 39 16 8v85L4 124Z"/>
+    <path fill="var(--frame)" d="M20 47h4v79h-4Zm120 0h6v85h-6Z"/>
+    <path fill="var(--counter-side)" d="M24 112h112l8 10H24Z"/>
+    <path fill="var(--wall-side)" d="M24 50h112v4H24Z"/>
+  </g>
+  <g id="canopy">
+    <path fill="var(--ink)" d="M0 0h128l20 10v38H20L0 38Z"/>
+    <path fill="var(--roof-top)" d="M4 2h122l16 8H20Z"/>
+    <path fill="var(--roof-side)" d="m2 3 16 8v34L2 37Z"/>
+    <path fill="var(--roof)" d="M20 12h126v34H20Z"/>
+    <path fill="var(--paper)" d="M22 13h122v2H22Z"/>
+    <path fill="var(--frame)" d="M24 48h112v3H24Z"/>
+  </g>
+  <g id="counter">
+    <path fill="var(--ink)" d="M8 96h128l12 10v30H20L8 126Z"/>
+    <path fill="var(--counter-top)" d="M12 98h122l10 8H22Z"/>
+    <path fill="var(--counter-side)" d="m10 100 8 7v26l-8-8Z"/>
+    <path fill="var(--counter)" d="M20 108h126v26H20Z"/>
+    <path fill="var(--roof)" d="M20 108h126v4H20Z"/>
+    <path fill="var(--frame)" d="M20 132h126v2H20Z"/>
+    <path fill="var(--ink)" d="M82 117h30v3H82Z"/>
+    <path fill="var(--paper)" d="M119 99h13v6h-13Z"/>
+    <path fill="var(--roof-side)" d="M119 105h13v2h-13Z"/>
+    <path fill="var(--ink)" d="M138 114h3v3h-3Z"/>
+  </g>
+</svg>

@@ -1,0 +1,351 @@
+/* Conversation is a viewport state. Its geometry never depends on typing. */
+.conversation-dialog {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-paper);
+  box-shadow: none;
+  overflow: hidden;
+  pointer-events: none;
+  outline: none;
+}
+.conversation-dialog::backdrop {
+  background: var(--overlay-cinema);
+}
+.cinematic-top {
+  position: absolute;
+  inset: 0 0 auto;
+  height: min(7vh, 64px);
+  min-height: 48px;
+  background: var(--cinema-bg);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 28px;
+  transition: translate 200ms ease-out;
+  pointer-events: auto;
+}
+.cinematic-close {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font: 12px var(--font-mono);
+  padding: var(--space-3) 0;
+}
+.cinematic-close > span {
+  font-size: 26px;
+  line-height: 1;
+}
+.conversation-frame {
+  position: absolute;
+  inset: auto 0 0;
+  height: 236px;
+  padding: var(--space-6) var(--space-10)
+    max(var(--space-6), env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: 152px minmax(0, 1fr) 214px;
+  gap: var(--space-8);
+  align-items: center;
+  background: var(--cinema-bg);
+  pointer-events: auto;
+  transition: translate 200ms ease-out;
+}
+.dialogue-identity {
+  text-align: center;
+  align-self: center;
+}
+.dialogue-portrait {
+  display: block;
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  margin: 0 auto 2px;
+}
+.dialogue-identity h2 {
+  font: 28px/1 var(--font-display);
+  letter-spacing: 0;
+}
+.dialogue-identity p {
+  font: 10px/1.5 var(--font-mono);
+  color: var(--cinema-muted);
+  margin-top: 7px;
+}
+.dialogue-copy {
+  width: 100%;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  font: 21px/1.45 var(--font-body);
+  cursor: pointer;
+}
+.dialogue-text-stack {
+  display: grid;
+  width: 100%;
+}
+.dialogue-text-stack > span {
+  grid-area: 1/1;
+}
+.dialogue-text-measure,
+.dialogue-unrevealed {
+  visibility: hidden;
+}
+.dialogue-interaction {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+.dialogue-choice-slot {
+  height: 116px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+}
+.dialogue-choice-slot button {
+  min-height: 32px;
+  padding: 5px 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: left;
+  font: 12px/1.4 var(--font-mono);
+}
+.dialogue-choice-slot button > span:first-child {
+  display: inline-block;
+  flex: 0 0 10px;
+}
+.dialogue-choice-slot button[data-selected="true"] {
+  color: var(--yellow);
+}
+.dialogue-choice-slot button:hover {
+  color: var(--yellow);
+}
+.dialogue-interaction > p {
+  color: var(--cinema-muted);
+  font: 10px/1.8 var(--font-mono);
+}
+.dialogue-continue {
+  gap: var(--space-3) !important;
+}
+.conversation-dialog kbd {
+  font: inherit;
+  min-width: 24px;
+  display: inline-block;
+  border: 1px solid var(--cinema-keyline);
+  padding: 2px var(--space-1);
+  text-align: center;
+  color: var(--paper);
+}
+.conversation-dialog :focus-visible {
+  outline-color: var(--yellow);
+  outline-offset: 5px;
+}
+.conversation-dialog[data-closing="true"] .cinematic-top {
+  translate: 0 -100%;
+}
+.conversation-dialog[data-closing="true"] .conversation-frame {
+  translate: 0 100%;
+}
+@starting-style {
+  .conversation-dialog[open] .cinematic-top {
+    translate: 0 -100%;
+  }
+  .conversation-dialog[open] .conversation-frame {
+    translate: 0 100%;
+  }
+}
+.world-floor {
+  transition: scale 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.world-floor.is-conversation {
+  position: fixed;
+  inset: 0 0 auto;
+  width: 100vw;
+  height: calc(100dvh - var(--dialogue-bottom));
+  min-height: 0;
+  border: 0;
+  z-index: 35;
+}
+.world-stage[data-conversation="true"] {
+  overflow-anchor: none;
+}
+.world-floor.is-conversation .world-inner {
+  transform: translate3d(calc(-1 * var(--conversation-camera)), 0, 0)
+    scale(var(--scene-zoom, 1.06));
+  transform-origin: var(--conversation-anchor) calc(100% - 120px);
+  transition: transform 200ms ease-out;
+}
+.world-floor.is-conversation .event-board,
+.world-floor.is-conversation .schedule-board,
+.world-floor.is-conversation .hall-controls {
+  visibility: hidden;
+}
+
+.world-stage[data-conversation="true"] .world-prompt,
+.world-stage[data-conversation="true"] .player-name,
+.world-stage[data-conversation="true"] .npc-focus-name {
+  visibility: hidden;
+}
+
+.game-dialog:focus {
+  outline: none;
+}
+.game-top kbd,
+.game-message kbd {
+  font: 10px var(--font-mono);
+  border: 1px solid currentColor;
+  padding: 1px var(--space-1);
+  opacity: 0.75;
+}
+.game-message .game-menu-hint {
+  font: 10px/1.8 var(--font-mono);
+  margin-top: var(--space-5);
+}
+.desktop-game-help {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+.input-feedback {
+  display: flex;
+  gap: 5px;
+}
+.input-feedback kbd {
+  padding: 3px 7px;
+  min-width: 25px;
+  border: 1px solid var(--color-soft-ink);
+  color: var(--paper);
+  font: 11px var(--font-mono);
+  transition:
+    background 70ms,
+    color 70ms,
+    translate 70ms;
+}
+.input-feedback kbd[data-pressed="true"] {
+  background: var(--yellow);
+  color: var(--ink);
+  translate: 0 2px;
+}
+@media (min-width: 1200px) {
+  .conversation-frame {
+    padding-inline: max(var(--space-12), calc((100vw - 1300px) / 2));
+    grid-template-columns: 170px minmax(0, 1fr) 230px;
+    gap: 44px;
+  }
+  .dialogue-copy {
+    font-size: 24px;
+  }
+}
+@media (max-width: 700px) {
+  .cinematic-top {
+    padding-inline: 18px;
+    height: 48px;
+  }
+  .cinematic-close {
+    font-size: 10px;
+    gap: 10px;
+  }
+  .cinematic-close > span {
+    font-size: 24px;
+  }
+  .conversation-frame {
+    height: 320px;
+    padding: var(--space-4) 18px
+      max(var(--space-4), env(safe-area-inset-bottom));
+    grid-template-columns: 70px minmax(0, 1fr);
+    grid-template-rows: 150px 1fr;
+    column-gap: var(--space-4);
+    row-gap: 6px;
+    align-items: start;
+  }
+  .dialogue-identity {
+    align-self: start;
+  }
+  .dialogue-portrait {
+    width: 78px;
+    height: 78px;
+    max-width: none;
+    margin-left: -var(--space-1);
+  }
+  .dialogue-identity h2 {
+    font-size: 24px;
+  }
+  .dialogue-identity p {
+    font-size: 10px;
+    line-height: 1.4;
+    margin-top: 7px;
+  }
+  .dialogue-copy {
+    font-size: 15px;
+    line-height: 1.5;
+    align-items: center;
+  }
+  .dialogue-interaction {
+    grid-column: 1/-1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .dialogue-choice-slot {
+    height: 100%;
+    flex: 1;
+    gap: 1px;
+  }
+  .dialogue-choice-slot button {
+    font-size: 11px;
+    min-height: 28px;
+    padding: 3px 0;
+  }
+  .dialogue-interaction > p {
+    font-size: 10px;
+    line-height: 1.8;
+    flex: 0 0 130px;
+  }
+  .game-top kbd {
+    display: none;
+  }
+  .desktop-game-help {
+    display: none;
+  }
+  .game-message .game-menu-hint {
+    font-size: 9px;
+    margin-top: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .world-floor,
+  .cinematic-top,
+  .conversation-frame,
+  .input-feedback kbd {
+    transition: none;
+  }
+  .world-floor.is-conversation {
+    --scene-zoom: 1;
+  }
+  .world-floor.is-conversation .world-inner {
+    transition: none;
+  }
+}

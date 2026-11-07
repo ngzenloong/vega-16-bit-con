@@ -1,0 +1,79 @@
+export type GameId = "breaker" | "runner" | "kart" | "beat";
+export type OutfitPart = "hat" | "glasses" | "shirt";
+export interface Appearance {
+  hat: number;
+  glasses: number;
+  shirt: number;
+}
+export interface Player {
+  name: string;
+  appearance: Appearance;
+  interests: number[];
+}
+export interface GameResult {
+  id: GameId;
+  score: number;
+  won: boolean;
+  detail: string;
+}
+export type Scores = Partial<Record<GameId, number>>;
+export const DEFAULT_APPEARANCE: Appearance = { hat: 0, glasses: 0, shirt: 0 };
+export const GAMES: {
+  id: GameId;
+  machine: string;
+  name: string;
+  instructions: string;
+  controls: string;
+  action: string;
+  secondary: string;
+}[] = [
+  {
+    id: "breaker",
+    machine: "16-BIT ARCADE / SYSTEM 16",
+    name: "Daisy Breaker",
+    instructions:
+      "Break all 24 Legacy Stack blocks with three balls. The 60-second timer runs while your ball is in play.",
+    controls: "← → Move · Space Launch",
+    action: "LAUNCH",
+    secondary: "PAUSE",
+  },
+  {
+    id: "runner",
+    machine: "16-BIT / MEGA DRIVE",
+    name: "Cartridge Run",
+    instructions:
+      "Bring five query cartridges to Booth 630 in 60 seconds. You have three lives. Stomp a SIEM bot for a Post-SIEM badge and 50 points. The halfway flag saves a checkpoint.",
+    controls: "← → Move · Space Jump",
+    action: "JUMP",
+    secondary: "PAUSE",
+  },
+  {
+    id: "kart",
+    machine: "16-BIT / SNES",
+    name: "Sam Circuit",
+    instructions:
+      "Drive the PostSIEM.com Fiat past three Legacy Stack rivals. Finish in the top three within 60 seconds. Catch the yellow boosts and brake before bends.",
+    controls: "← → Steer · ↑ / Space Gas · ↓ Brake",
+    action: "GAS",
+    secondary: "BRAKE",
+  },
+  {
+    id: "beat",
+    machine: "16-BIT / MEGA DRIVE + MEGA-CD",
+    name: "Sam’s Beat",
+    instructions:
+      "Press each direction as its arrow reaches the target. Reach 70% accuracy for a Post-SIEM clear. Misses and extra taps reduce your grade.",
+    controls: "← ↓ ↑ → or A S W D · Follow the visual pulse",
+    action: "PAUSE",
+    secondary: "PAUSE",
+  },
+];
+export const SESSIONS = [
+  { time: "10:00 AM", title: "The Future of Retro", kind: "Opening keynote" },
+  {
+    time: "2:00 PM",
+    title: "Pixel Art in the Age of AI",
+    kind: "Panel discussion",
+  },
+  { time: "6:00 PM", title: "Vega After Party", kind: "Booth 630" },
+];

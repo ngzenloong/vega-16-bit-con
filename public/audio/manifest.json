@@ -1,0 +1,127 @@
+{
+  "provenance": "Composer-made recording by congusbongus, reused under CC0 1.0. The assistant selected excerpts, adjusted tempo/EQ/gain, and prepared loop boundaries. No AI music-generation provider was used.",
+  "preparationSource": "tools/audio/prepare.py",
+  "sourcePage": "https://opengameart.org/content/welcome-to-the-item-shop",
+  "sourceDownload": "https://opengameart.org/sites/default/files/welcome_to_the_item_shop_1.ogg",
+  "sourceSha256": "a3b783d367a7d1299bc3c34d7d7e1e7a7e23c3e91a89cf63223c6a6af82efd03",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "instrumentation": "Author-created BambooTracker/YM2608 FM arrangement with flute, bells, vibraphone, soft brass, choir and plucked accompaniment.",
+  "playback": "Decode once with Web Audio, set loop=true, loopStart=0, and loopEnd to the selected track duration. The beat track is exactly 32 seconds at 120 BPM; beat n is startTime + n * 0.5 seconds.",
+  "tracks": {
+    "hall": {
+      "title": "Welcome to the Item Shop",
+      "artist": "congusbongus",
+      "purpose": "Convention hall background",
+      "files": {
+        "ogg": "/audio/hall.ogg",
+        "wav": "/audio/hall.wav"
+      },
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourcePage": "https://opengameart.org/content/welcome-to-the-item-shop",
+      "bpm": 115,
+      "sourceBpm": 115,
+      "timeSignature": "4/4",
+      "bars": 32,
+      "beats": 128,
+      "durationSeconds": 66.78349206349206,
+      "sampleRateHz": 44100,
+      "sampleFrames": 2945152,
+      "channels": 2,
+      "beatOffsetSeconds": 0,
+      "secondsPerBeat": 0.5217391304347826,
+      "loop": {
+        "enabled": true,
+        "startSeconds": 0,
+        "endSeconds": 66.78349206349206
+      },
+      "edit": {
+        "sourceStartSeconds": 4.173913043478261,
+        "sourceDurationSeconds": 66.78260869565217,
+        "tempoRatio": 1.0,
+        "preservePitch": true,
+        "seamBlendSeconds": 0.025,
+        "gainDb": -11.8,
+        "highShelfDb": -2.5
+      },
+      "levels": {
+        "sampleFrames": 2945152,
+        "peakDbfs": -10.679,
+        "rmsDbfs": -25.629,
+        "clippedSamples": 0,
+        "boundaryStepLinear": [
+          0.0003052,
+          0.0002747
+        ],
+        "integratedLufs": -23.5,
+        "loudnessRangeLu": 3.8,
+        "truePeakDbfs": -10.7,
+        "oggPeakDbfs": -10.575,
+        "oggDecodedFrames": 2945152
+      },
+      "bytes": {
+        "wav": 11780686,
+        "ogg": 522607
+      },
+      "wavSha256": "a0b5cf0c344f31e20a8b45ebf7e4e118e56bb9e44dc3d1da3847d211de3baf02"
+    },
+    "beat": {
+      "title": "Welcome to the Item Shop",
+      "artist": "congusbongus",
+      "purpose": "Rhythm-game music",
+      "files": {
+        "ogg": "/audio/beat.ogg",
+        "wav": "/audio/beat.wav"
+      },
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourcePage": "https://opengameart.org/content/welcome-to-the-item-shop",
+      "bpm": 120,
+      "sourceBpm": 115,
+      "timeSignature": "4/4",
+      "bars": 16,
+      "beats": 64,
+      "durationSeconds": 32.0,
+      "sampleRateHz": 44100,
+      "sampleFrames": 1411200,
+      "channels": 2,
+      "beatOffsetSeconds": 0,
+      "secondsPerBeat": 0.5,
+      "loop": {
+        "enabled": true,
+        "startSeconds": 0,
+        "endSeconds": 32.0
+      },
+      "edit": {
+        "sourceStartSeconds": 4.173913043478261,
+        "sourceDurationSeconds": 33.391304347826086,
+        "tempoRatio": 1.0434782608695652,
+        "preservePitch": true,
+        "seamBlendSeconds": 0.025,
+        "gainDb": -9.5,
+        "highShelfDb": -2.5
+      },
+      "levels": {
+        "sampleFrames": 1411200,
+        "peakDbfs": -9.409,
+        "rmsDbfs": -23.691,
+        "clippedSamples": 0,
+        "boundaryStepLinear": [
+          9.16e-05,
+          0.0001831
+        ],
+        "integratedLufs": -21.5,
+        "loudnessRangeLu": 2.3,
+        "truePeakDbfs": -9.4,
+        "oggPeakDbfs": -9.31,
+        "oggDecodedFrames": 1411200
+      },
+      "bytes": {
+        "wav": 5644878,
+        "ogg": 243953
+      },
+      "wavSha256": "862c5679da3a25d47898c6873564d5ca85698392c15dce6f6c9a00a0dc362a61"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="208" height="144" viewBox="0 0 208 144" shape-rendering="crispEdges" role="img" aria-label="Vega lift recess with transparent surroundings for a continuous room wall and floor" data-door-sheet-box="64 15 91 122" data-threshold-y="137" data-walk-ground-y="144" data-transparent-surround="true">
+  <title>Transparent recessed Vega lift bay</title>
+  <metadata>Original elevator-floor-1.png embedded unchanged at x64 y15. Overlay original 91x122 elevator-doors frames at the same inset. Threshold y137; foreground walking line y144. Surrounding wall, yellow baseboard and floor are supplied continuously by the host scene; this asset paints no outer wall, baseboard or floor apron.</metadata>
+  <g id="wall-returns" transform="translate(0 5)">
+    <g fill="#CDC5B5">
+      <rect x="53" y="20" width="1" height="1" />
+      <rect x="53" y="21" width="3" height="1" />
+      <rect x="53" y="22" width="5" height="1" />
+      <rect x="53" y="23" width="8" height="1" />
+      <rect x="53" y="24" width="10" height="1" />
+      <rect x="53" y="25" width="11" height="102" />
+      <rect x="54" y="127" width="10" height="1" />
+      <rect x="56" y="128" width="8" height="1" />
+      <rect x="58" y="129" width="6" height="1" />
+      <rect x="61" y="130" width="3" height="1" />
+      <rect x="63" y="131" width="1" height="1" />
+    </g>
+    <g fill="#E6D8C0">
+      <rect x="54" y="20" width="84" height="1" />
+      <rect x="56" y="21" width="84" height="1" />
+      <rect x="58" y="22" width="84" height="1" />
+      <rect x="61" y="23" width="84" height="1" />
+      <rect x="63" y="24" width="84" height="1" />
+    </g>
+    <rect x="56" y="23" width="2" height="103" fill="#FFF8ED" />
+    <rect x="64" y="26" width="78" height="106" fill="#767272" />
+  </g>
+  <image id="original-lift-frame" x="64" y="15" width="91" height="122" preserveAspectRatio="xMinYMin meet" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFsAAAB6CAYAAADQxi8KAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAC+klEQVR42u3dsW3cMBTGcS+QATKGR7ghskIGcOEVnD1cpklnIGUAly4NNy6MBAECZIEAKWRcYeAgUyeRIr/3yPc38DU2Leh+lqlHiaIupmm6qJXrq6vJW2p+vr2pDv3z+dlVPIE3gT4cDi7iDbw6dg2kx/8fq4KHw94KeGyX2/Y04bHPYdT4w4CdAbKnG1nbLtiV++xz7TlB7jhSOUFS+jGoGXJQw3DdAJtkYns8Okf5j1hE/np7Gzot0N9BR0dOoTfBBrctONhKbKB14JuxR68+XGBHK/nMsE934uXpyXWO+/hwf1+ULeASbO/INbDn4HLsnqBrYy95gF0Je+3obo7dQ4bB9nZtOnWtGmywx+lGhsT+9nf6XJLf/6aX3GzdNtgiaLCF0GALocEWQofHVkKHxlZDh8W2gA6JbQUdDtsSOhS2NXQYbA/QIbC9QA+P7Ql6aGxv0Mftgy2CBlsIDbYQOjy2Ejo0tho6bDViAR0S2wo6HLYldChsa+gwJ0gP0CGwvUAPj+0Jemhsb9BgC6HBFkKDLYQGWwgNthAabCE0s1iF0GALocEWQoMthAZbCD00Ns9BprFLl63jCd9M7JKV4t5+F+xC7JI1pliVoQL2liWQVrH37nzrWKw3Mv/5udWV5+1Y3GUHdgr6+P0U+BDdSCpW2Kfts7F7/SpF34OdOilmYXuvRlLZgw62EL1Gn710klzF/nF312VK0U2rkV5Tik6dndHfztFy0U1HkL1il6KbHtmng4b5iG0pVu229MU56KYjyJ6xt6KbViOjYa+hm9bZo2IvoYPdEHtpOWeTayNRsF1c9QObasQVNnV2j/cgwT4/laHq3XWwlyfpVJ83ArbR2zzABhtssMEGG2ywwQYbbLDBBnucSTq8NU/4yIdiynAz7J7m96Vu3ILdEPtt30vR6bN3vDM9F90Ue/py2VX2ooMtRAdbiA62EB1sI3SwG6ODLUQHW4gOthE62CNj//n0IVRMsX99vwkVGXYq0bDn4EsTJEvzClKE8eCU7QcBAAAAAElFTkSuQmCC" style="image-rendering:pixelated" />
+</svg>

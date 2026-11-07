@@ -1,0 +1,13 @@
+Music: Welcome to the Item Shop
+Composer: congusbongus
+Source: https://opengameart.org/content/welcome-to-the-item-shop
+License: CC0 1.0 Universal
+License URL: https://creativecommons.org/publicdomain/zero/1.0/
+
+Used with appreciation under the composer's public-domain dedication.
+Edits for this app: selected 32-bar and 16-bar excerpts, softened high
+frequencies, reduced the overall level, prepared loop boundaries, and changed
+the rhythm-game excerpt from 115 to 120 BPM while preserving pitch.
+
+These are edits of a composer-made recording. No AI music-generation provider
+was used. The composer does not endorse this app.

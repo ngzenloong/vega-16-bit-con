@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.next-export/
+.agents/
+.codex/
+out/
+*.tsbuildinfo
+.env*
+!.env.example
+.DS_Store

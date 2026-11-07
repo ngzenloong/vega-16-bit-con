@@ -1,0 +1,944 @@
+/* Shared controls and input-mode layouts. These rules also apply after rotation. */
+html,
+body {
+  overflow-x: clip;
+}
+h1,
+h2,
+h3 {
+  font-style: normal;
+  min-width: 0;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+p {
+  text-wrap: pretty;
+}
+:focus-visible {
+  outline: 2px solid var(--leaf);
+  outline-offset: 3px;
+}
+.site-footer :focus-visible {
+  outline-color: var(--paper);
+}
+.pixel-button,
+.icon-button {
+  min-height: var(--control-hit);
+  transition-property: translate, box-shadow, background-color;
+}
+.icon-button {
+  width: var(--control-hit);
+  min-width: var(--control-hit);
+  height: var(--control-hit);
+  padding: var(--space-2);
+  font-size: 0;
+  flex: none;
+}
+.icon-button:disabled:hover {
+  background: var(--white);
+}
+.icon-button svg {
+  display: block;
+  flex: none;
+}
+.window-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.cinematic-top > .sound-toggle {
+  margin-right: auto;
+  color: var(--paper);
+  background: var(--cinema-bg);
+}
+.site-header nav > button:not(.pixel-button),
+.motion-toggle {
+  min-height: var(--control-hit);
+}
+.motion-toggle {
+  font: var(--text-sm) / 1.4 var(--font-mono);
+}
+.motion-symbol {
+  display: none;
+}
+.site-header .sound-toggle {
+  width: var(--control-hit);
+  min-width: var(--control-hit);
+}
+.sound-toggle {
+  position: relative;
+}
+.sound-toggle[aria-busy="true"] {
+  background: var(--yellow);
+  color: var(--ink);
+}
+.sound-error-mark {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  background: var(--yellow);
+  color: var(--ink);
+  font: 12px/1 var(--font-mono);
+  padding: 1px 3px;
+}
+.game-audio-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 4px var(--space-3);
+  background: var(--paper);
+  color: var(--ink);
+  font: 12px/1.4 var(--font-body);
+}
+.game-audio-status button {
+  flex: none;
+  min-height: var(--control-hit);
+}
+.site-header > a {
+  display: flex;
+  align-items: center;
+  min-height: var(--control-hit);
+  flex: none;
+}
+@media (max-width: 340px) {
+  .site-header > a img {
+    width: 48px;
+  }
+}
+.nav-narrow {
+  display: none;
+}
+.global-notice {
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  background: var(--yellow);
+  font: var(--text-sm) / 1.5 var(--font-body);
+}
+.world-stage[data-travelling="true"] .world-player {
+  visibility: hidden !important;
+}
+.world-stage[data-travelling="true"] .world-lift .sprite {
+  background-position: 0 0;
+}
+.world-stage[data-navigating="true"] [data-target] {
+  cursor: wait;
+  opacity: 1;
+}
+.world-floor .world-prompt {
+  font-family: var(--font-mono);
+}
+.attract-screen {
+  clip-path: polygon(
+    2px 0,
+    calc(100% - 2px) 0,
+    calc(100% - 2px) 2px,
+    100% 2px,
+    100% calc(100% - 2px),
+    calc(100% - 2px) calc(100% - 2px),
+    calc(100% - 2px) 100%,
+    2px 100%,
+    2px calc(100% - 2px),
+    0 calc(100% - 2px),
+    0 2px,
+    2px 2px
+  );
+}
+.attract-screen canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+.hero-explore {
+  display: none;
+}
+.handheld-top {
+  display: none;
+}
+.is-handheld {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--handheld-shell);
+  padding: 0 var(--space-3) env(safe-area-inset-bottom);
+}
+.is-handheld .handheld-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  flex-shrink: 0;
+  font: 13px/1.4 var(--font-mono);
+}
+.is-handheld .world-floor {
+  display: none;
+  flex: 1;
+  height: auto;
+  min-height: 0;
+  border: 4px solid var(--handheld-frame);
+}
+.is-handheld .world-floor[data-current="true"] {
+  display: block;
+}
+.is-handheld .event-board,
+.is-handheld .hall-controls {
+  display: none;
+}
+.is-handheld .venue-sign {
+  top: 14px;
+}
+.is-handheld .steel-roof {
+  top: 0;
+}
+.is-handheld .service-wall {
+  top: 20px;
+}
+.is-handheld .schedule-board {
+  top: 65px;
+  width: 1000px;
+  max-width: none;
+}
+.is-handheld .schedule-board h2 {
+  font-size: 32px;
+}
+.is-handheld .schedule-board > p {
+  display: none;
+}
+.is-handheld .event-tickets {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: var(--space-4);
+}
+.is-handheld .event-ticket {
+  min-height: 190px;
+}
+.is-handheld .handheld-controls {
+  flex-shrink: 0;
+  min-height: 185px;
+  padding: 15px var(--space-2) var(--space-3);
+}
+.handheld-active .motion-toggle {
+  display: none;
+}
+.ticket-action {
+  min-height: var(--control-hit);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+.ticket-action[aria-pressed="true"] {
+  font-weight: 600;
+}
+.registration-dialog .window-title .icon-button {
+  width: var(--control-hit);
+  height: var(--control-hit);
+  min-width: var(--control-hit);
+  min-height: var(--control-hit);
+  font-size: 0;
+}
+.registration-preview {
+  min-width: 0;
+}
+.look-status {
+  min-height: 20px;
+  margin-top: var(--space-3);
+  font: var(--text-sm) / 1.5 var(--font-body);
+}
+.outfit-options .outfit-all {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.outfit-options .outfit-cycle {
+  display: none;
+}
+.outfit-option {
+  min-height: var(--control-hit);
+  font: var(--text-sm) / 1.4 var(--font-mono);
+}
+.form-note {
+  font: var(--text-sm) / 1.5 var(--font-body);
+}
+.dialogue-choice-slot {
+  height: 132px;
+  gap: 0;
+}
+.dialogue-choice-slot button {
+  min-height: var(--control-hit);
+  font-size: var(--text-sm);
+}
+.cinematic-close {
+  min-height: var(--control-hit);
+}
+.conversation-dialog :focus-visible,
+.game-dialog :focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 3px;
+}
+.game-top .icon-button {
+  min-width: var(--control-hit-desktop);
+  min-height: var(--control-hit-desktop);
+  width: var(--control-hit-desktop);
+  height: var(--control-hit-desktop);
+  font-size: 0;
+}
+.game-message {
+  max-height: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.menu-actions {
+  margin-top: var(--space-5);
+}
+.game-message .best-score {
+  font: 18px / 1.5 var(--font-game);
+  margin-top: var(--space-3);
+}
+.game-message .audio-error {
+  font: var(--text-sm) / 1.5 var(--font-body);
+  margin-top: var(--space-3);
+}
+.timing-settings {
+  text-align: left;
+  border-top: 1px solid var(--line);
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  font: var(--text-sm) / 1.5 var(--font-mono);
+}
+.timing-settings summary {
+  cursor: pointer;
+  min-height: var(--control-hit);
+  display: flex;
+  align-items: center;
+}
+.timing-settings label {
+  display: grid;
+  gap: var(--space-2);
+}
+.timing-settings input {
+  width: 100%;
+  height: var(--control-hit);
+}
+.timing-settings p {
+  font-size: var(--text-xs);
+  margin-top: var(--space-2);
+}
+.game-dialog.is-touch {
+  background: var(--handheld-shell);
+}
+.game-dialog.is-touch .game-shell {
+  padding: 0 var(--space-3);
+  color: var(--ink);
+}
+.game-dialog.is-touch .game-top {
+  padding: 6px 0;
+  min-height: 56px;
+  gap: var(--space-2);
+  background: transparent;
+  border: 0;
+}
+.game-dialog.is-touch .game-top > .pixel-button {
+  display: none;
+}
+.game-dialog.is-touch .game-top h2 {
+  font-size: clamp(18px, 5.5vw, 24px);
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.game-dialog.is-touch .game-top > div {
+  gap: var(--space-1);
+}
+.game-dialog.is-touch .game-top .icon-button {
+  display: grid;
+  width: var(--control-hit);
+  height: var(--control-hit);
+  min-width: var(--control-hit);
+  min-height: var(--control-hit);
+  color: var(--ink);
+  border-color: var(--ink);
+  background: var(--paper);
+}
+.game-dialog.is-touch .game-screen {
+  flex: 1;
+  min-height: 0;
+  background: var(--ink);
+  border: 4px solid var(--handheld-frame);
+}
+.game-dialog.is-touch .game-hud {
+  padding: var(--space-2) 6px;
+  font: 18px / 1.4 var(--font-game);
+  background: transparent;
+  color: var(--ink);
+}
+.game-dialog.is-touch .game-hud span:nth-child(2) {
+  font-size: 16px;
+  max-width: 50%;
+}
+.game-dialog.is-touch .game-mobile-controls {
+  display: block;
+  flex-shrink: 0;
+}
+.game-dialog.is-touch .handheld-controls {
+  min-height: 185px;
+  padding: 10px var(--space-2) var(--space-4);
+}
+.game-dialog.is-touch .desktop-game-help {
+  display: none;
+}
+.game-dialog.is-touch .game-overlay {
+  padding: var(--space-3);
+}
+.game-dialog.is-touch .game-message {
+  padding: var(--space-5) var(--space-4);
+}
+.game-dialog.is-touch .game-message h3 {
+  font-size: 32px;
+}
+.game-dialog.is-touch .game-message p {
+  font-size: 13px;
+}
+.game-dialog.is-touch .game-message .control-legend {
+  font: var(--text-sm) / 1.7 var(--font-mono);
+}
+.game-dialog.is-touch .game-message .pixel-button {
+  font-size: var(--text-sm);
+  min-height: var(--control-hit);
+}
+@media (min-width: 701px) and (max-height: 820px) {
+  .world-stage {
+    --floor-height: clamp(640px, calc(100svh - 76px), 920px);
+  }
+  .event-board {
+    top: 86px;
+    width: min(760px, calc(100vw - 64px));
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    column-gap: 24px;
+    padding: 18px 24px;
+    text-align: left;
+  }
+  .event-board h1 {
+    font-size: 64px;
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .event-board p {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 13px;
+    margin: 8px 0 0;
+    line-height: 1.4;
+  }
+  .event-date {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    text-align: center;
+    margin: 0 0 12px;
+  }
+  .event-board .button-row {
+    grid-column: 2;
+    grid-row: 2;
+    gap: 8px;
+    align-self: start;
+    flex-wrap: nowrap;
+  }
+  .event-board .pixel-button {
+    font-size: 11px;
+    padding: 8px 12px;
+  }
+}
+@media (max-width: 700px) {
+  .site-header {
+    gap: var(--space-2);
+  }
+  .site-header nav {
+    gap: var(--space-2);
+  }
+  .site-header .sound-toggle {
+    min-width: var(--control-hit);
+    width: var(--control-hit);
+  }
+  .motion-toggle {
+    min-height: var(--control-hit);
+    font: var(--text-xs) / 1.4 var(--font-mono);
+    position: static;
+    padding: var(--space-2);
+    width: var(--control-hit);
+    background: transparent;
+    color: var(--ink);
+    border: 0;
+    box-shadow: none;
+  }
+  .motion-label {
+    display: none;
+  }
+  .motion-symbol {
+    display: grid;
+    place-items: center;
+  }
+  .hero-explore {
+    display: inline-flex;
+  }
+  .event-board .lineup-link {
+    display: none;
+  }
+  .social-floor {
+    height: 1120px;
+  }
+  .event-tickets {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .event-ticket {
+    min-height: 180px;
+  }
+  .schedule-board > p {
+    font-size: 13px;
+  }
+  .schedule-board small {
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .hall-controls {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding-inline: var(--space-3);
+  }
+  .hall-controls .text-link {
+    min-height: var(--control-hit);
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .registration-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .registration-preview .player-pass {
+    margin: auto;
+  }
+  .outfit-options .outfit-all {
+    display: none;
+  }
+  .outfit-options .outfit-cycle {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    gap: var(--space-2);
+    align-items: center;
+    text-align: center;
+    font: var(--text-control) / 1.4 var(--font-mono);
+  }
+  .outfit-cycle button {
+    min-height: var(--control-hit);
+    border: 1px solid var(--ink);
+    background: var(--white);
+    font: 18px var(--font-mono);
+  }
+  .outfit-cycle button:active {
+    background: var(--yellow);
+  }
+  .conversation-frame {
+    height: 352px;
+    grid-template-rows: 136px 1fr;
+    row-gap: var(--space-2);
+  }
+  .dialogue-interaction {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-1);
+  }
+  .dialogue-choice-slot {
+    height: 132px;
+    flex: 1;
+    gap: 0;
+  }
+  .dialogue-choice-slot button {
+    min-height: 44px;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  .dialogue-interaction > p {
+    flex: none;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+  .dialogue-interaction > p br {
+    display: none;
+  }
+  .dialogue-identity p {
+    font-size: 10px;
+  }
+  .dialogue-copy {
+    font-size: 15px;
+  }
+}
+@media (max-width: 380px) {
+  .site-header {
+    padding-inline: 12px;
+    gap: 8px;
+  }
+  .site-header img {
+    width: 64px;
+  }
+  .site-header nav {
+    gap: 6px;
+  }
+  .site-header nav > button:not(.pixel-button) {
+    font-size: 12px;
+  }
+  .site-header .pixel-button {
+    font-size: 12px;
+    padding-inline: 10px;
+  }
+  .nav-wide {
+    display: none;
+  }
+  .nav-narrow {
+    display: inline;
+  }
+}
+@media (max-height: 600px) and (min-aspect-ratio: 1/1) {
+  .is-handheld {
+    padding-inline: 148px;
+    padding-bottom: 8px;
+  }
+  .is-handheld .handheld-top {
+    margin-inline: -136px;
+  }
+  .is-handheld .handheld-controls {
+    position: absolute;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    left: 8px;
+    right: 8px;
+    background: transparent;
+    pointer-events: none;
+    min-height: 0;
+    padding: 0;
+    z-index: 20;
+  }
+  .is-handheld .handheld-controls button {
+    pointer-events: auto;
+  }
+  .is-handheld .handheld-controls .dpad,
+  .is-handheld .ab-controls {
+    scale: 1;
+  }
+  .is-handheld .world-inner {
+    translate: 0 44px;
+  }
+  .is-handheld .venue-sign,
+  .is-handheld .steel-roof {
+    display: none;
+  }
+  .is-handheld .world-prompt:not([hidden]) {
+    top: 12px;
+    bottom: auto;
+  }
+  .game-dialog.is-touch .game-mobile-controls {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 12px;
+    pointer-events: none;
+  }
+  .game-dialog.is-touch .handheld-controls {
+    background: transparent;
+    pointer-events: none;
+    min-height: 0;
+    padding: 0;
+  }
+  .game-dialog.is-touch .handheld-controls button {
+    pointer-events: auto;
+  }
+  .game-dialog.is-touch .dpad,
+  .game-dialog.is-touch .ab-controls {
+    scale: 1;
+  }
+  .game-dialog.is-touch .game-screen {
+    margin-inline: 142px;
+  }
+  .game-dialog.is-touch .game-hud {
+    padding-inline: 148px;
+  }
+}
+@media (max-height: 600px) and (max-aspect-ratio: 1/1) {
+  .is-handheld .handheld-controls,
+  .game-dialog.is-touch .handheld-controls {
+    min-height: 160px;
+    padding-block: 8px;
+  }
+  .is-handheld .world-inner {
+    translate: 0 24px;
+  }
+  .is-handheld .venue-sign,
+  .is-handheld .steel-roof {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .world-lift .sprite,
+  .booth-entry-light {
+    transition: none;
+  }
+  .world-floor.is-conversation .world-inner {
+    transition: none;
+  }
+}
+.world-floor[data-live="false"] .sprite-animated,
+.world-floor[data-live="false"] .sky-cloud {
+  animation-play-state: paused;
+}
+.world-stage[data-control="manual"] .world-player .sprite-animated {
+  animation-play-state: running;
+}
+.is-handheld .world-floor.is-conversation {
+  display: block;
+  position: fixed;
+  inset: 0 0 auto;
+  height: calc(100dvh - var(--dialogue-bottom));
+  width: 100%;
+  min-height: 0;
+  border: 0;
+  flex: none;
+}
+@media (max-height: 600px) {
+  .world-floor.is-conversation .world-inner {
+    translate: 0 70px;
+  }
+}
+@media (min-width: 701px) and (max-height: 600px) {
+  .conversation-frame {
+    height: 180px;
+    padding: 18px 24px;
+    grid-template-columns: 100px minmax(0, 1fr) 210px;
+    gap: 24px;
+  }
+  .dialogue-portrait {
+    width: 80px;
+    height: 80px;
+  }
+  .dialogue-identity h2 {
+    font-size: 24px;
+  }
+  .dialogue-copy {
+    font-size: 17px;
+  }
+  .dialogue-choice-slot {
+    height: 132px;
+  }
+  .dialogue-interaction {
+    gap: 0;
+  }
+  .dialogue-interaction > p {
+    font-size: 9px;
+  }
+}
+.arcade-brand-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.game-dialog {
+  --game-accent: var(--yellow);
+  --game-chrome: var(--ink);
+}
+.game-breaker {
+  --game-accent: var(--color-orange);
+  --game-chrome: var(--color-orange);
+}
+.game-runner {
+  --game-accent: var(--color-lime);
+  --game-chrome: var(--leaf);
+}
+.game-kart {
+  --game-accent: var(--yellow);
+  --game-chrome: var(--yellow);
+}
+.game-beat {
+  --game-accent: var(--color-lime);
+  --game-chrome: var(--cinema-bg);
+}
+.game-top,
+.game-hud {
+  background: var(--game-chrome) !important;
+}
+.game-breaker .game-top,
+.game-breaker .game-hud,
+.game-kart .game-top,
+.game-kart .game-hud {
+  color: var(--ink);
+}
+.game-breaker .game-top .pixel-button,
+.game-breaker .game-top .icon-button,
+.game-kart .game-top .pixel-button,
+.game-kart .game-top .icon-button {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.game-message {
+  box-shadow: 4px 4px 0 var(--game-accent);
+}
+.game-dialog .pixel-button.primary {
+  background: var(--game-accent);
+}
+.game-message p {
+  font: 20px/1.3 var(--font-game);
+}
+.game-message h3 {
+  font-family: var(--font-game);
+}
+.game-message .pixel-button {
+  font: 18px/1.25 var(--font-game);
+}
+.game-message .control-legend,
+.game-message .game-menu-hint {
+  font: 12px/1.7 var(--font-mono);
+}
+.dialogue-copy {
+  font: 27px/1.25 var(--font-game);
+}
+.dialogue-choice-slot button {
+  font: 19px/1.25 var(--font-game);
+}
+.dialogue-interaction > p {
+  font-family: var(--font-mono);
+}
+.schedule-board h2 {
+  font-family: var(--font-editorial);
+}
+.game-dialog.is-touch .game-top {
+  background: var(--game-chrome) !important;
+  padding-inline: 8px;
+  margin-inline: -12px;
+}
+.game-dialog.is-touch .game-top h2 {
+  color: var(--paper);
+}
+.game-dialog.is-touch.game-kart .game-top h2,
+.game-dialog.is-touch.game-breaker .game-top h2 {
+  color: var(--ink);
+}
+.game-dialog.is-touch .game-top .icon-button {
+  background: var(--paper);
+  color: var(--ink);
+}
+.game-dialog.is-touch .game-hud {
+  background: transparent !important;
+}
+.game-dialog.is-touch .game-message p {
+  font: 19px/1.3 var(--font-game);
+}
+.game-dialog.is-touch .game-message .control-legend {
+  font: 12px/1.7 var(--font-mono);
+}
+.game-dialog.is-touch .game-message .pixel-button {
+  font: 18px/1.25 var(--font-game);
+}
+@media (max-width: 700px) {
+  .dialogue-copy {
+    font-size: 20px;
+    line-height: 1.25;
+  }
+  .dialogue-choice-slot button {
+    font-size: 17px;
+  }
+  .dialogue-interaction > p {
+    font-size: 11px;
+  }
+}
+.ambient-bubble {
+  left: clamp(
+    calc(
+      50% + var(--camera-x) - var(--npc-world-x) - var(--npc-shift, 0px) + 106px
+    ),
+    var(--speech-anchor, 50%),
+    calc(
+      50% + var(--camera-x) - var(--npc-world-x) - var(--npc-shift, 0px) +
+        var(--viewport-width, 100vw) - 106px
+    )
+  );
+}
+.npc[data-in-view="false"] .ambient-bubble {
+  visibility: hidden;
+}
+.npc-coffee .ambient-bubble {
+  left: clamp(
+    calc(
+      50% + var(--camera-x) - var(--npc-world-x) - var(--npc-shift, 0px) + 106px
+    ),
+    calc(50% + 35px),
+    calc(
+      50% + var(--camera-x) - var(--npc-world-x) - var(--npc-shift, 0px) +
+        var(--viewport-width, 100vw) - 106px
+    )
+  );
+}
+.npc-host .ambient-bubble {
+  left: clamp(
+    calc(50% + var(--camera-x) - var(--npc-world-x) + 106px),
+    calc(100% + 80px),
+    calc(
+      50% + var(--camera-x) - var(--npc-world-x) +
+        var(--viewport-width, 100vw) - 106px
+    )
+  );
+}
+
+.ticket-action.is-near {
+  background: var(--ink);
+  color: var(--paper);
+  padding-inline: 8px;
+}
+.site-header {
+  padding-block: 15px;
+}
+.game-dialog .game-message :focus-visible,
+.game-dialog .handheld-controls :focus-visible {
+  outline-color: var(--ink);
+}
+.game-kart .game-top :focus-visible,
+.game-breaker .game-top :focus-visible,
+.game-dialog.is-touch .game-top :focus-visible {
+  outline-color: var(--ink);
+}
+@media (max-width: 700px) {
+  .site-header {
+    padding-block: 11px;
+  }
+}
+.game-dialog .game-message :focus-visible,
+.game-dialog .handheld-controls :focus-visible {
+  outline-color: var(--ink);
+}
+.game-kart .game-top :focus-visible,
+.game-breaker .game-top :focus-visible {
+  outline-color: var(--ink);
+}
+.game-dialog canvas:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: -3px;
+  box-shadow: inset 0 0 0 5px var(--ink);
+}
+.game-breaker {
+  --game-curtain: var(--curtain-arcade);
+}
+.game-runner {
+  --game-curtain: var(--curtain-drive);
+}
+.game-kart {
+  --game-curtain: var(--curtain-snes);
+}
+.game-beat {
+  --game-curtain: var(--curtain-cd);
+}
+.game-overlay {
+  background: var(--game-curtain, var(--overlay-game));
+}
+.world-stage[data-navigating="true"]
+  [data-player][data-auto-walk="true"]
+  .pose-run {
+  animation-play-state: running;
+}
