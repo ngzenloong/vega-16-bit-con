@@ -4,7 +4,7 @@ import type { GameId, GameResult, Player, Scores } from "@/lib/types";
 import { DEFAULT_APPEARANCE, GAMES, SESSIONS } from "@/lib/types";
 import type { WorldController, WorldTarget } from "@/lib/world";
 import type { LoreAction } from "@/lib/lore";
-import { MACHINES } from "@/lib/scene";
+import { MACHINES, SCENE } from "@/lib/scene";
 import { safePlayer } from "@/lib/math";
 import { audio } from "@/lib/audio";
 import { enterFromPass } from "@/lib/arrival";
@@ -14,6 +14,7 @@ import Dialogue from "./Dialogue";
 import GameHost from "./GameHost";
 import SoundControl from "./SoundControl";
 import Icon from "./Icon";
+import { readScoreProgress, SCORE_RULES } from "@/lib/scores";
 
 const STORE = "vega-16-bit-con-v1";
 type Panel =
@@ -49,10 +50,10 @@ export default function Convention() {
   const desiredSound = useRef(false),
     soundIntent = useRef(0),
     handheldScroll = useRef(0),
-    restoreHandheldScroll = useRef(true),
     handoff = useRef(0),
     frames = useRef<number[]>([]),
     entrance = useRef<AbortController | null>(null);
+  const previousScores = useRef<Scores>({});
   const announce = useCallback(
     (text: string) => setAnnouncement((s) => ({ text, id: s.id + 1 })),
     [],
@@ -94,37 +95,34 @@ export default function Convention() {
     [open],
   );
   const navigate = useCallback(
-    (floor: number, x = 1440) => {
+    (floor: number, x?: number) => {
       if (arrivalRef.current) return;
-      restoreHandheldScroll.current = false;
       setPanel(null);
-      setHandheld(false);
       afterLayout(() => {
         world.current?.refresh();
-        world.current?.goTo(floor, x, true);
+        world.current?.reveal(floor, x);
       });
     },
     [afterLayout],
   );
   const exitHandheld = useCallback(() => {
-    restoreHandheldScroll.current = true;
+    handheldRef.current = false;
     setHandheld(false);
     afterLayout(() => world.current?.release());
   }, [afterLayout]);
+  const startHandheld = useCallback(() => {
+    if (handheldRef.current) return;
+    handheldScroll.current = scrollY;
+    handheldRef.current = true;
+    setHandheld(true);
+  }, []);
   useEffect(() => {
     try {
       const stored = JSON.parse(localStorage.getItem(STORE) || "null");
       setPlayer(safePlayer(stored?.player));
-      if (stored?.scores && typeof stored.scores === "object") {
-        const clean: Scores = {};
-        for (const game of GAMES)
-          if (
-            Number.isFinite(stored.scores[game.id]) &&
-            stored.scores[game.id] >= 0
-          )
-            clean[game.id] = stored.scores[game.id];
-        setScores(clean);
-      }
+      const progress = readScoreProgress(stored);
+      setScores(progress.scores);
+      previousScores.current = progress.previousScores;
     } catch {
       setSaveStatus("session");
     }
@@ -155,7 +153,15 @@ export default function Convention() {
   useEffect(() => {
     if (!ready) return;
     try {
-      localStorage.setItem(STORE, JSON.stringify({ player, scores }));
+      localStorage.setItem(
+        STORE,
+        JSON.stringify({
+          player,
+          scores,
+          scoreRules: SCORE_RULES,
+          previousScores: previousScores.current,
+        }),
+      );
       setSaveStatus("saved");
     } catch {
       setSaveStatus("session");
@@ -173,7 +179,7 @@ export default function Convention() {
       if (next && audio.enabled) {
         const active = panelRef.current;
         await audio.prepare(
-          active?.kind === "game" && active.id === "beat" ? "beat" : "hall",
+          active?.kind === "game" ? active.id : "hall",
         );
       }
       if (token !== soundIntent.current) return;
@@ -216,13 +222,16 @@ export default function Convention() {
     return () => document.removeEventListener("keydown", key);
   }, [toggleSound]);
   useEffect(() => {
+    let active = true;
     const reconcile = () => {
       if (document.hidden) {
         audio.pause();
         return;
       }
+      const intent = soundIntent.current;
       if (desiredSound.current && panelRef.current?.kind !== "game")
         void audio.play("hall").catch(() => {
+          if (!active || intent !== soundIntent.current || !desiredSound.current || panelRef.current?.kind === "game") return;
           setSoundStatus("error");
           setSoundError(
             "Music could not load. Turn sound off and on to retry.",
@@ -231,29 +240,29 @@ export default function Convention() {
     };
     reconcile();
     document.addEventListener("visibilitychange", reconcile);
-    return () => document.removeEventListener("visibilitychange", reconcile);
+    return () => {
+      active = false;
+      document.removeEventListener("visibilitychange", reconcile);
+    };
   }, [panel, sound]);
   useEffect(() => {
     if (!handheld) return;
-    handheldScroll.current = scrollY;
-    restoreHandheldScroll.current = true;
     const old = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = old;
-      if (restoreHandheldScroll.current) {
-        const html = document.documentElement,
-          before = html.style.scrollBehavior;
-        html.style.scrollBehavior = "auto";
-        window.scrollTo({ top: handheldScroll.current, behavior: "auto" });
-        html.style.scrollBehavior = before;
-      }
+      const html = document.documentElement,
+        before = html.style.scrollBehavior;
+      html.style.scrollBehavior = "auto";
+      window.scrollTo({ top: handheldScroll.current, behavior: "auto" });
+      html.style.scrollBehavior = before;
     };
   }, [handheld]);
   useEffect(() => {
     const escape = (event: KeyboardEvent) => {
       if (
         event.key === "Escape" &&
+        !event.defaultPrevented &&
         !event.repeat &&
         handheldRef.current &&
         !panelRef.current &&
@@ -266,16 +275,44 @@ export default function Convention() {
     document.addEventListener("keydown", escape);
     return () => document.removeEventListener("keydown", escape);
   }, [exitHandheld]);
+  const enterScene = useCallback(
+    (floor: number) => {
+      if (arrivalRef.current || panelRef.current) return;
+      audio.effect("click");
+      if (touch && !handheldRef.current) {
+        startHandheld();
+        afterLayout(() => {
+          world.current?.refresh();
+          world.current?.control(floor);
+        });
+      } else world.current?.control(floor);
+    },
+    [touch, afterLayout, startHandheld],
+  );
   const openTarget = useCallback(
     (target: WorldTarget) => {
-      if (target.kind === "register")
-        open({ kind: "register", interest: null }, target.element);
-      else if (target.kind === "game")
-        open({ kind: "game", id: target.id as GameId }, target.element);
-      else if (target.kind === "npc")
-        open({ kind: "npc", id: target.id }, target.element);
+      const show = () => {
+        if (target.kind === "register")
+          open({ kind: "register", interest: null }, target.element);
+        else if (target.kind === "game")
+          open({ kind: "game", id: target.id as GameId }, target.element);
+        else if (target.kind === "npc")
+          open({ kind: "npc", id: target.id }, target.element);
+      };
+      if (touch && !handheldRef.current) {
+        const floor = Number(
+          target.element.closest<HTMLElement>("[data-floor]")?.dataset.floor ||
+            0,
+        );
+        startHandheld();
+        afterLayout(() => {
+          world.current?.refresh();
+          world.current?.control(floor);
+          show();
+        });
+      } else show();
     },
-    [open],
+    [open, touch, afterLayout, startHandheld],
   );
   const onResult = useCallback(
     (result: GameResult) =>
@@ -314,6 +351,8 @@ export default function Convention() {
   const submit = useCallback(
     async (next: Player, card: HTMLElement) => {
       if (arrivalRef.current) return;
+      const updating = player !== null;
+      const location = world.current?.position() || { floor: 0, x: SCENE.booth };
       entrance.current?.abort();
       const owner = new AbortController();
       entrance.current = owner;
@@ -321,7 +360,9 @@ export default function Convention() {
       setArrival(true);
       world.current?.pause("arrival", true);
       announce(
-        touch
+        updating
+          ? "Updating your player."
+          : touch
           ? "Entering the hall."
           : "Entering the hall. Press Escape to skip the animation.",
       );
@@ -335,10 +376,18 @@ export default function Convention() {
           await new Promise<void>((resolve) =>
             requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
           );
-          const actor = world.current!.goTo(0, 1400, false);
+          if (updating) world.current?.refresh();
+          const floor = updating ? location.floor : 0;
+          const actor = updating
+            ? document.querySelector<HTMLElement>(
+                `[data-player-floor="${floor}"]`,
+              )!
+            : world.current!.goTo(0, SCENE.booth, false);
           return {
             player: actor,
-            world: document.querySelector<HTMLElement>("#main-hall")!,
+            world: document.querySelector<HTMLElement>(
+              `[data-floor="${floor}"]`,
+            )!,
           };
         },
         onDone: () => {
@@ -350,28 +399,22 @@ export default function Convention() {
           afterLayout(() => world.current?.focus());
           audio.effect("win");
           announce(
-            `${next.name} is at Booth 630. Choose a game or explore the hall.`,
+            updating
+              ? `${next.name}'s player is updated. Keep exploring.`
+              : `${next.name} is at Booth 630. Choose a game or explore the hall.`,
           );
         },
       });
     },
-    [reduced, touch, announce, afterLayout],
+    [player, reduced, touch, announce, afterLayout],
   );
   const explore = () => {
-    if (arrivalRef.current) return;
-    audio.effect("click");
-    if (touch) {
-      setHandheld(true);
-      afterLayout(() => {
-        world.current?.refresh();
-        world.current?.goTo(0, 1440, true);
-      });
-    } else navigate(0);
+    enterScene(0);
   };
   const handleDialogue = (action: LoreAction) => {
     if (action.startsWith("find-")) {
       const machine = MACHINES.find((m) => m.id === action.slice(5));
-      if (machine) navigate(0, machine.x);
+      if (machine) open({ kind: "game", id: machine.id });
     } else if (action === "register") register();
     else if (action === "about")
       window.open(
@@ -379,8 +422,8 @@ export default function Convention() {
         "_blank",
         "noopener,noreferrer",
       );
-    else if (action === "schedule") navigate(1);
-    else if (action === "explore") navigate(0, 1860);
+    else if (action === "schedule") navigate(1, 1440);
+    else if (action === "explore") close();
     else close();
   };
   const soundControl = (
@@ -401,7 +444,7 @@ export default function Convention() {
         href="#social-floor"
         onClick={(e) => {
           e.preventDefault();
-          navigate(1);
+          navigate(1, 1440);
         }}
       >
         Skip to schedule
@@ -419,7 +462,7 @@ export default function Convention() {
           <button onClick={explore} disabled={arrival}>
             Explore
           </button>
-          <button onClick={() => navigate(1)} disabled={arrival}>
+          <button onClick={() => navigate(1, 1440)} disabled={arrival}>
             Schedule
           </button>
           <button
@@ -482,7 +525,9 @@ export default function Convention() {
         onSession={session}
         onAnnounce={announce}
         onHandheld={explore}
+        onEnterScene={enterScene}
         onExitHandheld={exitHandheld}
+        onToggleMotion={() => setAmbientPaused((v) => !v)}
         soundControl={soundControl}
       />
       <footer className="site-footer" inert={handheld || arrival}>
@@ -514,6 +559,7 @@ export default function Convention() {
           onSubmit={submit}
           sessionOnly={saveStatus === "session"}
           soundControl={soundControl}
+          mobile={touch || handheld}
         />
       )}
       {panel?.kind === "npc" && (

@@ -1,12 +1,15 @@
 import Sprite from "./Sprite";
+import Companion from "./Companion";
 export default function PlayerCard({
   name,
   sprite,
   ready = false,
+  companion = 0,
 }: {
   name: string;
   sprite: string;
   ready?: boolean;
+  companion?: number;
 }) {
   return (
     <div className="player-pass" data-player-pass>
@@ -18,6 +21,7 @@ export default function PlayerCard({
           </div>
           <div className="pass-character">
             <Sprite name="sam-idle" src={sprite} />
+            <Companion kind={companion} className="pass-companion" />
           </div>
           <strong>{name || "Your player"}</strong>
           <p>
@@ -33,6 +37,7 @@ export default function PlayerCard({
           </div>
           <div className="pass-character">
             <Sprite name="sam-idle" src={sprite} />
+            <Companion kind={companion} className="pass-companion" />
           </div>
           <strong>{name || "Your player"}</strong>
           <p>Meet us in the middle.</p>

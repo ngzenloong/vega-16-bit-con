@@ -1,0 +1,76 @@
+{
+  "hall": {
+    "title": "Cozy Puzzle In-Game 1",
+    "artist": "MintoDog",
+    "purpose": "Convention hall background",
+    "files": {
+      "ogg": "/audio/hall.ogg",
+      "wav": "/audio/hall.wav"
+    },
+    "license": "CC0-1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sourcePage": "https://opengameart.org/content/cozy-puzzle-in-game-1",
+    "sourceDownload": "https://opengameart.org/sites/default/files/cozy_puzzle_in-game_1_bpm118_0.ogg",
+    "sourceSha256": "afa440cb8814907b215b285a0503d39b125b6c83d9fca3f686c969107f04c7f7",
+    "preparationSource": "tools/audio/prepare_hall_bossa.py",
+    "instrumentation": "Author-described saxophone, flute, mallets and bossa nova arrangement.",
+    "bpm": 118,
+    "sourceBpm": 118,
+    "timeSignature": "4/4",
+    "bars": 32,
+    "beats": 128,
+    "durationSeconds": 65.0855328798186,
+    "sampleRateHz": 44100,
+    "sampleFrames": 2870272,
+    "channels": 2,
+    "beatOffsetSeconds": 0,
+    "secondsPerBeat": 0.5084745762711864,
+    "loop": {
+      "enabled": true,
+      "startSeconds": 0,
+      "endSeconds": 65.0855328798186
+    },
+    "edit": {
+      "sourceStartSeconds": 0,
+      "sourceDurationSeconds": 65.08474576271186,
+      "tempoRatio": 1,
+      "preservePitch": true,
+      "seamBlendSeconds": 0.025,
+      "gainDb": -11.7,
+      "highShelfDb": -1,
+      "lowpassHz": 12500
+    },
+    "levels": {
+      "sampleFrames": 2870272,
+      "peakDbfs": -11.602,
+      "rmsDbfs": -25.679,
+      "clippedSamples": 0,
+      "boundaryStepLinear": [
+        0.0158997,
+        0.0170288
+      ],
+      "integratedLufs": -23.5,
+      "loudnessRangeLu": 1.6,
+      "truePeakDbfs": -11.6,
+      "oggDecodedFrames": 2870272,
+      "oggPeakDbfs": -11.422,
+      "oggClippedSamples": 0
+    },
+    "bytes": {
+      "wav": 11481166,
+      "ogg": 992431
+    },
+    "wavSha256": "cd302a5caddfb34fbc3cdfa0acb795040255167e556fbdc1be61de3ffa264b00",
+    "oggSha256": "0345ff1603ad190e28d098c4a316a5bacb683feef88eab5b6b631e71a816f671"
+  },
+  "protectedGameAudioSha256": {
+    "beat.wav": "862c5679da3a25d47898c6873564d5ca85698392c15dce6f6c9a00a0dc362a61",
+    "beat.ogg": "06c97465c292ef32f7948e8e8424d60a38b4ac72e2dbace7ca23f2931e89bbf1",
+    "breaker.wav": "df094108cd6f35e2a1411637fb16be267cd515cac458d2517b2fab2358fc8afc",
+    "breaker.ogg": "f6625a7c02e4327873dbe9ac83dc92e6ca7965ee8380ba7fc2a4f2c4fbba7fca",
+    "runner.wav": "c6ffd606f731752e60bcc5deec065a7bb13df75671b0723c5c4eeb3fca8c18b8",
+    "runner.ogg": "a311c0d8219ea87acef18390de46d052ec4fcf7a281c50f0b87f6203fb0d4b15",
+    "kart.wav": "99335d952978629696a56b2e42e75ee56dbbca22b5e353e012d98d054ff27208",
+    "kart.ogg": "bfe787f2a98ca6ac6c1e6ec974a5536884790f3f06422a94a65b8c64de928621"
+  }
+}

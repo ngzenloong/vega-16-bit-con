@@ -61,3 +61,15 @@ test("racing throttle accelerates after countdown and braking reduces travel", (
   assert.ok(fast.hud().progress! > 0.025);
   assert.ok(fast.hud().progress! > braking.hud().progress!);
 });
+test("the beginner rhythm round tolerates ordinary early and late taps", () => {
+  const { game, results } = round(beat);
+  const keys: GameButton[] = ["left", "down", "up", "right"];
+  BEAT_CHART.forEach((note, i) => {
+    const time = note.beat * 0.5 + (i % 2 ? 0.18 : -0.18);
+    game.update(1 / 60, neutral, time);
+    game.press(keys[note.lane], time);
+  });
+  game.update(1 / 60, neutral, 32);
+  assert.equal(results[0].won, true);
+  assert.match(results[0].detail, /75% accuracy/);
+});

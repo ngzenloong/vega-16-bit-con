@@ -9,70 +9,263 @@
   "onsetOffsetSeconds": 0,
   "lastNoteBeat": 62,
   "outroBeats": 2,
-  "laneOrder": ["left", "down", "up", "right"],
+  "laneOrder": [
+    "left",
+    "down",
+    "up",
+    "right"
+  ],
   "notes": [
-    { "beat": 4, "lane": 0 },
-    { "beat": 5, "lane": 1 },
-    { "beat": 6, "lane": 2 },
-    { "beat": 7.5, "lane": 3 },
-    { "beat": 8.5, "lane": 3 },
-    { "beat": 9.5, "lane": 2 },
-    { "beat": 10.5, "lane": 1 },
-    { "beat": 11.25, "lane": 1 },
-    { "beat": 11.75, "lane": 2 },
-    { "beat": 13, "lane": 1 },
-    { "beat": 15.5, "lane": 0 },
-    { "beat": 16.5, "lane": 2 },
-    { "beat": 17.5, "lane": 1 },
-    { "beat": 18, "lane": 0 },
-    { "beat": 19.5, "lane": 2 },
-    { "beat": 20, "lane": 3 },
-    { "beat": 21.5, "lane": 0 },
-    { "beat": 22, "lane": 1 },
-    { "beat": 24.5, "lane": 3 },
-    { "beat": 25.5, "lane": 2 },
-    { "beat": 26, "lane": 1 },
-    { "beat": 27.5, "lane": 0 },
-    { "beat": 28, "lane": 1 },
-    { "beat": 30, "lane": 2 },
-    { "beat": 31.5, "lane": 0 },
-    { "beat": 32.5, "lane": 0 },
-    { "beat": 33.5, "lane": 2 },
-    { "beat": 34.5, "lane": 1 },
-    { "beat": 35.75, "lane": 3 },
-    { "beat": 37, "lane": 3 },
-    { "beat": 38, "lane": 2 },
-    { "beat": 39, "lane": 0 },
-    { "beat": 40, "lane": 0 },
-    { "beat": 41, "lane": 1 },
-    { "beat": 42, "lane": 1 },
-    { "beat": 43.75, "lane": 3 },
-    { "beat": 45, "lane": 3 },
-    { "beat": 46, "lane": 2 },
-    { "beat": 47, "lane": 0 },
-    { "beat": 48.5, "lane": 1 },
-    { "beat": 49.5, "lane": 0 },
-    { "beat": 50.75, "lane": 1 },
-    { "beat": 51.5, "lane": 2 },
-    { "beat": 52, "lane": 3 },
-    { "beat": 54, "lane": 0 },
-    { "beat": 55, "lane": 2 },
-    { "beat": 56.5, "lane": 3 },
-    { "beat": 57.5, "lane": 2 },
-    { "beat": 58.75, "lane": 1 },
-    { "beat": 59.5, "lane": 0 },
-    { "beat": 60, "lane": 1 },
-    { "beat": 62, "lane": 2 }
+    {
+      "beat": 4,
+      "lane": 0
+    },
+    {
+      "beat": 5,
+      "lane": 1
+    },
+    {
+      "beat": 6,
+      "lane": 2
+    },
+    {
+      "beat": 7.5,
+      "lane": 3
+    },
+    {
+      "beat": 8.5,
+      "lane": 3
+    },
+    {
+      "beat": 9.5,
+      "lane": 2
+    },
+    {
+      "beat": 10.5,
+      "lane": 1
+    },
+    {
+      "beat": 11.25,
+      "lane": 1
+    },
+    {
+      "beat": 11.75,
+      "lane": 2
+    },
+    {
+      "beat": 13,
+      "lane": 1
+    },
+    {
+      "beat": 15.5,
+      "lane": 0
+    },
+    {
+      "beat": 16.5,
+      "lane": 2
+    },
+    {
+      "beat": 17.5,
+      "lane": 1
+    },
+    {
+      "beat": 18,
+      "lane": 0
+    },
+    {
+      "beat": 19.5,
+      "lane": 2
+    },
+    {
+      "beat": 20,
+      "lane": 3
+    },
+    {
+      "beat": 21.5,
+      "lane": 0
+    },
+    {
+      "beat": 22,
+      "lane": 1
+    },
+    {
+      "beat": 24.5,
+      "lane": 3
+    },
+    {
+      "beat": 25.5,
+      "lane": 2
+    },
+    {
+      "beat": 26,
+      "lane": 1
+    },
+    {
+      "beat": 27.5,
+      "lane": 0
+    },
+    {
+      "beat": 28,
+      "lane": 1
+    },
+    {
+      "beat": 30,
+      "lane": 2
+    },
+    {
+      "beat": 31.5,
+      "lane": 0
+    },
+    {
+      "beat": 32.5,
+      "lane": 0
+    },
+    {
+      "beat": 33.5,
+      "lane": 2
+    },
+    {
+      "beat": 34.5,
+      "lane": 1
+    },
+    {
+      "beat": 35.75,
+      "lane": 3
+    },
+    {
+      "beat": 37,
+      "lane": 3
+    },
+    {
+      "beat": 38,
+      "lane": 2
+    },
+    {
+      "beat": 39,
+      "lane": 0
+    },
+    {
+      "beat": 40,
+      "lane": 0
+    },
+    {
+      "beat": 41,
+      "lane": 1
+    },
+    {
+      "beat": 42,
+      "lane": 1
+    },
+    {
+      "beat": 43.75,
+      "lane": 3
+    },
+    {
+      "beat": 45,
+      "lane": 3
+    },
+    {
+      "beat": 46,
+      "lane": 2
+    },
+    {
+      "beat": 47,
+      "lane": 0
+    },
+    {
+      "beat": 48.5,
+      "lane": 1
+    },
+    {
+      "beat": 49.5,
+      "lane": 0
+    },
+    {
+      "beat": 50.75,
+      "lane": 1
+    },
+    {
+      "beat": 51.5,
+      "lane": 2
+    },
+    {
+      "beat": 52,
+      "lane": 3
+    },
+    {
+      "beat": 54,
+      "lane": 0
+    },
+    {
+      "beat": 55,
+      "lane": 2
+    },
+    {
+      "beat": 56.5,
+      "lane": 3
+    },
+    {
+      "beat": 57.5,
+      "lane": 2
+    },
+    {
+      "beat": 58.75,
+      "lane": 1
+    },
+    {
+      "beat": 59.5,
+      "lane": 0
+    },
+    {
+      "beat": 60,
+      "lane": 1
+    },
+    {
+      "beat": 62,
+      "lane": 2
+    }
   ],
   "phrases": [
-    { "startBeat": 4, "endBeat": 8, "role": "Gentle accompaniment opening" },
-    { "startBeat": 8, "endBeat": 16, "role": "Descending melody call, then bass response" },
-    { "startBeat": 16, "endBeat": 24, "role": "Rising melody and lower answer" },
-    { "startBeat": 24, "endBeat": 32, "role": "Descending answer and relaxed accompaniment" },
-    { "startBeat": 32, "endBeat": 40, "role": "Lower-register variation and counterline response" },
-    { "startBeat": 40, "endBeat": 48, "role": "Melody call and a second counterline response" },
-    { "startBeat": 48, "endBeat": 56, "role": "Returning melody with varied lane movement" },
-    { "startBeat": 56, "endBeat": 64, "role": "Closing descent, bass cadence, and uncharted outro" }
+    {
+      "startBeat": 4,
+      "endBeat": 8,
+      "role": "Gentle accompaniment opening"
+    },
+    {
+      "startBeat": 8,
+      "endBeat": 16,
+      "role": "Descending melody call, then bass response"
+    },
+    {
+      "startBeat": 16,
+      "endBeat": 24,
+      "role": "Rising melody and lower answer"
+    },
+    {
+      "startBeat": 24,
+      "endBeat": 32,
+      "role": "Descending answer and relaxed accompaniment"
+    },
+    {
+      "startBeat": 32,
+      "endBeat": 40,
+      "role": "Lower-register variation and counterline response"
+    },
+    {
+      "startBeat": 40,
+      "endBeat": 48,
+      "role": "Melody call and a second counterline response"
+    },
+    {
+      "startBeat": 48,
+      "endBeat": 56,
+      "role": "Returning melody with varied lane movement"
+    },
+    {
+      "startBeat": 56,
+      "endBeat": 64,
+      "role": "Closing descent, bass cadence, and uncharted outro"
+    }
   ],
   "evidence": {
     "method": "Authored four-lane chart using selected note-on rows from the original BambooTracker score. Timing is score-based, not audio-transcribed or latency-calibrated. Lane assignments and omitted notes are authored for a gentle single-note game.",
@@ -81,8 +274,21 @@
     "sourceScore": "tools/audio/sources/welcome to the item shop.btm",
     "sourceScoreSha256": "62e503816dad233d297e46a68ef755f1fcdb37d6482686bfa766705d43965f18",
     "sourceBpm": 115,
-    "sourceOrderIndices": [1, 2, 3, 4, 5, 6, 7, 8],
-    "sourceTrackIndices": [0, 1, 5],
+    "sourceOrderIndices": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "sourceTrackIndices": [
+      0,
+      1,
+      5
+    ],
     "rowsPerBeat": 4,
     "rowsPerPattern": 32,
     "excerptStartSecondsInSource": 4.173913043478261,
@@ -91,5 +297,110 @@
     "audioWavSha256": "862c5679da3a25d47898c6873564d5ca85698392c15dce6f6c9a00a0dc362a61",
     "timingNote": "Beat zero is the excerpt start. Each chart beat maps to onsetOffsetSeconds + beat * 0.5 seconds. Zero offset follows the source trim; no extra global latency offset was measured. Selected onsets avoid the lead's delayed-note ornaments. Tracker tick quantization and the pitch-preserving tempo edit can shift the audible attack slightly.",
     "arrangementNote": "The first four audio beats are a chart count-in with no required input. The melody rests during beats 4-8, so the opening follows accompaniment. Source track 5 enters with counterline answers around beats 37-40 and 45-48. The final required input is the bass note at beat 62; the last two beats are an intentional uncharted outro. The delivered audio is unchanged."
+  },
+  "runtimeChart": {
+    "name": "Beginner",
+    "noteCount": 24,
+    "firstNoteSeconds": 3,
+    "minimumGapSeconds": 1,
+    "clearAccuracy": 60,
+    "notes": [
+      {
+        "beat": 6,
+        "lane": 2
+      },
+      {
+        "beat": 8.5,
+        "lane": 3
+      },
+      {
+        "beat": 10.5,
+        "lane": 1
+      },
+      {
+        "beat": 13,
+        "lane": 1
+      },
+      {
+        "beat": 15.5,
+        "lane": 0
+      },
+      {
+        "beat": 17.5,
+        "lane": 1
+      },
+      {
+        "beat": 19.5,
+        "lane": 2
+      },
+      {
+        "beat": 21.5,
+        "lane": 0
+      },
+      {
+        "beat": 24.5,
+        "lane": 3
+      },
+      {
+        "beat": 27.5,
+        "lane": 0
+      },
+      {
+        "beat": 30,
+        "lane": 2
+      },
+      {
+        "beat": 32.5,
+        "lane": 0
+      },
+      {
+        "beat": 34.5,
+        "lane": 1
+      },
+      {
+        "beat": 37,
+        "lane": 3
+      },
+      {
+        "beat": 39,
+        "lane": 0
+      },
+      {
+        "beat": 41,
+        "lane": 1
+      },
+      {
+        "beat": 43.75,
+        "lane": 3
+      },
+      {
+        "beat": 47,
+        "lane": 0
+      },
+      {
+        "beat": 49.5,
+        "lane": 0
+      },
+      {
+        "beat": 51.5,
+        "lane": 2
+      },
+      {
+        "beat": 54,
+        "lane": 0
+      },
+      {
+        "beat": 56.5,
+        "lane": 3
+      },
+      {
+        "beat": 58.75,
+        "lane": 1
+      },
+      {
+        "beat": 62,
+        "lane": 2
+      }
+    ]
   }
 }

@@ -1,0 +1,71 @@
+{
+  "hall": {
+    "title": "Apple Cider",
+    "artist": "Zane Little",
+    "purpose": "Convention hall background",
+    "files": {
+      "ogg": "/audio/hall.ogg",
+      "wav": "/audio/hall.wav"
+    },
+    "license": "CC0-1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sourcePage": "https://opengameart.org/content/apple-cider-juiced",
+    "sourceDownload": "https://opengameart.org/sites/default/files/apple_cider_loop.wav",
+    "sourceSha256": "afb73875b0485e12f71094683a6df58ed2b2fd92c493d93a9db07bed00e0177c",
+    "preparationSource": "tools/audio/prepare_hall_life.py",
+    "instrumentation": "Author tags the original work as acoustic, guitar, whistle, flute and bells; the pack explicitly references Animal Crossing. No Nintendo melody is used.",
+    "bpm": null,
+    "sourceBpm": null,
+    "durationSeconds": 86.4,
+    "sampleRateHz": 44100,
+    "sampleFrames": 3810240,
+    "channels": 2,
+    "loop": {
+      "enabled": true,
+      "startSeconds": 0,
+      "endSeconds": 86.4
+    },
+    "edit": {
+      "sourceStartSeconds": 0,
+      "sourceDurationSeconds": 86.4,
+      "tempoRatio": 1,
+      "preservePitch": true,
+      "seamBlendSeconds": 0.025,
+      "gainDb": -8.3,
+      "highShelfDb": -2.5,
+      "lowpassHz": 12500
+    },
+    "levels": {
+      "sampleFrames": 3810240,
+      "peakDbfs": -7.725,
+      "rmsDbfs": -24.542,
+      "clippedSamples": 0,
+      "boundaryStepLinear": [
+        9.16e-05,
+        0.0037842
+      ],
+      "integratedLufs": -23.5,
+      "loudnessRangeLu": 5.3,
+      "truePeakDbfs": -7.7,
+      "oggDecodedFrames": 3810240,
+      "oggPeakDbfs": -7.795,
+      "oggClippedSamples": 0
+    },
+    "bytes": {
+      "wav": 15241038,
+      "ogg": 1779190
+    },
+    "wavSha256": "72815213ce10b6865fe6abaa3ef7de851dff032d6ccf6bcee49d26ac61079d1d",
+    "oggSha256": "ebe14b2e26b848ba9ae592d5175c61f805511f99517802982961df4273b5f9e8"
+  },
+  "protectedGameAudioSha256": {
+    "beat.wav": "862c5679da3a25d47898c6873564d5ca85698392c15dce6f6c9a00a0dc362a61",
+    "beat.ogg": "06c97465c292ef32f7948e8e8424d60a38b4ac72e2dbace7ca23f2931e89bbf1",
+    "breaker.wav": "df094108cd6f35e2a1411637fb16be267cd515cac458d2517b2fab2358fc8afc",
+    "breaker.ogg": "f6625a7c02e4327873dbe9ac83dc92e6ca7965ee8380ba7fc2a4f2c4fbba7fca",
+    "runner.wav": "c6ffd606f731752e60bcc5deec065a7bb13df75671b0723c5c4eeb3fca8c18b8",
+    "runner.ogg": "a311c0d8219ea87acef18390de46d052ec4fcf7a281c50f0b87f6203fb0d4b15",
+    "kart.wav": "99335d952978629696a56b2e42e75ee56dbbca22b5e353e012d98d054ff27208",
+    "kart.ogg": "bfe787f2a98ca6ac6c1e6ec974a5536884790f3f06422a94a65b8c64de928621"
+  }
+}

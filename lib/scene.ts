@@ -6,6 +6,7 @@ export const SCENE = {
   walkline: 88,
   booth: 1440,
   lift: 520,
+  walkSpeed: 400,
 } as const;
 export type Machine = {
   id: GameId;

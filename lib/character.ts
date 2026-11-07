@@ -1,8 +1,17 @@
 import type { Appearance } from "./types";
+import { completeAppearance } from "./appearance";
+import {
+  decorateOutfit,
+  GLASS_COLORS,
+  SHOE_COLORS,
+  shirtPixel,
+  type OutfitAnchor,
+} from "./outfit-art";
 export type CharacterSheets = { idle: string; run: string; jump: string };
 const cache = new Map<string, Promise<CharacterSheets>>();
 const images = new Map<string, Promise<HTMLImageElement>>();
 const portraits = new Map<string, Promise<string>>();
+const colors = new Map<string, number[]>();
 export function loadImage(src: string) {
   let p = images.get(src);
   if (!p) {
@@ -13,18 +22,32 @@ export function loadImage(src: string) {
       i.src = src;
     });
     images.set(src, p);
-    p.catch(() => images.delete(src));
+    if (images.size > 128) {
+      const oldest = [...images.keys()].find((key) => key.startsWith("data:"));
+      if (oldest && oldest !== src) images.delete(oldest);
+    }
+    p.catch(() => {
+      if (images.get(src) === p) images.delete(src);
+    });
   }
   return p;
 }
 function color(hex: string) {
-  return [
+  const cached = colors.get(hex);
+  if (cached) return cached;
+  const rgb = [
     parseInt(hex.slice(1, 3), 16),
     parseInt(hex.slice(3, 5), 16),
     parseInt(hex.slice(5, 7), 16),
   ];
+  colors.set(hex, rgb);
+  return rgb;
 }
-function compose(image: HTMLImageElement, appearance: Appearance) {
+function compose(
+  image: HTMLImageElement,
+  appearance: Appearance,
+  portrait = false,
+) {
   const canvas = document.createElement("canvas");
   canvas.width = image.width;
   canvas.height = image.height;
@@ -32,15 +55,15 @@ function compose(image: HTMLImageElement, appearance: Appearance) {
   c.imageSmoothingEnabled = false;
   c.drawImage(image, 0, 0);
   const glassesColor = appearance.glasses
-    ? color(["", "#ffd11b", "#fffaeb", "#32402d"][appearance.glasses])
+    ? color(GLASS_COLORS[appearance.glasses])
     : null;
-  const shirtColor = appearance.shirt
-    ? color(["", "#276219", "#ffd11b", "#e5e0ce"][appearance.shirt])
+  const shoeColor = appearance.shoes
+    ? color(SHOE_COLORS[appearance.shoes])
     : null;
   const data = c.getImageData(0, 0, canvas.width, canvas.height),
     p = data.data;
   const frames = Math.floor(image.width / 60),
-    eyes: { x: number; y: number; bottom: number }[] = [];
+    eyes: OutfitAnchor[] = [];
   for (let frame = 0; frame < frames; frame++) {
     let minX = 60,
       maxX = 0,
@@ -63,7 +86,15 @@ function compose(image: HTMLImageElement, appearance: Appearance) {
       x: maxX ? Math.round((minX + maxX) / 2) : 32,
       y: maxY ? minY : 17,
       bottom: maxY || 24,
+      feet: 59,
     };
+    feet: for (let fy = 59; fy >= 38; fy--) {
+      for (let fx = 0; fx < 60; fx++)
+        if (p[(fy * canvas.width + frame * 60 + fx) * 4 + 3] > 100) {
+          anchor.feet = fy;
+          break feet;
+        }
+    }
     eyes.push(anchor);
     for (let y = 0; y < 60; y++)
       for (let x = 0; x < 60; x++) {
@@ -89,8 +120,18 @@ function compose(image: HTMLImageElement, appearance: Appearance) {
           r > b * 1.6 &&
           x > 10 &&
           x < 51
+        ) {
+          const fill = shirtPixel(appearance.shirt, x, y, anchor);
+          target = fill ? color(fill) : null;
+        }
+        if (
+          !portrait &&
+          shoeColor &&
+          y >= anchor.feet - 4 &&
+          r > g * 1.12 &&
+          r > b * 1.6
         )
-          target = shirtColor;
+          target = shoeColor;
         if (target) {
           const shade = Math.max(0.5, Math.min(1.15, (r + g + b) / 300));
           p[k] = Math.min(255, target[0] * shade);
@@ -100,55 +141,36 @@ function compose(image: HTMLImageElement, appearance: Appearance) {
       }
   }
   c.putImageData(data, 0, 0);
-  if (appearance.hat)
-    eyes.forEach((a, frame) => {
-      const x = frame * 60 + a.x - 11,
-        y = Math.max(2, a.y - 9);
-      c.fillStyle = "#151514";
-      if (appearance.hat === 1) {
-        c.fillRect(x, y + 3, 22, 7);
-        c.fillRect(x + 1, y, 16, 6);
-        c.fillStyle = "#ff9823";
-        c.fillRect(x + 3, y + 2, 12, 6);
-        c.fillRect(x + 1, y + 7, 20, 2);
-      }
-      if (appearance.hat === 2) {
-        c.fillRect(x + 3, y, 15, 8);
-        c.fillRect(x, y + 6, 22, 4);
-        c.fillStyle = "#fffaeb";
-        c.fillRect(x + 5, y + 1, 11, 6);
-        c.fillRect(x + 1, y + 7, 20, 2);
-        c.fillStyle = "#0d5500";
-        c.fillRect(x + 4, y + 5, 13, 2);
-      }
-      if (appearance.hat === 3) {
-        c.fillRect(x + 1, y + 2, 21, 3);
-        c.fillRect(x, y + 3, 4, 14);
-        c.fillRect(x + 19, y + 3, 4, 14);
-        c.fillStyle = "#ffd11b";
-        c.fillRect(x + 2, y + 6, 4, 8);
-        c.fillRect(x + 17, y + 6, 4, 8);
-      }
-    });
+  eyes.forEach((anchor, frame) => {
+    c.save();
+    c.beginPath();
+    c.rect(frame * 60, 0, 60, 60);
+    c.clip();
+    c.translate(frame * 60, 0);
+    decorateOutfit(c, appearance, anchor, portrait);
+    c.restore();
+  });
   return canvas.toDataURL("image/png");
 }
 export function characterSheets(
   appearance: Appearance,
 ): Promise<CharacterSheets> {
-  const key = JSON.stringify(appearance);
+  const { companion: _companion, ...look } = completeAppearance(appearance);
+  const key = JSON.stringify(look);
   let pending = cache.get(key);
   if (!pending) {
     pending = Promise.all(
       ["idle", "run", "jump"].map(async (pose) => {
         const src = `/assets/vega/sam-${pose}.png`;
-        if (!appearance.hat && !appearance.glasses && !appearance.shirt)
-          return src;
-        return compose(await loadImage(src), appearance);
+        if (Object.values(look).every((value) => !value)) return src;
+        return compose(await loadImage(src), look);
       }),
     ).then(([idle, run, jump]) => ({ idle, run, jump }));
     cache.set(key, pending);
     if (cache.size > 32) cache.delete(cache.keys().next().value!);
-    pending.catch(() => cache.delete(key));
+    pending.catch(() => {
+      if (cache.get(key) === pending) cache.delete(key);
+    });
   }
   return pending;
 }
@@ -198,12 +220,15 @@ export function characterPortrait(
           canvas.width = 60;
           canvas.height = 60;
           canvas.getContext("2d")!.drawImage(image, 7, 8);
-          return compose(await loadImage(canvas.toDataURL()), appearance);
+          return compose(await loadImage(canvas.toDataURL()), appearance, true);
         },
       );
     }
     portraits.set(key, pending);
-    pending.catch(() => portraits.delete(key));
+    if (portraits.size > 32) portraits.delete(portraits.keys().next().value!);
+    pending.catch(() => {
+      if (portraits.get(key) === pending) portraits.delete(key);
+    });
   }
   return pending;
 }

@@ -1,5 +1,6 @@
-export type Track = "hall" | "beat";
-const REVISION = "item-shop-20261106";
+import type { GameId } from "./types";
+export type Track = "hall" | GameId;
+const REVISION = "life-sim-scores-20261107";
 const tones: Record<string, number[]> = {
   click: [520],
   near: [660, 780],
@@ -34,9 +35,12 @@ class AudioBus {
   private started = 0;
   private seek = 0;
   private duration = 0;
-  private offsets: Record<Track, number> = { hall: 0, beat: 0 };
+  private offsets: Record<Track, number> = {
+    hall: 0, breaker: 0, runner: 0, kart: 0, beat: 0,
+  };
   private engine: { oscillator: OscillatorNode; gain: GainNode } | null = null;
   private playback = 0;
+  private cancelPending: (() => void) | null = null;
   private intent = 0;
   private ducking = 1;
   private lastEffect = new Map<string, number>();
@@ -85,15 +89,42 @@ class AudioBus {
     let pending = this.buffers.get(track);
     if (!pending) {
       const load = async (extension: string) => {
-        const response = await fetch(
-          `/audio/${track}.${extension}?v=${REVISION}`,
-        );
-        if (!response.ok) throw Error("Audio unavailable");
-        return this.context!.decodeAudioData(await response.arrayBuffer());
+        const controller = new AbortController();
+        let timer: ReturnType<typeof setTimeout>;
+        const timeout = new Promise<never>((_, reject) => {
+          timer = setTimeout(() => {
+            reject(new DOMException("Audio load timed out", "TimeoutError"));
+            controller.abort();
+          }, 8000);
+        });
+        try {
+          return await Promise.race([
+            (async () => {
+              const response = await fetch(`/audio/${track}.${extension}?v=${REVISION}`, { signal: controller.signal });
+              if (!response.ok) throw Error("Audio unavailable");
+              return this.context!.decodeAudioData(await response.arrayBuffer());
+            })(),
+            timeout,
+          ]);
+        } finally {
+          clearTimeout(timer!);
+        }
       };
-      pending = load("ogg").catch(() => load("wav"));
+      pending = load("ogg").catch((error) => {
+        if (error.name === "TimeoutError") throw error;
+        return load("wav");
+      });
       this.buffers.set(track, pending);
-      pending.catch(() => this.buffers.delete(track));
+      pending.catch(() => {
+        if (this.buffers.get(track) === pending) this.buffers.delete(track);
+      });
+    }
+    // Keep only the active score and the previous room decoded.
+    this.buffers.delete(track);
+    this.buffers.set(track, pending);
+    while (this.buffers.size > 2) {
+      const oldest = this.buffers.keys().next().value!;
+      this.buffers.delete(oldest);
     }
     return pending;
   }
@@ -109,10 +140,21 @@ class AudioBus {
     this.track = track;
     if (offset !== undefined) this.offsets[track] = Math.max(0, offset);
     if (!this.enabled || document.hidden) return false;
+    let cancel: () => void;
+    const cancelled = new Promise<null>((resolve) => {
+      cancel = () => resolve(null);
+      this.cancelPending = cancel;
+    });
     try {
-      await this.unlock();
-      const buffer = await this.buffer(track);
+      const buffer = await Promise.race([
+        (async () => {
+          await this.unlock();
+          return this.buffer(track);
+        })(),
+        cancelled,
+      ]);
       if (
+        !buffer ||
         !this.enabled ||
         document.hidden ||
         this.track !== track ||
@@ -135,8 +177,12 @@ class AudioBus {
       this.lastError = null;
       return true;
     } catch (error) {
+      if (ticket !== this.playback || this.track !== track || !this.enabled)
+        return false;
       this.lastError = "Music could not load. Turn sound on to try again.";
       throw error;
+    } finally {
+      if (this.cancelPending === cancel!) this.cancelPending = null;
     }
   }
   /** Unwrapped song time mapped to audible output, when the browser supplies it. */
@@ -158,6 +204,8 @@ class AudioBus {
   }
   pause() {
     this.playback++;
+    this.cancelPending?.();
+    this.cancelPending = null;
     this.motor(0);
     if (this.source) {
       this.offsets[this.track] =

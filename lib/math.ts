@@ -1,3 +1,9 @@
+import {
+  OUTFIT_OPTIONS,
+  OUTFIT_PARTS,
+  completeAppearance,
+} from "./appearance.ts";
+
 export const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(max, value));
 export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -33,13 +39,13 @@ export function rhythmJudgement(
   delta: number,
 ): "perfect" | "nice" | "good" | "bad" | "miss" {
   const distance = Math.abs(delta);
-  return distance <= 0.045
+  return distance <= 0.09
     ? "perfect"
-    : distance <= 0.085
+    : distance <= 0.16
       ? "nice"
-      : distance <= 0.13
+      : distance <= 0.24
         ? "good"
-        : distance <= 0.18
+        : distance <= 0.32
           ? "bad"
           : "miss";
 }
@@ -49,18 +55,19 @@ export function safePlayer(value: unknown) {
     a = p.appearance as Record<string, unknown> | undefined;
   if (typeof p.name !== "string" || !p.name.trim() || !a) return null;
   if (
-    !["hat", "glasses", "shirt"].every(
-      (k) => Number.isInteger(a[k]) && Number(a[k]) >= 0 && Number(a[k]) <= 3,
+    !OUTFIT_PARTS.every(
+      (k) =>
+        Number.isInteger(a[k] ?? 0) &&
+        Number(a[k] ?? 0) >= 0 &&
+        Number(a[k] ?? 0) < OUTFIT_OPTIONS[k].length,
     )
   )
     return null;
+  const appearance = completeAppearance({ hat: 0, glasses: 0, shirt: 0 });
+  for (const part of OUTFIT_PARTS) appearance[part] = Number(a[part] ?? 0);
   return {
     name: p.name.trim().slice(0, 24),
-    appearance: {
-      hat: Number(a.hat),
-      glasses: Number(a.glasses),
-      shirt: Number(a.shirt),
-    },
+    appearance,
     interests: Array.isArray(p.interests)
       ? p.interests.filter(
           (i): i is number => Number.isInteger(i) && i >= 0 && i < 3,

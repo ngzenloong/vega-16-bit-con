@@ -184,8 +184,8 @@ test("a fall still resets safely during enemy-hit immunity", () => {
 });
 test("rhythm judges input time rather than the previous rendered frame", () => {
   const state = createBeatState();
-  updateBeat(state, input, 1.9);
-  pressBeat(state, "left", 2);
+  updateBeat(state, input, 2.9);
+  pressBeat(state, "up", 3);
   assert.equal(state.score, 100);
   assert.equal(state.feedback, "PERFECT");
 });
@@ -201,14 +201,14 @@ test("all-lane mashing cannot clear the rhythm round", () => {
       keys.forEach((key) => pressBeat(state, key, t));
     }
   }
-  assert.ok(beatAccuracy(state) < 70);
+  assert.ok(beatAccuracy(state) < 60);
   assert.ok(state.strays > 100);
 });
 test("repeated taps cannot score the same rhythm note more than once", () => {
   const state = createBeatState();
-  pressBeat(state, "left", 2);
-  pressBeat(state, "left", 2);
-  pressBeat(state, "left", 2);
+  pressBeat(state, "up", 3);
+  pressBeat(state, "up", 3);
+  pressBeat(state, "up", 3);
   assert.equal(state.score, 100);
   assert.equal(state.strays, 2);
   assert.ok(beatAccuracy(state) < 100);
@@ -219,13 +219,13 @@ test("every rhythm lane retains independent held feedback", () => {
   assert.deepEqual(state.held, [true, false, false, true]);
 });
 test("the chart has valid increasing note times and a deliberate outro", () => {
-  assert.equal(BEAT_CHART.length, 52);
+  assert.equal(BEAT_CHART.length, 24);
   for (let i = 0; i < BEAT_CHART.length; i++) {
     const note = BEAT_CHART[i];
     assert.ok(note.lane >= 0 && note.lane < 4);
-    if (i) assert.ok(note.beat > BEAT_CHART[i - 1].beat);
+    if (i) assert.ok(note.beat - BEAT_CHART[i - 1].beat >= 2);
   }
-  assert.equal(BEAT_CHART[0].beat, 4);
+  assert.equal(BEAT_CHART[0].beat, 6);
   assert.equal(BEAT_CHART.at(-1)!.beat, 62);
 });
 test("racing off-road boundaries and rendered tarmac agree at player depth", () => {
@@ -299,12 +299,12 @@ test("rotating Breaker preserves progress and keeps every live block inside the 
 
 test("negative rhythm calibration keeps a still-valid late input eligible", () => {
   const state = createBeatState();
-  updateBeat(state, input, 2.22, -0.15);
+  updateBeat(state, input, 3.38, -0.15);
   assert.equal(state.notes[0].state, "waiting");
-  pressBeat(state, "left", 2.22 - 0.15, () => {}, 2.22);
+  pressBeat(state, "up", 3.38 - 0.15, () => {}, 3.38);
   assert.equal(state.hits, 1);
   assert.equal(state.strays, 0);
-  assert.equal(state.notes[0].grade, "nice");
+  assert.equal(state.notes[0].grade, "good");
 });
 
 test("rotating a descending Breaker ball preserves its upcoming paddle contact", () => {

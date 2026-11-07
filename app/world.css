@@ -780,8 +780,61 @@
 .chess-sign {
   left: 720px;
 }
-.world-stage[data-control="manual"] .world-player .sprite-animated {
-  animation-play-state: running;
+.world-stage .sprite-animated {
+  /* The world clock selects complete frames, including after a floor re-enters. */
+  animation: none;
+}
+.world-companion {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 60px;
+  height: 60px;
+  z-index: 9;
+  pointer-events: none;
+}
+.world-companion > .companion {
+  position: absolute;
+  bottom: calc(-1 * var(--pet-baseline, 0px));
+  left: 50%;
+  translate: -50% 0;
+}
+.world-companion[data-facing="left"] .companion {
+  scale: -1 1;
+}
+.world-companion[data-pose="run"] .companion-walker .companion-idle {
+  display: none;
+}
+.world-companion[data-pose="run"] .companion-run {
+  display: block;
+}
+.companion {
+  display: inline-block;
+  position: relative;
+}
+.companion-run {
+  display: none;
+}
+.companion[data-floating="true"] > .sprite {
+  translate: 0 -16px;
+}
+.pass-companion {
+  position: absolute;
+  right: -20px;
+  bottom: calc(-1 * var(--pet-baseline, 0px));
+}
+.world-stage:not(.is-handheld) .world-floor {
+  cursor: pointer;
+}
+.event-board,
+.schedule-board,
+.hall-controls {
+  cursor: auto;
+}
+@media (max-width: 700px) {
+  .main-hall > .hall-controls {
+    display: none;
+  }
 }
 .upper-catwalk {
   position: absolute;
@@ -859,7 +912,7 @@
     height: 30px;
   }
   .event-board h1 {
-    font-size: 62px;
+    font-size: clamp(44px, 15vw, 62px);
   }
   .event-board p {
     font-size: 12px;

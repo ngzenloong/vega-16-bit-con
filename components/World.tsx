@@ -22,6 +22,7 @@ import Controls from "./Controls";
 import NpcSprite from "./NpcSprite";
 import AttractScreen from "./AttractScreen";
 import Icon from "./Icon";
+import Companion from "./Companion";
 import { SCENE, MACHINES } from "@/lib/scene";
 
 const positions: Record<string, number> = {
@@ -53,7 +54,9 @@ type Props = {
   onSession: (index: number) => void;
   onAnnounce: (text: string) => void;
   onHandheld: () => void;
+  onEnterScene: (floor: number) => void;
   onExitHandheld: () => void;
+  onToggleMotion: () => void;
 };
 const World = forwardRef<WorldController, Props>(function World(
   {
@@ -69,15 +72,17 @@ const World = forwardRef<WorldController, Props>(function World(
     onSession,
     onAnnounce,
     onHandheld,
+    onEnterScene,
     onExitHandheld,
+    onToggleMotion,
     soundControl,
   },
   ref,
 ) {
   const root = useRef<HTMLDivElement>(null),
     engine = useRef<WorldController | null>(null),
-    callbacks = useRef({ onTarget, onAnnounce, onSession });
-  callbacks.current = { onTarget, onAnnounce, onSession };
+    callbacks = useRef({ onTarget, onAnnounce, onSession, onEnterScene });
+  callbacks.current = { onTarget, onAnnounce, onSession, onEnterScene };
   const [sheets, setSheets] = useState<CharacterSheets>(defaultSheets),
     [chatter, setChatter] = useState<{ index: number; turn: number } | null>(
       null,
@@ -106,6 +111,7 @@ const World = forwardRef<WorldController, Props>(function World(
         else callbacks.current.onTarget(t);
       },
       (text) => callbacks.current.onAnnounce(text),
+      (floor) => callbacks.current.onEnterScene(floor),
     );
     engine.current = controller;
     return () => {
@@ -118,6 +124,9 @@ const World = forwardRef<WorldController, Props>(function World(
   useEffect(() => {
     engine.current?.refresh();
   }, [handheld]);
+  useEffect(() => {
+    engine.current?.refresh();
+  }, [player?.appearance.companion]);
   useEffect(() => {
     if (paused || reduced || ambientPaused) {
       setChatter(null);
@@ -187,6 +196,8 @@ const World = forwardRef<WorldController, Props>(function World(
       travel: (f) => engine.current?.travel(f),
       cancelTravel: () => engine.current?.cancelTravel(),
       goTo: (f, x, s) => engine.current!.goTo(f, x, s),
+      reveal: (f, x) => engine.current?.reveal(f, x),
+      control: (f) => engine.current?.control(f),
       release: () => engine.current?.release(),
       focus: () => engine.current?.focus(),
       refresh: () => engine.current?.refresh(),
@@ -292,21 +303,32 @@ const World = forwardRef<WorldController, Props>(function World(
     );
   };
   const actor = (floor: number) => (
-    <div
-      className="world-player"
-      data-player
-      data-pose="idle"
-      data-facing="right"
-      data-player-floor={floor}
-    >
-      <span className="player-name">{player?.name || "Sam"}</span>
-      <div className="player-facing">
-        <Sprite name="sam-idle" src={sheets.idle} className="pose-idle" />
-        <Sprite name="sam-run" src={sheets.run} className="pose-run" />
-        <Sprite name="sam-jump" src={sheets.jump} className="pose-jump" />
+    <>
+      <div
+        className="world-player"
+        data-player
+        data-pose="idle"
+        data-facing="right"
+        data-player-floor={floor}
+      >
+        <span className="player-name">{player?.name || "Sam"}</span>
+        <div className="player-facing">
+          <Sprite name="sam-idle" src={sheets.idle} className="pose-idle" />
+          <Sprite name="sam-run" src={sheets.run} className="pose-run" />
+          <Sprite name="sam-jump" src={sheets.jump} className="pose-jump" />
+        </div>
+        <span className="player-shadow" />
       </div>
-      <span className="player-shadow" />
-    </div>
+      <div
+        className="world-companion"
+        data-companion={player?.appearance.companion || 0}
+        data-pose="idle"
+        data-facing="right"
+        hidden={!player?.appearance.companion}
+      >
+        <Companion kind={player?.appearance.companion} />
+      </div>
+    </>
   );
   const lift = (floor: number) => (
     <>
@@ -356,6 +378,14 @@ const World = forwardRef<WorldController, Props>(function World(
             {soundControl}
             <button
               className="icon-button"
+              onClick={onToggleMotion}
+              aria-pressed={ambientPaused}
+              aria-label={ambientPaused ? "Resume background motion" : "Pause background motion"}
+            >
+              <Icon name={ambientPaused ? "play" : "pause"} />
+            </button>
+            <button
+              className="icon-button"
               onClick={onExitHandheld}
               aria-label="Exit handheld mode and restore page scrolling"
             >
@@ -398,7 +428,7 @@ const World = forwardRef<WorldController, Props>(function World(
                 href="#social-floor"
                 onClick={(e) => {
                   e.preventDefault();
-                  engine.current?.goTo(1, 1440, true);
+                  engine.current?.reveal(1, 1440);
                 }}
               >
                 See the lineup ↓
@@ -549,9 +579,6 @@ const World = forwardRef<WorldController, Props>(function World(
           <span className="desktop-controls">
             ← → Move Sam · Space Jump · Enter Interact · Esc Release
           </span>
-          <button className="pixel-button mobile-explore" onClick={onHandheld}>
-            Explore the hall
-          </button>
           <span className="hall-hint">
             Walk left or right to find all four games.
           </span>
@@ -625,7 +652,7 @@ const World = forwardRef<WorldController, Props>(function World(
           <span>The schedule is in the middle of this floor.</span>
           <button
             className="text-link"
-            onClick={() => engine.current?.goTo(0, 1440, true)}
+            onClick={() => engine.current?.reveal(0)}
           >
             Back to Booth 630 ↑
           </button>

@@ -1,6 +1,14 @@
-# Music source and preparation
+# Rhythm music and original FM hall preparation
 
-## Delivered music
+This record describes the current rhythm track and the superseded FM hall.
+The current hall uses Zane Little's CC0 Apple Cider loop; see
+`REFERENCE_SHORTLIST.md`, `prepare_hall_life.py` and `hall-life-manifest.json`.
+All five current tracks are credited in `public/audio/ATTRIBUTION.txt` and
+the public manifest. `prepare.py` prepares beat only by default. It can
+overwrite the current hall with the old FM selection only when the explicit
+`--legacy-hall` flag is supplied.
+
+## Rhythm source
 
 - **Work:** Welcome to the Item Shop
 - **Composer/uploader:** congusbongus
@@ -27,8 +35,8 @@ Editable score SHA-256:
 
 ## Edits
 
-The two-bar introduction is omitted. The hall takes the next 32 bars at the
-original 115 BPM; the rhythm game takes the next 16 bars with a gentle,
+The two-bar introduction is omitted. The original hall took the next 32 bars
+at 115 BPM; the current rhythm game takes the next 16 bars with a gentle,
 pitch-preserving 115-to-120 BPM tempo adjustment. Both retain the composer's
 melody, harmony, instrumentation and arrangement. A 25 ms circular splice
 smooths the join without shortening the musical timeline. A small high-shelf
@@ -41,9 +49,9 @@ The Ogg files are decoded after encoding to verify their exact duration and
 headroom. Short playback previews are supplied for subjective review; source
 score, phrase structure, waveform continuity and loudness were inspected.
 
-The hall master is extended by 0.884 ms to a 64-sample encoder boundary, so its
+The original hall master was extended by 0.884 ms to a 64-sample encoder boundary, so its
 WAV and native Vorbis decode contain exactly the same 2,945,152 frames. Its
-tempo remains nominally 115 BPM. The game master is exactly 1,411,200 frames,
+tempo was nominally 115 BPM. The rhythm-game master is exactly 1,411,200 frames,
 32 seconds and 120 BPM.
 
 ## Music skills and available tooling researched

@@ -1,6 +1,6 @@
 # 16-Bit Con
 
-A playable convention landing page for the Vega Design Engineer assignment. Built with Next.js, React, TypeScript, CSS sprite animation, and small Canvas games.
+A playable convention landing page for the Vega Design Engineer assignment. Built with Next.js, React, TypeScript, whole-frame sprite playback, and small Canvas games.
 
 ## Run
 
@@ -23,14 +23,16 @@ npm run build
 
 ## Experience
 
-The page is a 2,880 px-wide, two-floor convention. Arrow keys immediately move Sam; the camera follows. Machines, people, the lift, and registration use HTML buttons. You can select them directly without moving Sam.
+The page is a 2,880 px-wide, two-floor convention. Sam stays where you leave him. Arrow keys or a deliberate tap on the venue immediately take control; the camera follows. Machines, people, the lift, and registration use HTML buttons. You can select them directly without moving Sam.
 
 - **Hall:** Left/Right or A/D move; Space or Up jumps; Enter interacts; Down + Space drops through a platform; Escape releases movement; Tab follows the document's controls.
 - **Conversation:** Enter, Space, or Down reveals then advances a line. At the final line, arrows choose a response and Enter selects it. Escape returns to the hall.
 - **Games:** Enter starts or resumes; Enter/P pauses; R restarts; Escape/X exits; M toggles sound. Each machine shows its own movement/action controls. Normal Tab navigation remains available.
-- **Phone:** Explore the hall opens a handheld layout with D-pad, A/B, and a fixed close button. Pointer capture prevents dragging off a pressed control from leaving movement stuck. Closing restores the previous page scroll position.
+- **Phone:** Tap the venue or choose Explore to open a handheld layout with D-pad, A/B, sound, background-motion pause, and a fixed close button. Conversations and games return to the same handheld session. Pointer capture prevents dragging off a pressed control from leaving movement stuck. Closing restores the previous page scroll position.
 
-Four games are open to guests: Daisy Breaker, Cartridge Run, Sam Circuit, and Sam's Beat. Sam Circuit uses a pixel Fiat based on the supplied PostSIEM.com event photograph and three fictional Legacy Stack rivals, with authored corners, collision penalties, boosts, and a podium target.
+Four games are open to guests: Daisy Breaker, Cartridge Run, Sam Circuit, and Sam's Beat. Every race loads the PostSIEM.com Fiat and all twelve distinct rival microcars. Finish first within 55 seconds; corners, traffic, collision penalties and boosts affect the result. The rhythm game has 24 spaced notes and a 60% clear threshold.
+
+Player creation offers eight customization categories, six preset looks and five optional companions. On phones, choose an outfit with a fixed preview, then enter details in a separate scrollable step. Older three-part player profiles still load.
 
 ## Implementation
 
@@ -40,7 +42,7 @@ Four games are open to guests: Daisy Breaker, Cartridge Run, Sam Circuit, and Sa
 
 Native dialogs make other content inert. Game and dialogue states explicitly restore focus. Dialogue reserves the complete text and response area, so typewriter animation does not change its geometry. Its dark bars and speaker portrait reuse the original game's presentation. Reduced motion removes automatic sprite/cloud motion and the cinematic zoom; gameplay remains available through deliberate input.
 
-Audio starts muted. The hall and rhythm tracks are edited excerpts of congusbongus’s CC0 FM track, Welcome to the Item Shop. Sound effects and the racing engine use Web Audio. Music is decoded on demand, with OGG and WAV fallback. Visibility changes pause active games and audio.
+Audio starts muted. The hall and four games each have a separate score, credited in `public/audio/ATTRIBUTION.txt`. Sound effects and the racing engine use Web Audio. Music loads on demand with OGG/WAV fallback and a bounded decoded cache. Load cancellation, timeouts and playback ownership keep a stalled or obsolete request from blocking a new game. Visibility changes pause active games and audio.
 
 ## Demo boundaries
 

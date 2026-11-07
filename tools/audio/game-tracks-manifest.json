@@ -1,0 +1,197 @@
+{
+  "preparedOn": "2026-11-07",
+  "preparationScript": "tools/audio/prepare_games.py",
+  "provenance": "Three different author-published CC0 recordings. No music-generation provider or copied Deja Vu melody was used. The 32 kHz/16-bit preparation is a restrained sample texture, not console-chip emulation.",
+  "protectedAudioSha256": {
+    "hall.wav": "a0b5cf0c344f31e20a8b45ebf7e4e118e56bb9e44dc3d1da3847d211de3baf02",
+    "hall.ogg": "07040a1a283d796471d9412f98f953766c72d8d3efde79ef565347f9175b0fc0",
+    "beat.wav": "862c5679da3a25d47898c6873564d5ca85698392c15dce6f6c9a00a0dc362a61",
+    "beat.ogg": "06c97465c292ef32f7948e8e8424d60a38b4ac72e2dbace7ca23f2931e89bbf1"
+  },
+  "bpmNote": "Kart tempo is author-tagged and adjusted to 156 BPM. Breaker and Runner have no published BPM; their approximate pulse estimates are separately labeled and neither recording is retimed.",
+  "tracks": {
+    "breaker": {
+      "id": "breaker",
+      "title": "Homely Arcade",
+      "artist": "Spring Spring",
+      "sourceFile": "homely-arcade.ogg",
+      "sourceUrl": "https://opengameart.org/sites/default/files/homely_arcade_0.ogg",
+      "sourcePage": "https://opengameart.org/content/homely-arcade",
+      "sourceSha256": "ea9fc11a8b79691ebab390bd51588151c68abbe76155b824890417b5c1070c3c",
+      "sourceBpm": null,
+      "bpm": null,
+      "estimatedPulseBpm": 128,
+      "bpmEvidence": "The author publishes no BPM. An onset-envelope pulse estimate is about 128 BPM; the recording is not retimed.",
+      "style": "Author-described warm 16-bit FM arcade chiptune.",
+      "sourceLoopReady": false,
+      "licenseNote": "The author offers OGA-BY 3.0 and CC0. This use selects the CC0 option. Attribution notice: Spring Spring.",
+      "tempoRatio": 1.0,
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": {
+        "ogg": "/audio/breaker.ogg",
+        "wav": "/audio/breaker.wav"
+      },
+      "sourceDurationSeconds": 134.967042,
+      "durationSeconds": 134.968,
+      "sampleRateHz": 32000,
+      "channels": 2,
+      "pcmBits": 16,
+      "sampleFrames": 4318976,
+      "loop": {
+        "startSeconds": 0,
+        "endSeconds": 134.968
+      },
+      "loopPreparation": "Whole-recording period with 25 ms circular splice; no newly composed melody or percussion.",
+      "gainDb": -10.1,
+      "highShelfDb": -1.5,
+      "lowpassHz": 11500,
+      "levels": {
+        "sampleFrames": 4318976,
+        "peakDbfs": -10.001,
+        "rmsDbfs": -25.11,
+        "clippedSamples": 0,
+        "boundaryStepLinear": [
+          0.0,
+          0.0
+        ],
+        "integratedLufs": -22.5,
+        "loudnessRangeLu": 3.3,
+        "truePeakDbfs": -10.0,
+        "oggPeakDbfs": -9.911,
+        "oggClippedSamples": 0,
+        "oggDecodedFrames": 4318976
+      },
+      "bytes": {
+        "ogg": 2085677,
+        "wav": 17275982
+      },
+      "wavSha256": "df094108cd6f35e2a1411637fb16be267cd515cac458d2517b2fab2358fc8afc",
+      "oggSha256": "f6625a7c02e4327873dbe9ac83dc92e6ca7965ee8380ba7fc2a4f2c4fbba7fca",
+      "preview": "tools/audio/previews/breaker-preview.mp3",
+      "loopPreview": "tools/audio/previews/breaker-loop-preview.mp3"
+    },
+    "runner": {
+      "id": "runner",
+      "title": "Wacky Wobblings",
+      "artist": "Fupi",
+      "sourceFile": "wacky-wobblings.ogg",
+      "sourceUrl": "https://opengameart.org/sites/default/files/wackywobblings.ogg",
+      "sourcePage": "https://opengameart.org/content/wacky-wobblings",
+      "sourceSha256": "e33833cfe5276e58deb60aa705846112e1c5ab11d0e2bf4a534082c5e9f476fc",
+      "sourceBpm": null,
+      "bpm": null,
+      "estimatedPulseBpm": 88,
+      "bpmEvidence": "The author publishes no BPM. The swing pulse estimates near 88 BPM (176 double-time); the recording is not retimed.",
+      "style": "Author-described 16-bit-style slap-bass, swing, drums and synth/blues arrangement made in BeepBox.",
+      "sourceLoopReady": true,
+      "licenseNote": "The author's original submission licenses the recording under CC0. The separate introduction file is not used.",
+      "tempoRatio": 1.0,
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": {
+        "ogg": "/audio/runner.ogg",
+        "wav": "/audio/runner.wav"
+      },
+      "sourceDurationSeconds": 46.363646,
+      "durationSeconds": 46.364,
+      "sampleRateHz": 32000,
+      "channels": 2,
+      "pcmBits": 16,
+      "sampleFrames": 1483648,
+      "loop": {
+        "startSeconds": 0,
+        "endSeconds": 46.364
+      },
+      "loopPreparation": "Whole-recording period with 25 ms circular splice; no newly composed melody or percussion.",
+      "gainDb": -4.3,
+      "highShelfDb": -1.8,
+      "lowpassHz": 11500,
+      "levels": {
+        "sampleFrames": 1483648,
+        "peakDbfs": -7.151,
+        "rmsDbfs": -21.969,
+        "clippedSamples": 0,
+        "boundaryStepLinear": [
+          0.0027161,
+          0.0027161
+        ],
+        "integratedLufs": -22.0,
+        "loudnessRangeLu": 0.7,
+        "truePeakDbfs": -7.1,
+        "oggPeakDbfs": -7.167,
+        "oggClippedSamples": 0,
+        "oggDecodedFrames": 1483648
+      },
+      "bytes": {
+        "ogg": 320118,
+        "wav": 5934670
+      },
+      "wavSha256": "c6ffd606f731752e60bcc5deec065a7bb13df75671b0723c5c4eeb3fca8c18b8",
+      "oggSha256": "a311c0d8219ea87acef18390de46d052ec4fcf7a281c50f0b87f6203fb0d4b15",
+      "preview": "tools/audio/previews/runner-preview.mp3",
+      "loopPreview": "tools/audio/previews/runner-loop-preview.mp3"
+    },
+    "kart": {
+      "id": "kart",
+      "title": "Fever Stadium",
+      "artist": "MintoDog",
+      "sourceFile": "fever-stadium-165.ogg",
+      "sourceUrl": "https://opengameart.org/sites/default/files/fever_stadium_bpm165_0.ogg",
+      "sourcePage": "https://opengameart.org/content/fever-stadium",
+      "sourceSha256": "65c892eba361402e1519c01e5082781931879d247c39a80e45af044303766a6a",
+      "sourceBpm": 165,
+      "bpm": 156,
+      "estimatedPulseBpm": null,
+      "bpmEvidence": "165 BPM is supplied in the author's filename and embedded BPM tag. The edit uses a pitch-preserving 156/165 tempo ratio.",
+      "style": "Author-described synth Eurobeat for a racing game, prepared with restrained 32 kHz/16-bit sample texture. It is not exact console-chip emulation.",
+      "sourceLoopReady": true,
+      "licenseNote": "The author's original submission licenses this track under CC0. The faster Climax variant is not used.",
+      "tempoRatio": 0.9454545454545454,
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": {
+        "ogg": "/audio/kart.ogg",
+        "wav": "/audio/kart.wav"
+      },
+      "sourceDurationSeconds": 85.818186,
+      "durationSeconds": 90.77,
+      "sampleRateHz": 32000,
+      "channels": 2,
+      "pcmBits": 16,
+      "sampleFrames": 2904640,
+      "loop": {
+        "startSeconds": 0,
+        "endSeconds": 90.77
+      },
+      "loopPreparation": "Whole-recording period with 25 ms circular splice; no newly composed melody or percussion.",
+      "gainDb": -10.3,
+      "highShelfDb": -1.2,
+      "lowpassHz": 11500,
+      "levels": {
+        "sampleFrames": 2904640,
+        "peakDbfs": -10.7,
+        "rmsDbfs": -23.365,
+        "clippedSamples": 0,
+        "boundaryStepLinear": [
+          0.0019531,
+          0.0013733
+        ],
+        "integratedLufs": -21.5,
+        "loudnessRangeLu": 1.3,
+        "truePeakDbfs": -10.6,
+        "oggPeakDbfs": -10.528,
+        "oggClippedSamples": 0,
+        "oggDecodedFrames": 2904640
+      },
+      "bytes": {
+        "ogg": 1785666,
+        "wav": 11618638
+      },
+      "wavSha256": "99335d952978629696a56b2e42e75ee56dbbca22b5e353e012d98d054ff27208",
+      "oggSha256": "bfe787f2a98ca6ac6c1e6ec974a5536884790f3f06422a94a65b8c64de928621",
+      "preview": "tools/audio/previews/kart-preview.mp3",
+      "loopPreview": "tools/audio/previews/kart-loop-preview.mp3"
+    }
+  }
+}

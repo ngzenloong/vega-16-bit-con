@@ -1,0 +1,252 @@
+/* The phone flow keeps outfit selection separate from keyboard entry. */
+.registration-details {
+  display: grid;
+  gap: 13px;
+}
+.registration-preview {
+  position: sticky;
+  top: 86px;
+}
+.registration-preview .text-link {
+  min-height: var(--control-hit);
+  padding-block: 10px;
+}
+.look-presets > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.registration-mobile .registration-preview {
+  position: static;
+}
+.outfit-cycle select {
+  min-width: 0;
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font: 13px var(--font-mono);
+  padding: 6px;
+}
+.registration-details > label {
+  display: grid;
+  gap: 5px;
+  font-size: 12px;
+}
+.registration-details[hidden],
+.outfit-options[hidden],
+.form-note[hidden] {
+  display: none;
+}
+.registration-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+.registration-copy h2:focus {
+  outline: none;
+}
+.registration-mobile {
+  position: fixed;
+  top: calc(var(--registration-top, 0px) + 12px);
+  bottom: auto;
+  left: 12px;
+  right: 12px;
+  margin: 0;
+  width: calc(100vw - 24px);
+  height: calc(var(--registration-vh, 100dvh) - 24px);
+  max-width: none;
+  max-height: calc(var(--registration-vh, 100dvh) - 24px);
+  overflow: hidden;
+}
+.registration-mobile[open] {
+  display: flex;
+  flex-direction: column;
+}
+.registration-mobile .window-title {
+  flex: none;
+  position: relative;
+  gap: 8px;
+  padding-inline: 12px;
+}
+.registration-step {
+  white-space: nowrap;
+}
+.registration-mobile form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+}
+.registration-mobile .registration-copy {
+  flex: none;
+  margin: 0;
+  padding: 14px 20px 12px;
+}
+.registration-mobile .registration-copy h2 {
+  font-size: 32px;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+.registration-mobile .registration-copy p {
+  font-size: 13px;
+}
+.registration-mobile .registration-grid {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: 0;
+}
+.registration-mobile .registration-preview {
+  flex: none;
+  width: 100%;
+  padding: 0 20px;
+}
+.registration-mobile .registration-card-window {
+  position: relative;
+  height: calc(270px * var(--pass-scale, 1));
+}
+.registration-mobile .registration-preview .player-pass {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  margin: 0;
+  width: 192px;
+  height: 270px;
+  translate: -50% 0;
+  scale: var(--pass-scale, 1);
+  transform-origin: center top;
+}
+.registration-mobile .pass-face {
+  padding: 12px;
+}
+.registration-mobile .pass-character {
+  margin-top: 4px;
+}
+.registration-mobile .pass-face > strong {
+  font-size: 20px;
+}
+.registration-mobile .pass-face > p {
+  font-size: 9px;
+  margin-top: 7px;
+}
+.registration-mobile .look-status {
+  margin: 8px 0 0;
+  min-height: 20px;
+  text-align: center;
+}
+.registration-mobile .registration-fields {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  padding: 0 20px;
+  gap: 0;
+}
+.registration-mobile .outfit-options {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  align-content: start;
+  gap: 12px;
+  margin: 0 -4px;
+  padding: 12px 4px;
+}
+.registration-mobile .outfit-all {
+  display: none;
+}
+.registration-mobile .outfit-cycle {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  gap: 8px;
+  align-items: center;
+  text-align: center;
+  font: 14px/1.4 var(--font-mono);
+}
+.registration-mobile .outfit-cycle button {
+  min-height: 44px;
+  border: 1px solid var(--ink);
+  background: var(--white);
+  font: 18px var(--font-mono);
+}
+.registration-mobile .outfit-cycle button:active {
+  background: var(--yellow);
+}
+.registration-mobile .registration-actions {
+  flex: none;
+  padding-block: 12px;
+}
+.registration-mobile .register-submit {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+.registration-mobile .registration-back {
+  flex: none;
+  padding-inline: 14px;
+}
+.registration-mobile[data-step="details"] form {
+  display: block;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.registration-mobile[data-step="details"] .registration-grid {
+  flex: none;
+}
+.registration-mobile[data-step="details"] .registration-fields {
+  display: grid;
+  flex: none;
+  gap: 12px;
+  order: 1;
+}
+.registration-mobile[data-step="details"] .registration-preview {
+  order: 2;
+  padding-block: 20px;
+}
+.registration-mobile[data-step="details"] .registration-card-window {
+  height: 270px;
+}
+.registration-mobile[data-step="details"] .player-pass {
+  scale: 1;
+}
+.registration-mobile .registration-details input {
+  font-size: 16px;
+}
+.registration-mobile .form-note {
+  font-size: 12px;
+  line-height: 1.5;
+}
+@media (min-width: 480px) and (max-height: 600px) {
+  .registration-mobile[data-step="look"] .registration-grid {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+  .registration-mobile[data-step="look"] .registration-fields {
+    height: 100%;
+  }
+  .registration-mobile .registration-copy {
+    padding-block: 8px;
+  }
+  .registration-mobile .registration-copy h2 {
+    font-size: 26px;
+  }
+  .registration-mobile .registration-copy p {
+    display: none;
+  }
+}
+@media (min-width: 480px) and (max-height: 360px) {
+  .registration-mobile[data-step="look"] .registration-grid {
+    grid-template-columns: 170px minmax(0, 1fr);
+  }
+  .registration-mobile[data-step="look"] .registration-card-window {
+    height: 149px;
+  }
+  .registration-mobile[data-step="look"] .player-pass {
+    scale: 0.55;
+  }
+}

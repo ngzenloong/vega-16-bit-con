@@ -229,13 +229,14 @@ img {
   height: var(--sprite-height);
   background-size: var(--sheet-width) var(--sprite-height);
   background-repeat: no-repeat;
+  background-position: 0px 0px;
   image-rendering: pixelated;
   user-select: none;
   pointer-events: none;
 }
 .sprite-animated {
-  animation: sprite-strip var(--sprite-duration) steps(var(--sprite-steps))
-    infinite;
+  animation: sprite-strip var(--sprite-duration)
+    steps(var(--sprite-steps), jump-none) infinite;
 }
 .site-footer {
   background: var(--leaf);
@@ -686,8 +687,11 @@ dialog::backdrop {
   outline-offset: 1px;
 }
 @keyframes sprite-strip {
+  from {
+    background-position: 0px 0px;
+  }
   to {
-    background-position: var(--sprite-end) 0;
+    background-position: var(--sprite-end) 0px;
   }
 }
 @media (max-width: 1100px) {

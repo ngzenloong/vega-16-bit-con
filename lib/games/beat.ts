@@ -24,7 +24,7 @@ export function createBeatState() {
     combo: 0,
     maxCombo: 0,
     feedback: "READY",
-    feedbackUntil: 2,
+    feedbackUntil: 2.5,
     feedbackKind: "ready",
     held: [false, false, false, false],
     pressedAt: [-10, -10, -10, -10],
@@ -54,7 +54,7 @@ export function pressBeat(
   const lane = lanes.indexOf(key);
   if (lane < 0) return;
   state.pressedAt[lane] = visualAt;
-  if (at < 1.5) {
+  if (at < 2.5) {
     state.laneGrade[lane] = "ready";
     sound("click");
     return;
@@ -108,7 +108,7 @@ export function updateBeat(
   state.time = time;
   state.held = lanes.map((key) => input[key]);
   for (const note of state.notes)
-    if (note.state === "waiting" && time + tapOffset - note.at > 0.2) {
+    if (note.state === "waiting" && time + tapOffset - note.at > 0.34) {
       note.state = "miss";
       note.grade = "miss";
       state.judged++;
@@ -128,7 +128,10 @@ function arrow(
   scale: number,
   color: string,
 ) {
-  const bitmap = ["00100", "01110", "11111", "00100", "00100"];
+  const bitmap = [
+    "0001000", "0011100", "0111110", "1111111",
+    "0001000", "0001000", "0001000",
+  ];
   c.save();
   c.translate(Math.round(x), Math.round(y));
   c.rotate([-Math.PI / 2, Math.PI, 0, Math.PI / 2][lane]);
@@ -136,7 +139,7 @@ function arrow(
   bitmap.forEach((row, ry) =>
     [...row].forEach((pixel, rx) => {
       if (pixel === "1")
-        c.fillRect((rx - 2.5) * scale, (ry - 2.5) * scale, scale, scale);
+        c.fillRect((rx - 3.5) * scale, (ry - 3.5) * scale, scale, scale);
     }),
   );
   c.restore();
@@ -181,8 +184,8 @@ export const createGame: GameFactory = (env) => {
         const accuracy = beatAccuracy(state);
         end(
           state.score,
-          accuracy >= 70,
-          `${accuracy}% accuracy. ${state.hits}/${state.notes.length} notes hit, ${state.strays} extra ${state.strays === 1 ? "tap" : "taps"}. ${accuracy >= 70 ? "Post-SIEM sync complete." : "Reach 70% accuracy to clear."}`,
+          accuracy >= 60,
+          `${accuracy}% accuracy. ${state.hits}/${state.notes.length} notes hit, ${state.strays} extra ${state.strays === 1 ? "tap" : "taps"}. ${accuracy >= 60 ? "Post-SIEM sync complete." : "Reach 60% accuracy to clear."}`,
         );
       }
     },
@@ -223,6 +226,13 @@ export const createGame: GameFactory = (env) => {
         const since = t - state.pressedAt[lane],
           recent = since >= 0 && since < 0.2,
           good = t - state.hitAt[lane] >= 0 && t - state.hitAt[lane] < 0.24;
+        const approaching = state.notes.some(
+          (note) =>
+            note.state === "waiting" &&
+            note.lane === lane &&
+            note.at >= t &&
+            note.at - t < 0.55,
+        );
         const amount = state.held[lane]
             ? 1
             : recent
@@ -238,7 +248,12 @@ export const createGame: GameFactory = (env) => {
             ? laneColors[lane]
             : "#62735a";
         c.fillRect(x - 29, target - 21 + press, 58, 34 - press);
-        c.fillStyle = amount > 0.05 || good ? C.paper : "#88967c";
+        c.fillStyle =
+          amount > 0.05 || good
+            ? C.paper
+            : approaching
+              ? laneColors[lane]
+              : "#88967c";
         c.fillRect(x - 28, target - 20 + press, 56, 3);
         arrow(
           c,
@@ -246,7 +261,11 @@ export const createGame: GameFactory = (env) => {
           target - 4 + press,
           lane,
           4,
-          amount > 0.05 || good || bad ? C.ink : C.paper,
+          amount > 0.05 || good || bad
+            ? C.ink
+            : approaching
+              ? laneColors[lane]
+              : C.paper,
         );
         if (good && !env.reducedMotion) {
           const spread = Math.round((t - state.hitAt[lane]) * 75);
@@ -267,7 +286,7 @@ export const createGame: GameFactory = (env) => {
       });
       for (const note of state.notes) {
         if (note.state !== "waiting") continue;
-        const y = target - ((note.at - t) * (target - fieldTop)) / 1.72;
+        const y = target - ((note.at - t) * (target - fieldTop)) / 2.4;
         if (y < fieldTop + 6 || y > target + 34) continue;
         const x = xs[note.lane];
         c.fillStyle = laneColors[note.lane];
@@ -330,7 +349,7 @@ export const createGame: GameFactory = (env) => {
         C.paper,
         "center",
       );
-      if (t < 2) {
+      if (t < 2.5) {
         pixelText(c, "READY", center, feedbackY, 24, C.paper, "center");
         pixelText(
           c,

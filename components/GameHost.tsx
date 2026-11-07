@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { GameId, GameResult, Appearance } from "@/lib/types";
-import { GAMES } from "@/lib/types";
+import { GAMES, GAME_DURATION } from "@/lib/types";
 import type {
   GameController,
   GameInput,
@@ -12,10 +12,12 @@ import { gameLoaders } from "@/lib/games/loaders";
 import { gameResources } from "@/lib/games/resources";
 import { SimulationClock } from "@/lib/games/clock";
 import { gameViewport } from "@/lib/games/viewport";
+import { RIVAL_CARS } from "@/lib/games/cars";
 import { audio } from "@/lib/audio";
 import { HeldInput } from "@/lib/input";
 import Controls from "./Controls";
 import Icon from "./Icon";
+import RaceGarage from "./RaceGarage";
 
 type Mode =
   | "loading"
@@ -85,8 +87,11 @@ export default function GameHost({
     [result, setResult] = useState<GameResult | null>(null),
     [hud, setHud] = useState<GameHUD>({
       score: 0,
-      time: id === "beat" ? 32 : 60,
+      time: GAME_DURATION[id],
     });
+  const [gridSeed] = useState(() =>
+    Math.floor(Math.random() * RIVAL_CARS.length),
+  );
   const [pressed, setPressed] = useState<GameButton[]>([]),
     [touch, setTouch] = useState(touchControls),
     [keyboardHelp, setKeyboardHelp] = useState(false),
@@ -157,14 +162,15 @@ export default function GameHost({
   }, [onClose]);
   const start = useCallback(async () => {
     if (!["intro", "paused"].includes(modeRef.current)) return;
-    const offset = modeRef.current === "paused" ? elapsed.current : 0,
+    const resuming = modeRef.current === "paused";
+    const offset = resuming ? elapsed.current : 0,
       ticket = ++launch.current;
     changeMode("starting");
     clearInput();
     audio.duck(1);
     setAudioError("");
     try {
-      await audio.play(id === "beat" ? "beat" : "hall", offset);
+      await audio.play(id, id === "beat" || !resuming ? offset : undefined);
     } catch {
       setAudioError(
         "Music is unavailable. You can keep playing with visual cues.",
@@ -209,7 +215,7 @@ export default function GameHost({
       const time = readTime();
       song.current = { offset: time, started: performance.now() };
       try {
-        await audio.play(id === "beat" ? "beat" : "hall", time);
+        await audio.play(id, id === "beat" ? time : undefined);
         setAudioError("");
       } catch {
         setAudioError(
@@ -222,7 +228,7 @@ export default function GameHost({
     } else if (modeRef.current === "paused") audio.pause();
     else if (audio.enabled)
       void audio
-        .play("hall")
+        .play(id)
         .catch(() =>
           setAudioError(
             "Music could not load. Turn sound off, then on to retry.",
@@ -313,7 +319,7 @@ export default function GameHost({
       try {
         const [{ createGame }, resources] = await Promise.all([
           gameLoaders[id](),
-          gameResources(appearance, id === "kart"),
+          gameResources(appearance, id === "kart", gridSeed + round),
         ]);
         if (disposed) return;
         const context = canvas.current!.getContext("2d")!;
@@ -329,7 +335,7 @@ export default function GameHost({
           clearInput();
           audio.pause();
           audio.duck(0.3);
-          void audio.play("hall").catch(() => {});
+          void audio.play(id).catch(() => {});
           changeMode("result");
           resultCallback.current(next);
         };
@@ -436,7 +442,16 @@ export default function GameHost({
       input.current = freshInput();
       audio.motor(0);
     };
-  }, [id, appearance, round, changeMode, clearInput, readTime, start]);
+  }, [
+    id,
+    appearance,
+    round,
+    gridSeed,
+    changeMode,
+    clearInput,
+    readTime,
+    start,
+  ]);
 
   const control = useCallback(
     (
@@ -535,6 +550,7 @@ export default function GameHost({
         if (!e.repeat) void toggleSound();
         return;
       }
+      if (current !== "playing" && e.code === "Space" && target?.closest(".race-garage ul")) return;
       if (e.code === "KeyX") {
         e.preventDefault();
         if (!e.repeat) exit();
@@ -568,6 +584,7 @@ export default function GameHost({
       if (
         ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)
       ) {
+        if (target?.closest(".race-garage")) return;
         const buttons = [
           ...d.querySelectorAll<HTMLButtonElement>(
             ".game-message .menu-actions button",
@@ -721,6 +738,7 @@ export default function GameHost({
                     <p className="control-legend">
                       {isTouch ? touchHelp[id] : info.controls}
                     </p>
+                    {id === "kart" && <RaceGarage />}
                     {best !== undefined && (
                       <p className="best-score">
                         Personal best: {best.toLocaleString()} points

@@ -1,0 +1,1758 @@
+[
+  {
+    "id": "mini",
+    "model": "Classic Mini Cooper",
+    "file": "car-mini-side.svg",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "side-left",
+      "side-right"
+    ],
+    "frameOffsets": [
+      0,
+      96
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "frameBounds": [
+      [
+        6,
+        38,
+        84,
+        53
+      ],
+      [
+        6,
+        38,
+        84,
+        53
+      ]
+    ],
+    "bodyBounds": [
+      [
+        6,
+        38,
+        84,
+        45
+      ],
+      [
+        6,
+        38,
+        84,
+        45
+      ]
+    ],
+    "wheels": [
+      {
+        "front": [
+          24,
+          82
+        ],
+        "rear": [
+          74,
+          82
+        ],
+        "radius": 8
+      },
+      {
+        "front": [
+          71,
+          82
+        ],
+        "rear": [
+          21,
+          82
+        ],
+        "radius": 8
+      }
+    ],
+    "sideWindowBoxes": [
+      [
+        [
+          27,
+          47,
+          22,
+          14
+        ],
+        [
+          52,
+          47,
+          22,
+          14
+        ]
+      ],
+      [
+        [
+          47,
+          47,
+          22,
+          14
+        ],
+        [
+          22,
+          47,
+          22,
+          14
+        ]
+      ]
+    ],
+    "doorBoxes": [
+      [
+        31,
+        61,
+        28,
+        18
+      ],
+      [
+        37,
+        61,
+        28,
+        18
+      ]
+    ],
+    "bodyTop": 38,
+    "bodyBottom": 82,
+    "identity": "Short upright two-door saloon, separate bonnet and boot, cream roof, chrome trim.",
+    "frontEnd": [
+      "left",
+      "right"
+    ],
+    "rearEnd": [
+      "right",
+      "left"
+    ],
+    "rearPlateVisible": false,
+    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
+    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts."
+  },
+  {
+    "id": "az1",
+    "model": "Autozam AZ-1",
+    "file": "car-az1-side.svg",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "side-left",
+      "side-right"
+    ],
+    "frameOffsets": [
+      0,
+      96
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "frameBounds": [
+      [
+        7,
+        47,
+        85,
+        44
+      ],
+      [
+        4,
+        47,
+        85,
+        44
+      ]
+    ],
+    "bodyBounds": [
+      [
+        7,
+        47,
+        85,
+        37
+      ],
+      [
+        4,
+        47,
+        85,
+        37
+      ]
+    ],
+    "wheels": [
+      {
+        "front": [
+          23,
+          82
+        ],
+        "rear": [
+          76,
+          82
+        ],
+        "radius": 8
+      },
+      {
+        "front": [
+          72,
+          82
+        ],
+        "rear": [
+          19,
+          82
+        ],
+        "radius": 8
+      }
+    ],
+    "sideWindowBoxes": [
+      [
+        [
+          31,
+          51,
+          20,
+          14
+        ],
+        [
+          54,
+          51,
+          18,
+          14
+        ]
+      ],
+      [
+        [
+          45,
+          51,
+          20,
+          14
+        ],
+        [
+          24,
+          51,
+          18,
+          14
+        ]
+      ]
+    ],
+    "doorBoxes": [
+      [
+        32,
+        65,
+        37,
+        15
+      ],
+      [
+        27,
+        65,
+        37,
+        15
+      ]
+    ],
+    "bodyTop": 47,
+    "bodyBottom": 83,
+    "identity": "Low wedge-shaped gullwing micro-coupe, black canopy and deep mid-engine side intake.",
+    "frontEnd": [
+      "left",
+      "right"
+    ],
+    "rearEnd": [
+      "right",
+      "left"
+    ],
+    "rearPlateVisible": false,
+    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
+    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts."
+  },
+  {
+    "id": "isetta",
+    "model": "BMW Isetta 300 Export",
+    "file": "car-isetta-side.svg",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "side-left",
+      "side-right"
+    ],
+    "frameOffsets": [
+      0,
+      96
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "frameBounds": [
+      [
+        19,
+        32,
+        58,
+        59
+      ],
+      [
+        19,
+        32,
+        58,
+        59
+      ]
+    ],
+    "bodyBounds": [
+      [
+        19,
+        32,
+        58,
+        51
+      ],
+      [
+        19,
+        32,
+        58,
+        51
+      ]
+    ],
+    "wheels": [
+      {
+        "front": [
+          32,
+          82
+        ],
+        "rear": [
+          65,
+          82
+        ],
+        "radius": 8
+      },
+      {
+        "front": [
+          63,
+          82
+        ],
+        "rear": [
+          30,
+          82
+        ],
+        "radius": 8
+      }
+    ],
+    "sideWindowBoxes": [
+      [
+        [
+          26,
+          37,
+          21,
+          23
+        ],
+        [
+          49,
+          38,
+          19,
+          23
+        ]
+      ],
+      [
+        [
+          49,
+          37,
+          21,
+          23
+        ],
+        [
+          28,
+          38,
+          19,
+          23
+        ]
+      ]
+    ],
+    "doorBoxes": [
+      [
+        22,
+        57,
+        25,
+        21
+      ],
+      [
+        49,
+        57,
+        25,
+        21
+      ]
+    ],
+    "bodyTop": 32,
+    "bodyBottom": 82,
+    "identity": "Egg-shaped cabin with front-door seam, curved glazing and short tapering engine tail.",
+    "frontEnd": [
+      "left",
+      "right"
+    ],
+    "rearEnd": [
+      "right",
+      "left"
+    ],
+    "rearPlateVisible": false,
+    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
+    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts."
+  },
+  {
+    "id": "p50",
+    "model": "Peel P50",
+    "file": "car-p50-side.svg",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "side-left",
+      "side-right"
+    ],
+    "frameOffsets": [
+      0,
+      96
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "frameBounds": [
+      [
+        26,
+        41,
+        44,
+        50
+      ],
+      [
+        26,
+        41,
+        44,
+        50
+      ]
+    ],
+    "bodyBounds": [
+      [
+        26,
+        41,
+        44,
+        44
+      ],
+      [
+        26,
+        41,
+        44,
+        44
+      ]
+    ],
+    "wheels": [
+      {
+        "front": [
+          35,
+          84
+        ],
+        "rear": [
+          60,
+          84
+        ],
+        "radius": 6
+      },
+      {
+        "front": [
+          60,
+          84
+        ],
+        "rear": [
+          35,
+          84
+        ],
+        "radius": 6
+      }
+    ],
+    "sideWindowBoxes": [
+      [
+        [
+          32,
+          45,
+          15,
+          17
+        ],
+        [
+          50,
+          45,
+          12,
+          16
+        ]
+      ],
+      [
+        [
+          49,
+          45,
+          15,
+          17
+        ],
+        [
+          34,
+          45,
+          12,
+          16
+        ]
+      ]
+    ],
+    "doorBoxes": [
+      [
+        30,
+        62,
+        22,
+        18
+      ],
+      [
+        44,
+        62,
+        22,
+        18
+      ]
+    ],
+    "bodyTop": 41,
+    "bodyBottom": 84,
+    "identity": "Tiny single-seat shell and short wheelbase; one visible front wheel and the single rear wheel.",
+    "frontEnd": [
+      "left",
+      "right"
+    ],
+    "rearEnd": [
+      "right",
+      "left"
+    ],
+    "rearPlateVisible": false,
+    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
+    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts.",
+    "wheelLayout": "three wheels in total; side projection shows one front wheel and the centered rear wheel"
+  },
+  {
+    "id": "sambar-van",
+    "model": "Subaru Sambar van",
+    "file": "car-sambar-van-side.svg",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "side-left",
+      "side-right"
+    ],
+    "frameOffsets": [
+      0,
+      96
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "frameBounds": [
+      [
+        5,
+        25,
+        87,
+        66
+      ],
+      [
+        4,
+        25,
+        87,
+        66
+      ]
+    ],
+    "bodyBounds": [
+      [
+        5,
+        25,
+        87,
+        59
+      ],
+      [
+        4,
+        25,
+        87,
+        59
+      ]
+    ],
+    "wheels": [
+      {
+        "front": [
+          22,
+          82
+        ],
+        "rear": [
+          76,
+          82
+        ],
+        "radius": 8
+      },
+      {
+        "front": [
+          73,
+          82
+        ],
+        "rear": [
+          19,
+          82
+        ],
+        "radius": 8
+      }
+    ],
+    "sideWindowBoxes": [
+      [
+        [
+          10,
+          37,
+          21,
+          19
+        ],
+        [
+          35,
+          37,
+          24,
+          19
+        ],
+        [
+          63,
+          37,
+          22,
+          19
+        ]
+      ],
+      [
+        [
+          65,
+          37,
+          21,
+          19
+        ],
+        [
+          37,
+          37,
+          24,
+          19
+        ],
+        [
+          11,
+          37,
+          22,
+          19
+        ]
+      ]
+    ],
+    "doorBoxes": [
+      [
+        33,
+        56,
+        49,
+        23
+      ],
+      [
+        14,
+        56,
+        49,
+        23
+      ]
+    ],
+    "bodyTop": 25,
+    "bodyBottom": 83,
+    "identity": "Tall cab-over van, nearly flat nose, three side glass sections and a sliding cargo door.",
+    "frontEnd": [
+      "left",
+      "right"
+    ],
+    "rearEnd": [
+      "right",
+      "left"
+    ],
+    "rearPlateVisible": false,
+    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
+    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts."
+  },
+  {
+    "id": "sambar-truck",
+    "model": "Subaru Sambar kei truck",
+    "file": "car-sambar-truck-side.svg",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "side-left",
+      "side-right"
+    ],
+    "frameOffsets": [
+      0,
+      96
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "frameBounds": [
+      [
+        5,
+        31,
+        86,
+        60
+      ],
+      [
+        5,
+        31,
+        86,
+        60
+      ]
+    ],
+    "bodyBounds": [
+      [
+        5,
+        31,
+        86,
+        52
+      ],
+      [
+        5,
+        31,
+        86,
+        52
+      ]
+    ],
+    "wheels": [
+      {
+        "front": [
+          22,
+          82
+        ],
+        "rear": [
+          76,
+          82
+        ],
+        "radius": 8
+      },
+      {
+        "front": [
+          73,
+          82
+        ],
+        "rear": [
+          19,
+          82
+        ],
+        "radius": 8
+      }
+    ],
+    "sideWindowBoxes": [
+      [
+        [
+          11,
+          41,
+          29,
+          15
+        ]
+      ],
+      [
+        [
+          56,
+          41,
+          29,
+          15
+        ]
+      ]
+    ],
+    "doorBoxes": [
+      [
+        12,
+        57,
+        28,
+        22
+      ],
+      [
+        56,
+        57,
+        28,
+        22
+      ]
+    ],
+    "bodyTop": 31,
+    "bodyBottom": 82,
+    "identity": "Cab-over two-seat truck with a separate long open bed, ribbed drop side and tailgate latches.",
+    "frontEnd": [
+      "left",
+      "right"
+    ],
+    "rearEnd": [
+      "right",
+      "left"
+    ],
+    "rearPlateVisible": false,
+    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
+    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts.",
+    "bedBoxes": [
+      [
+        46,
+        57,
+        43,
+        22
+      ],
+      [
+        7,
+        57,
+        43,
+        22
+      ]
+    ]
+  },
+  {
+    "id": "midget",
+    "model": "Daihatsu Midget II pickup",
+    "file": "car-midget-side.svg",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "side-left",
+      "side-right"
+    ],
+    "frameOffsets": [
+      0,
+      96
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "frameBounds": [
+      [
+        13,
+        33,
+        70,
+        58
+      ],
+      [
+        13,
+        33,
+        70,
+        58
+      ]
+    ],
+    "bodyBounds": [
+      [
+        13,
+        33,
+        70,
+        51
+      ],
+      [
+        13,
+        33,
+        70,
+        51
+      ]
+    ],
+    "wheels": [
+      {
+        "front": [
+          29,
+          83
+        ],
+        "rear": [
+          70,
+          83
+        ],
+        "radius": 7
+      },
+      {
+        "front": [
+          66,
+          83
+        ],
+        "rear": [
+          25,
+          83
+        ],
+        "radius": 7
+      }
+    ],
+    "sideWindowBoxes": [
+      [
+        [
+          21,
+          44,
+          25,
+          15
+        ]
+      ],
+      [
+        [
+          50,
+          44,
+          25,
+          15
+        ]
+      ]
+    ],
+    "doorBoxes": [
+      [
+        22,
+        60,
+        23,
+        19
+      ],
+      [
+        51,
+        60,
+        23,
+        19
+      ]
+    ],
+    "bodyTop": 33,
+    "bodyBottom": 83,
+    "identity": "Narrow one-seat cab, visible front-mounted spare edge and short open green cargo bed.",
+    "frontEnd": [
+      "left",
+      "right"
+    ],
+    "rearEnd": [
+      "right",
+      "left"
+    ],
+    "rearPlateVisible": false,
+    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
+    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts.",
+    "bedBoxes": [
+      [
+        49,
+        56,
+        32,
+        23
+      ],
+      [
+        15,
+        56,
+        32,
+        23
+      ]
+    ]
+  },
+  {
+    "id": "smart",
+    "model": "Smart Fortwo 450",
+    "file": "car-smart-side.svg",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "side-left",
+      "side-right"
+    ],
+    "frameOffsets": [
+      0,
+      96
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "frameBounds": [
+      [
+        16,
+        32,
+        65,
+        59
+      ],
+      [
+        15,
+        32,
+        65,
+        59
+      ]
+    ],
+    "bodyBounds": [
+      [
+        16,
+        32,
+        65,
+        53
+      ],
+      [
+        15,
+        32,
+        65,
+        53
+      ]
+    ],
+    "wheels": [
+      {
+        "front": [
+          29,
+          82
+        ],
+        "rear": [
+          68,
+          82
+        ],
+        "radius": 8
+      },
+      {
+        "front": [
+          66,
+          82
+        ],
+        "rear": [
+          27,
+          82
+        ],
+        "radius": 8
+      }
+    ],
+    "sideWindowBoxes": [
+      [
+        [
+          24,
+          41,
+          29,
+          19
+        ],
+        [
+          55,
+          41,
+          14,
+          20
+        ]
+      ],
+      [
+        [
+          43,
+          41,
+          29,
+          19
+        ],
+        [
+          27,
+          41,
+          14,
+          20
+        ]
+      ]
+    ],
+    "doorBoxes": [
+      [
+        24,
+        60,
+        40,
+        20
+      ],
+      [
+        32,
+        60,
+        40,
+        20
+      ]
+    ],
+    "bodyTop": 32,
+    "bodyBottom": 84,
+    "identity": "Very short two-seat coupe with an exposed contrasting safety cell and large triangular side glazing.",
+    "frontEnd": [
+      "left",
+      "right"
+    ],
+    "rearEnd": [
+      "right",
+      "left"
+    ],
+    "rearPlateVisible": false,
+    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
+    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts."
+  },
+  {
+    "id": "be1",
+    "model": "Nissan Be-1",
+    "file": "car-be1-side.svg",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "side-left",
+      "side-right"
+    ],
+    "frameOffsets": [
+      0,
+      96
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "frameBounds": [
+      [
+        7,
+        39,
+        83,
+        52
+      ],
+      [
+        6,
+        39,
+        83,
+        52
+      ]
+    ],
+    "bodyBounds": [
+      [
+        7,
+        39,
+        83,
+        44
+      ],
+      [
+        6,
+        39,
+        83,
+        44
+      ]
+    ],
+    "wheels": [
+      {
+        "front": [
+          23,
+          82
+        ],
+        "rear": [
+          75,
+          82
+        ],
+        "radius": 8
+      },
+      {
+        "front": [
+          72,
+          82
+        ],
+        "rear": [
+          20,
+          82
+        ],
+        "radius": 8
+      }
+    ],
+    "sideWindowBoxes": [
+      [
+        [
+          31,
+          45,
+          25,
+          15
+        ],
+        [
+          58,
+          45,
+          22,
+          15
+        ]
+      ],
+      [
+        [
+          40,
+          45,
+          25,
+          15
+        ],
+        [
+          16,
+          45,
+          22,
+          15
+        ]
+      ]
+    ],
+    "doorBoxes": [
+      [
+        36,
+        60,
+        31,
+        19
+      ],
+      [
+        29,
+        60,
+        31,
+        19
+      ]
+    ],
+    "bodyTop": 39,
+    "bodyBottom": 82,
+    "identity": "Rounded compact hatch with a conventional bonnet, broad side glass, large black rub strip and short rear hatch.",
+    "frontEnd": [
+      "left",
+      "right"
+    ],
+    "rearEnd": [
+      "right",
+      "left"
+    ],
+    "rearPlateVisible": false,
+    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
+    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts."
+  },
+  {
+    "id": "pao",
+    "model": "Nissan Pao",
+    "file": "car-pao-side.svg",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "side-left",
+      "side-right"
+    ],
+    "frameOffsets": [
+      0,
+      96
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "frameBounds": [
+      [
+        4,
+        35,
+        88,
+        56
+      ],
+      [
+        4,
+        35,
+        88,
+        56
+      ]
+    ],
+    "bodyBounds": [
+      [
+        4,
+        35,
+        88,
+        48
+      ],
+      [
+        4,
+        35,
+        88,
+        48
+      ]
+    ],
+    "wheels": [
+      {
+        "front": [
+          23,
+          82
+        ],
+        "rear": [
+          76,
+          82
+        ],
+        "radius": 8
+      },
+      {
+        "front": [
+          72,
+          82
+        ],
+        "rear": [
+          19,
+          82
+        ],
+        "radius": 8
+      }
+    ],
+    "sideWindowBoxes": [
+      [
+        [
+          31,
+          44,
+          25,
+          16
+        ],
+        [
+          59,
+          44,
+          21,
+          16
+        ]
+      ],
+      [
+        [
+          40,
+          44,
+          25,
+          16
+        ],
+        [
+          16,
+          44,
+          21,
+          16
+        ]
+      ]
+    ],
+    "doorBoxes": [
+      [
+        37,
+        60,
+        29,
+        20
+      ],
+      [
+        30,
+        60,
+        29,
+        20
+      ]
+    ],
+    "bodyTop": 35,
+    "bodyBottom": 82,
+    "identity": "Canvas-roof retro hatch with upright glass, external door hinges, cream belt trim and a visible fuel flap.",
+    "frontEnd": [
+      "left",
+      "right"
+    ],
+    "rearEnd": [
+      "right",
+      "left"
+    ],
+    "rearPlateVisible": false,
+    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
+    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts."
+  },
+  {
+    "id": "figaro",
+    "model": "Nissan Figaro",
+    "file": "car-figaro-side.svg",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "side-left",
+      "side-right"
+    ],
+    "frameOffsets": [
+      0,
+      96
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "frameBounds": [
+      [
+        4,
+        39,
+        89,
+        52
+      ],
+      [
+        3,
+        39,
+        89,
+        52
+      ]
+    ],
+    "bodyBounds": [
+      [
+        4,
+        39,
+        89,
+        44
+      ],
+      [
+        3,
+        39,
+        89,
+        44
+      ]
+    ],
+    "wheels": [
+      {
+        "front": [
+          22,
+          82
+        ],
+        "rear": [
+          77,
+          82
+        ],
+        "radius": 8
+      },
+      {
+        "front": [
+          73,
+          82
+        ],
+        "rear": [
+          18,
+          82
+        ],
+        "radius": 8
+      }
+    ],
+    "sideWindowBoxes": [
+      [
+        [
+          33,
+          44,
+          20,
+          15
+        ],
+        [
+          55,
+          44,
+          13,
+          14
+        ]
+      ],
+      [
+        [
+          43,
+          44,
+          20,
+          15
+        ],
+        [
+          28,
+          44,
+          13,
+          14
+        ]
+      ]
+    ],
+    "doorBoxes": [
+      [
+        32,
+        60,
+        36,
+        19
+      ],
+      [
+        28,
+        60,
+        36,
+        19
+      ]
+    ],
+    "bodyTop": 39,
+    "bodyBottom": 82,
+    "identity": "Long rounded bonnet and separate boot, compact ivory hardtop and chrome/whitewall details.",
+    "frontEnd": [
+      "left",
+      "right"
+    ],
+    "rearEnd": [
+      "right",
+      "left"
+    ],
+    "rearPlateVisible": false,
+    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
+    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts."
+  },
+  {
+    "id": "scargo",
+    "model": "Nissan S-Cargo Yokohama",
+    "file": "car-scargo-side.svg",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "side-left",
+      "side-right"
+    ],
+    "frameOffsets": [
+      0,
+      96
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "frameBounds": [
+      [
+        4,
+        22,
+        89,
+        69
+      ],
+      [
+        3,
+        22,
+        89,
+        69
+      ]
+    ],
+    "bodyBounds": [
+      [
+        4,
+        22,
+        89,
+        62
+      ],
+      [
+        3,
+        22,
+        89,
+        62
+      ]
+    ],
+    "wheels": [
+      {
+        "front": [
+          23,
+          81
+        ],
+        "rear": [
+          77,
+          81
+        ],
+        "radius": 9
+      },
+      {
+        "front": [
+          72,
+          81
+        ],
+        "rear": [
+          18,
+          81
+        ],
+        "radius": 9
+      }
+    ],
+    "sideWindowBoxes": [
+      [
+        [
+          29,
+          31,
+          32,
+          29
+        ]
+      ],
+      [
+        [
+          35,
+          31,
+          32,
+          29
+        ]
+      ]
+    ],
+    "doorBoxes": [
+      [
+        29,
+        58,
+        34,
+        22
+      ],
+      [
+        33,
+        58,
+        34,
+        22
+      ]
+    ],
+    "bodyTop": 22,
+    "bodyBottom": 83,
+    "identity": "Tall curved marine-blue cargo shell, dark roof, large cab glass, blue side door and circular nautical porthole.",
+    "frontEnd": [
+      "left",
+      "right"
+    ],
+    "rearEnd": [
+      "right",
+      "left"
+    ],
+    "rearPlateVisible": false,
+    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
+    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts.",
+    "bodyColor": "#4384D6",
+    "bodyHighlight": "#7BADE1",
+    "bodyShade": "#2166C3",
+    "roofColor": "#2D4560",
+    "porthole": {
+      "center": [
+        75,
+        43
+      ],
+      "radius": 9
+    },
+    "portholeCenters": [
+      [
+        75,
+        43
+      ],
+      [
+        20,
+        43
+      ]
+    ],
+    "rearPlateGlyph": "茶",
+    "livery": "User-supplied Yokohama Version reference. Blue side panels; white bumper/arches; narrow white trim only at the rear edge. Rear plate is not visible from an orthographic side.",
+    "sourcePhotos": [
+      "91DE6246-D45D-4898-9559-780AA18A3652/1-Photo-1.jpg",
+      "2B6ABA25-A49F-4774-AF84-823F7772D107/1-Photo-1.jpg"
+    ]
+  },
+  {
+    "id": "fiat-player",
+    "model": "Fiat 500 player",
+    "file": "fiat-player-side.svg",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "side-left",
+      "side-right"
+    ],
+    "frameOffsets": [
+      0,
+      96
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "frameBounds": [
+      [
+        7,
+        33,
+        84,
+        58
+      ],
+      [
+        5,
+        33,
+        84,
+        58
+      ]
+    ],
+    "bodyBounds": [
+      [
+        7,
+        33,
+        84,
+        51
+      ],
+      [
+        5,
+        33,
+        84,
+        51
+      ]
+    ],
+    "wheels": [
+      {
+        "front": [
+          24,
+          82
+        ],
+        "rear": [
+          75,
+          82
+        ],
+        "radius": 8
+      },
+      {
+        "front": [
+          71,
+          82
+        ],
+        "rear": [
+          20,
+          82
+        ],
+        "radius": 8
+      }
+    ],
+    "sideWindowBoxes": [
+      [
+        [
+          29,
+          40,
+          28,
+          20
+        ],
+        [
+          61,
+          40,
+          18,
+          20
+        ]
+      ],
+      [
+        [
+          39,
+          40,
+          28,
+          20
+        ],
+        [
+          17,
+          40,
+          18,
+          20
+        ]
+      ]
+    ],
+    "doorBoxes": [
+      [
+        33,
+        60,
+        35,
+        20
+      ],
+      [
+        28,
+        60,
+        35,
+        20
+      ]
+    ],
+    "bodyTop": 33,
+    "bodyBottom": 83,
+    "identity": "Rounded modern Fiat 500 hatch, short bonnet, arched roof, split side glass and photo-matched lime-yellow event livery.",
+    "frontEnd": [
+      "left",
+      "right"
+    ],
+    "rearEnd": [
+      "right",
+      "left"
+    ],
+    "rearPlateVisible": false,
+    "rendering": "Two complete profile states, not an autoplay strip. Use square frames and shared [48,90] ground anchor. Do not stretch to a common opaque width.",
+    "construction": "Original integer-grid illustration. Flat opaque pixels; no embedded photographs, manufacturer badges, external resources or fonts.",
+    "bodyColor": "#D8DC20",
+    "lettering": "PostSIEM.com",
+    "decals": [
+      {
+        "wordmarkBox": [
+          29,
+          66,
+          49,
+          5
+        ],
+        "daisyBox": [
+          14,
+          64,
+          12,
+          9
+        ],
+        "daisySource": "Approved fiat-player.svg straight frame white mask [14,66,12,9]"
+      },
+      {
+        "wordmarkBox": [
+          29,
+          66,
+          49,
+          5
+        ],
+        "daisyBox": [
+          14,
+          64,
+          12,
+          9
+        ],
+        "daisySource": "Approved fiat-player.svg straight frame white mask [14,66,12,9]"
+      }
+    ]
+  }
+]

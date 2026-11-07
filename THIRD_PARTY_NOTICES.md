@@ -19,4 +19,4 @@ No sounds or graphics bundled with those examples are included. Their separate a
 
 ## Music and Vega art
 
-Music is an edited CC0 recording by congusbongus; see `public/audio/ATTRIBUTION.txt` and `tools/audio/PROVENANCE.md`. Vega's original art, fonts and marks remain Vega assets used for the assignment; see `ASSET_SOURCES.md`. New console/booth/Fiat pixel drawings are described there separately.
+Music uses separately credited CC0 recordings by Zane Little, MintoDog, Spring Spring, Fupi and congusbongus; see `public/audio/ATTRIBUTION.txt` and `tools/audio/PROVENANCE.md`. Vega's original art, fonts and marks remain Vega assets used for the assignment; see `ASSET_SOURCES.md`. New console, booth, microcar and companion pixel drawings are described there separately.

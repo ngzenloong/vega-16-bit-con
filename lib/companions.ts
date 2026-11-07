@@ -1,0 +1,43 @@
+export const COMPANIONS = [
+  null,
+  {
+    name: "Pixel pup",
+    idle: "dog",
+    run: "dog-walk",
+    scale: 1,
+    ground: 32,
+    floating: false,
+  },
+  {
+    name: "Pocket cat",
+    idle: "pet-cat",
+    run: "pet-cat",
+    scale: 2,
+    ground: 22,
+    floating: false,
+  },
+  {
+    name: "Daisy fairy",
+    idle: "pet-daisy",
+    run: "pet-daisy",
+    scale: 2,
+    ground: 22,
+    floating: true,
+  },
+  {
+    name: "Mini bot",
+    idle: "pet-bot",
+    run: "pet-bot",
+    scale: 2,
+    ground: 22,
+    floating: false,
+  },
+  {
+    name: "Firefly",
+    idle: "pet-firefly",
+    run: "pet-firefly",
+    scale: 2,
+    ground: 22,
+    floating: true,
+  },
+] as const;

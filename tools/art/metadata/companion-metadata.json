@@ -1,0 +1,253 @@
+[
+  {
+    "id": "cat",
+    "name": "Cat",
+    "src": "/assets/vega/pet-cat.svg",
+    "width": 24,
+    "height": 24,
+    "sheetWidth": 96,
+    "sheetHeight": 24,
+    "frames": 4,
+    "fps": 6,
+    "groundAnchor": [
+      12,
+      22
+    ],
+    "centerX": 12,
+    "idleFrame": 0,
+    "reducedMotionFrame": 0,
+    "locomotion": "walk",
+    "frameStates": [
+      "alert",
+      "left step",
+      "blink",
+      "right step"
+    ],
+    "frameBounds": [
+      [
+        3,
+        2,
+        18,
+        21
+      ],
+      [
+        3,
+        2,
+        18,
+        21
+      ],
+      [
+        3,
+        2,
+        18,
+        21
+      ],
+      [
+        3,
+        2,
+        18,
+        21
+      ]
+    ],
+    "motion": "Tiny paw cycle and one blink; curled tail and head remain centered.",
+    "coreSample": [
+      12,
+      11,
+      "#0F3301"
+    ],
+    "rendering": "Native integer pixels. Render the 24x24 frame at 48x48 CSS pixels for the inspected 2x size. Frame offsets: 0,24,48,72. No external resources or fonts.",
+    "source": {
+      "note": "Original code-native pixel drawing, informed by the established Vega dog/Sam outline and shading craft."
+    }
+  },
+  {
+    "id": "daisy",
+    "name": "Daisy fairy",
+    "src": "/assets/vega/pet-daisy.svg",
+    "width": 24,
+    "height": 24,
+    "sheetWidth": 96,
+    "sheetHeight": 24,
+    "frames": 4,
+    "fps": 4,
+    "groundAnchor": [
+      12,
+      22
+    ],
+    "centerX": 12,
+    "idleFrame": 0,
+    "reducedMotionFrame": 0,
+    "locomotion": "hover",
+    "frameStates": [
+      "leaves down",
+      "leaves flutter",
+      "blink",
+      "leaves settle"
+    ],
+    "frameBounds": [
+      [
+        2,
+        1,
+        20,
+        22
+      ],
+      [
+        2,
+        1,
+        20,
+        22
+      ],
+      [
+        2,
+        1,
+        20,
+        22
+      ],
+      [
+        2,
+        1,
+        20,
+        22
+      ]
+    ],
+    "motion": "Floating flower fairy with fluttering leaves; the actual six-petal logo silhouette remains fixed.",
+    "coreSample": [
+      12,
+      11,
+      "#FFD11B"
+    ],
+    "rendering": "Native integer pixels. Render the 24x24 frame at 48x48 CSS pixels for the inspected 2x size. Frame offsets: 0,24,48,72. No external resources or fonts.",
+    "source": {
+      "path": "public/assets/vega/logo.svg",
+      "elementId": "Subtract",
+      "pathSha256": "66f852c854d6dfcf49e3519c5f22aba7b4a009d3d79d13f2039ccd0ff62c7341",
+      "nativeSampling": [
+        18,
+        17
+      ],
+      "note": "Actual supplied six-petal silhouette, sampled to native pixels; original face, stem, leaves and animation."
+    }
+  },
+  {
+    "id": "bot",
+    "name": "Leaf bot",
+    "src": "/assets/vega/pet-bot.svg",
+    "width": 24,
+    "height": 24,
+    "sheetWidth": 96,
+    "sheetHeight": 24,
+    "frames": 4,
+    "fps": 6,
+    "groundAnchor": [
+      12,
+      22
+    ],
+    "centerX": 12,
+    "idleFrame": 0,
+    "reducedMotionFrame": 0,
+    "locomotion": "walk",
+    "frameStates": [
+      "ready",
+      "antenna right",
+      "blink",
+      "antenna left"
+    ],
+    "frameBounds": [
+      [
+        4,
+        1,
+        17,
+        22
+      ],
+      [
+        4,
+        1,
+        17,
+        22
+      ],
+      [
+        4,
+        1,
+        17,
+        22
+      ],
+      [
+        4,
+        1,
+        17,
+        22
+      ]
+    ],
+    "motion": "Leaf antenna, tiny feet and claws animate around a fixed head/body.",
+    "coreSample": [
+      12,
+      17,
+      "#B98B18"
+    ],
+    "rendering": "Native integer pixels. Render the 24x24 frame at 48x48 CSS pixels for the inspected 2x size. Frame offsets: 0,24,48,72. No external resources or fonts.",
+    "source": {
+      "note": "Original code-native pixel drawing, informed by the established Vega dog/Sam outline and shading craft."
+    }
+  },
+  {
+    "id": "firefly",
+    "name": "Paper-wing firefly",
+    "src": "/assets/vega/pet-firefly.svg",
+    "width": 24,
+    "height": 24,
+    "sheetWidth": 96,
+    "sheetHeight": 24,
+    "frames": 4,
+    "fps": 8,
+    "groundAnchor": [
+      12,
+      22
+    ],
+    "centerX": 12,
+    "idleFrame": 0,
+    "reducedMotionFrame": 0,
+    "locomotion": "hover",
+    "frameStates": [
+      "wings open",
+      "wings raised",
+      "wings folded",
+      "wings lowered"
+    ],
+    "frameBounds": [
+      [
+        2,
+        3,
+        21,
+        20
+      ],
+      [
+        4,
+        3,
+        17,
+        20
+      ],
+      [
+        5,
+        3,
+        15,
+        20
+      ],
+      [
+        2,
+        3,
+        21,
+        20
+      ]
+    ],
+    "motion": "Paper wings flutter around a fixed gold spirit; no body translation or glow filters.",
+    "coreSample": [
+      12,
+      13,
+      "#FFD11B"
+    ],
+    "rendering": "Native integer pixels. Render the 24x24 frame at 48x48 CSS pixels for the inspected 2x size. Frame offsets: 0,24,48,72. No external resources or fonts.",
+    "source": {
+      "note": "Original code-native pixel drawing, informed by the established Vega dog/Sam outline and shading craft."
+    }
+  }
+]

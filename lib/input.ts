@@ -27,3 +27,11 @@ export class HeldInput {
     this.keys.clear();
   }
 }
+export type ScenePress = { x: number; y: number; scroll: number; time: number };
+export function isSceneTap(start: ScenePress, end: ScenePress) {
+  return (
+    end.time - start.time <= 500 &&
+    Math.hypot(end.x - start.x, end.y - start.y) <= 10 &&
+    Math.abs(end.scroll - start.scroll) <= 6
+  );
+}

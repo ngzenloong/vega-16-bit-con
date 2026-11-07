@@ -1,13 +1,55 @@
-Music: Welcome to the Item Shop
+16-Bit Con music credits
+
+All five delivered tracks use author-published CC0 1.0 recordings.
+License: https://creativecommons.org/publicdomain/zero/1.0/
+These credits do not imply endorsement by any composer.
+
+HALL: hall.ogg / hall.wav
+Work: Apple Cider
+Composer: Zane Little
+Source: https://opengameart.org/content/apple-cider-juiced
+Download: https://opengameart.org/sites/default/files/apple_cider_loop.wav
+License: CC0 1.0 Universal
+Edits: full author-provided 86.4-second loop, original tempo, gentle EQ,
+reduced level, 16-bit PCM conversion and a short loop splice.
+This is an independent work; no Animal Crossing recording or melody is used.
+
+RHYTHM GAME: beat.ogg / beat.wav
+Work: Welcome to the Item Shop
 Composer: congusbongus
 Source: https://opengameart.org/content/welcome-to-the-item-shop
 License: CC0 1.0 Universal
-License URL: https://creativecommons.org/publicdomain/zero/1.0/
+Edits: 16-bar excerpt, pitch-preserving tempo adjustment from 115 to 120 BPM,
+gentle EQ, reduced level and loop preparation. The duration is 32 seconds.
 
-Used with appreciation under the composer's public-domain dedication.
-Edits for this app: selected 32-bar and 16-bar excerpts, softened high
-frequencies, reduced the overall level, prepared loop boundaries, and changed
-the rhythm-game excerpt from 115 to 120 BPM while preserving pitch.
+DAISY BREAKER: breaker.ogg / breaker.wav
+Work: Homely Arcade
+Composer: Spring Spring
+Source: https://opengameart.org/content/homely-arcade
+License: CC0 1.0 Universal, selected from the author's offered CC0/OGA-BY options
+Edits: 32 kHz/16-bit preparation, gentle EQ, reduced level and loop splice.
+The recording is not retimed.
 
-These are edits of a composer-made recording. No AI music-generation provider
-was used. The composer does not endorse this app.
+CARTRIDGE RUN: runner.ogg / runner.wav
+Work: Wacky Wobblings
+Composer: Fupi
+Source: https://opengameart.org/content/wacky-wobblings
+License: CC0 1.0 Universal
+Edits: 32 kHz/16-bit preparation, gentle EQ, reduced level and loop splice.
+The recording is not retimed. The separate introduction file is not used.
+
+SAM CIRCUIT: kart.ogg / kart.wav
+Work: Fever Stadium
+Composer: MintoDog
+Source: https://opengameart.org/content/fever-stadium
+License: CC0 1.0 Universal
+Edits: pitch-preserving tempo adjustment from 165 to 156 BPM, 32 kHz/16-bit
+preparation, gentle EQ, reduced level and loop splice.
+
+These are edits of separately credited existing recordings. No AI
+music-generation provider was used. Fever Stadium is an independent
+composition, not Deja Vu or a recreation of its melody.
+
+The MIT-licensed Riftpane excerpt under tools/audio/references is research
+material only and is not one of the delivered public game/hall tracks.
+Its exact MIT notice and explicit audio-license evidence are retained there.

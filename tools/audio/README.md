@@ -1,26 +1,34 @@
-# Convention music
+# Audio preparation
 
-The soundtrack uses **Welcome to the Item Shop** by **congusbongus**, released
-by the composer under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
-The [author's source page](https://opengameart.org/content/welcome-to-the-item-shop)
-includes both the recording and an editable BambooTracker composition.
+Current order: `python3 tools/audio/prepare.py`, `python3 tools/audio/prepare_games.py`, then `python3 tools/audio/prepare_hall_life.py`.
 
-The arrangement uses warm YM2608 FM flute, bells, vibraphone, soft brass, choir,
-and plucked accompaniment. `hall` preserves 32 bars at the original 115 BPM
-(about 66.78 seconds). `beat` uses a 16-bar section at 120 BPM, with a small
-pitch-preserving tempo change, and is exactly 32 seconds.
+The hall is Apple Cider by Zane Little, CC0, using the author's full loop. The old bossa and FM hall preparations remain reproducible references; running them intentionally replaces the hall until `prepare_hall_life.py` runs again. Public credits and manifest name the final files. OGG loads first; WAV is a compatibility fallback. A two-buffer decoded cache limits retained music memory.
 
-Run `python3 tools/audio/prepare.py` from the project root to reproduce the
-WAV masters, Ogg delivery files, manifest, and 14-second MP3 previews. The
-script requires Python's standard library and FFmpeg. It verifies the source
-hash, softens the high frequencies, uses fixed gain for a quiet mix, prepares
-the loop joins, and checks both PCM and decoded Ogg lengths and peak levels.
-It uses no music-generation API, model, or account.
+## Reproduce current assets
 
-See `PROVENANCE.md` for source/license evidence and the researched music skills.
-The `sources` directory retains the author's original recording and editable
-`.btm` score. `previews` contains short playable review copies.
+Run these from the project root, using Python 3 and FFmpeg:
 
-For Web Audio, set `loopStart = 0` and use the duration of the selected decoded
-buffer for `loopEnd`. The hall is longer than 32 seconds. The rhythm game's
-beat `n` occurs at `contextTime + n * 0.5` seconds; its track starts on beat zero.
+```sh
+python3 tools/audio/prepare.py
+python3 tools/audio/prepare_games.py
+python3 tools/audio/prepare_hall_bossa.py
+python3 tools/audio/prepare_references.py
+```
+
+`prepare.py` now prepares **beat only** by default and preserves the other
+manifest entries. The superseded FM hall is available only through the
+explicit `--legacy-hall` flag, which intentionally replaces the current hall.
+Use `prepare_hall_bossa.py` for the current hall.
+
+Original recordings are retained in `sources` and `references`; scripts verify
+their hashes. The production scripts check PCM/Ogg duration and clipping.
+Short music and loop-join previews are in `previews`.
+
+`REFERENCE_SHORTLIST.md` distinguishes the verified MIT audio reference from
+the recommended CC0 arrangements. The reference excerpts are research assets,
+not extra live game tracks. No music-generation API, model or paid account is
+used in these preparation scripts.
+
+For Web Audio, set `loopStart = 0` and use the selected decoded buffer's own
+duration for `loopEnd`. Only the rhythm game uses the 32-second/120 BPM clock.
+The authored note chart controls its required inputs.

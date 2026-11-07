@@ -1,0 +1,59 @@
+[
+  {
+    "id": "cozy",
+    "file": "cozy-puzzle-118.ogg",
+    "startSeconds": 8.135593220338983,
+    "title": "Cozy Puzzle In-Game 1",
+    "artist": "MintoDog",
+    "bpm": 118,
+    "license": "CC0-1.0",
+    "source": "https://opengameart.org/content/cozy-puzzle-in-game-1",
+    "durationSeconds": 14,
+    "gainDb": -9.8,
+    "sourceSha256": "afa440cb8814907b215b285a0503d39b125b6c83d9fca3f686c969107f04c7f7",
+    "preview": "tools/audio/previews/reference-cozy.mp3",
+    "levels": {
+      "integratedLufs": -22.4,
+      "loudnessRangeLu": 1.6,
+      "truePeakDbfs": -11.2
+    }
+  },
+  {
+    "id": "urban",
+    "file": "urban-theme-115.ogg",
+    "startSeconds": 8.347826086956522,
+    "title": "Urban Theme",
+    "artist": "MintoDog",
+    "bpm": 115,
+    "license": "CC0-1.0",
+    "source": "https://opengameart.org/content/urban-theme",
+    "durationSeconds": 14,
+    "gainDb": -10.1,
+    "sourceSha256": "564fe32a9421a771e10de249a38362789e7a116140ad8d74d8d9ebcb398d99cc",
+    "preview": "tools/audio/previews/reference-urban.mp3",
+    "levels": {
+      "integratedLufs": -22.4,
+      "loudnessRangeLu": 0.4,
+      "truePeakDbfs": -10.8
+    }
+  },
+  {
+    "id": "riftpane-mit",
+    "file": "riftpane.mp3",
+    "startSeconds": 20,
+    "title": "Riftpane",
+    "artist": "Riftpane Project Contributors",
+    "bpm": null,
+    "license": "MIT (explicit audio grant in README)",
+    "source": "https://github.com/sakurablush/riftpane#music",
+    "durationSeconds": 14,
+    "gainDb": -6.4,
+    "sourceSha256": "b855f92b5356be219cd39ca10889383db0883ea00dc9de9d7f3218e43688c363",
+    "preview": "tools/audio/previews/reference-riftpane-mit.mp3",
+    "levels": {
+      "integratedLufs": -22.4,
+      "loudnessRangeLu": 4.5,
+      "truePeakDbfs": -9.1
+    }
+  }
+]

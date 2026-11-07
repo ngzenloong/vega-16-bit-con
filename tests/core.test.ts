@@ -6,7 +6,8 @@ import {
   rhythmJudgement,
   safePlayer,
 } from "../lib/math.ts";
-import { HeldInput } from "../lib/input.ts";
+import { HeldInput, isSceneTap } from "../lib/input.ts";
+import { DEFAULT_APPEARANCE } from "../lib/types.ts";
 test("landing uses the first crossed platform, including fast downward steps", () => {
   const upper = { x: 20, y: 120, w: 100 },
     lower = { x: 0, y: 250, w: 300 };
@@ -35,11 +36,27 @@ test("touching edges is not an overlapping hitbox", () => {
 test("rhythm windows treat early and late input symmetrically", () => {
   for (const sign of [-1, 1]) {
     assert.equal(rhythmJudgement(0.03 * sign), "perfect");
-    assert.equal(rhythmJudgement(0.06 * sign), "nice");
-    assert.equal(rhythmJudgement(0.11 * sign), "good");
-    assert.equal(rhythmJudgement(0.16 * sign), "bad");
-    assert.equal(rhythmJudgement(0.2 * sign), "miss");
+    assert.equal(rhythmJudgement(0.14 * sign), "nice");
+    assert.equal(rhythmJudgement(0.22 * sign), "good");
+    assert.equal(rhythmJudgement(0.29 * sign), "bad");
+    assert.equal(rhythmJudgement(0.35 * sign), "miss");
   }
+});
+test("scene entry accepts a deliberate tap but not scrolling, dragging or a long press", () => {
+  const start = { x: 100, y: 200, scroll: 500, time: 1000 };
+  assert.equal(
+    isSceneTap(start, { x: 104, y: 204, scroll: 500, time: 1120 }),
+    true,
+  );
+  assert.equal(
+    isSceneTap(start, { x: 100, y: 250, scroll: 500, time: 1120 }),
+    false,
+  );
+  assert.equal(
+    isSceneTap(start, { x: 100, y: 200, scroll: 540, time: 1120 }),
+    false,
+  );
+  assert.equal(isSceneTap(start, { ...start, time: 1700 }), false);
 });
 test("local player data validates cosmetic bounds and removes unrelated fields", () => {
   const p = safePlayer({
@@ -50,7 +67,7 @@ test("local player data validates cosmetic bounds and removes unrelated fields",
   });
   assert.deepEqual(p, {
     name: "Alex",
-    appearance: { hat: 2, glasses: 1, shirt: 3 },
+    appearance: { ...DEFAULT_APPEARANCE, hat: 2, glasses: 1, shirt: 3 },
     interests: [0, 2],
   });
   assert.equal(

@@ -8,3 +8,5 @@ out/
 .env*
 !.env.example
 .DS_Store
+
+tools/art/metadata/*.png

@@ -1,4 +1,5 @@
 import type { GameId, GameResult } from "../types";
+import type { RivalCar } from "./cars";
 export type GameButton =
   | "left"
   | "right"
@@ -27,6 +28,7 @@ export interface GameEnvironment {
   sprite: HTMLImageElement;
   rivals?: HTMLImageElement[];
   cars?: HTMLImageElement[];
+  rivalCars?: readonly RivalCar[];
   tapOffset?: number;
   sprites?: {
     idle: HTMLImageElement;

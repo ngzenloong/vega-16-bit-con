@@ -1,4 +1,6 @@
 import { clamp } from "../math.ts";
+import { GAME_DURATION } from "../types.ts";
+import { carContactWidth, RIVAL_CARS } from "./cars.ts";
 import {
   TRACK_LENGTH,
   PLAYER_DEPTH,
@@ -28,7 +30,8 @@ export const createGame: GameFactory = (env) => {
     braking = false,
     throttle = false,
     heading = 0,
-    viewHeight = 400;
+    viewHeight = 400,
+    demoLane = 0;
   let collisionUntil = 0,
     boostUntil = 0,
     lastMotor = 0,
@@ -37,35 +40,23 @@ export const createGame: GameFactory = (env) => {
     callout = "",
     calloutUntil = 0,
     finished = false;
-  const rivals = [
-    {
-      name: "INGEST",
-      distance: 760,
-      lane: -0.58,
-      home: -0.58,
-      pace: 1105,
+  const rivals = (env.rivalCars || RIVAL_CARS).map((car, i) => {
+    const row = Math.floor(i / 3),
+      lane = [-0.58, 0, 0.58][i % 3];
+    return {
+      name: car.label,
+      faction: car.id === "scargo" ? "" : "SIEM",
+      bodyWidth: car.bodyWidth,
+      distance: 500 + row * 620 + (i % 3) * 200,
+      lane,
+      home: lane,
+      turn: 0,
+      pace: [1300, 1280, 1290][i % 3] - row * 30,
       passed: false,
-      car: 1,
-    },
-    {
-      name: "SILO",
-      distance: 400,
-      lane: 0.02,
-      home: 0.02,
-      pace: 1000,
-      passed: false,
-      car: 2,
-    },
-    {
-      name: "MIGRATE",
-      distance: 1120,
-      lane: 0.58,
-      home: 0.58,
-      pace: 1045,
-      passed: false,
-      car: 3,
-    },
-  ];
+      car: i + 1,
+    };
+  });
+  const gridSize = rivals.length + 1;
   const pads = [
     { at: 14500, lane: -0.52, used: false },
     { at: 31000, lane: 0.52, used: false },
@@ -85,7 +76,6 @@ export const createGame: GameFactory = (env) => {
     scale: number,
     index: number,
     turn: number,
-    legacy = false,
   ) {
     const image = env.cars?.[index];
     if (!image) return;
@@ -101,29 +91,31 @@ export const createGame: GameFactory = (env) => {
       96 * scale,
       96 * scale,
     );
-    if (legacy && scale > 0.25) {
-      c.fillStyle = C.ink;
-      c.fillRect(x - 17 * scale, y - 61 * scale, 34 * scale, 12 * scale);
-      pixelText(
-        c,
-        "SIEM",
-        x,
-        y - 51 * scale,
-        Math.max(7, 13 * scale),
-        C.paper,
-        "center",
-      );
-    }
   }
   return {
     attractInput: () => {
-      const ahead = rivals.find(
-        (r) =>
-          r.distance > distance &&
-          r.distance - distance < 850 &&
-          Math.abs(r.lane - lateral) < 0.32,
+      const nextBoost = pads.find(
+        (pad) => !pad.used && pad.at > distance && pad.at - distance < 5000,
       );
-      const lane = ahead ? (ahead.lane <= 0 ? 0.65 : -0.65) : 0,
+      const traffic = rivals.filter(
+        (r) => Math.abs(r.distance - distance) < 1500,
+      );
+      if (
+        nextBoost &&
+        !traffic.some((r) => Math.abs(r.lane - nextBoost.lane) < 0.4)
+      )
+        demoLane = nextBoost.lane;
+      if (
+        traffic.some(
+          (r) =>
+            Math.abs(r.lane - demoLane) < carContactWidth(r.bodyWidth) + 0.02,
+        )
+      ) {
+        const clearance = (lane: number) =>
+          Math.min(...traffic.map((r) => Math.abs(r.lane - lane)));
+        demoLane = clearance(-0.9) > clearance(0.9) ? -0.9 : 0.9;
+      }
+      const lane = demoLane,
         ratio = speed / MAX_SPEED;
       return {
         held: {
@@ -177,41 +169,47 @@ export const createGame: GameFactory = (env) => {
       }
       distance += speed * dt;
       heading += (curve * speed * dt) / 6000;
+      const traffic = [...rivals, { distance, lane: lateral, pace: speed }];
       for (let i = 0; i < rivals.length; i++) {
-        const r = rivals[i],
-          traffic = [
-            ...rivals.filter((other) => other !== r),
-            { distance, lane: lateral },
-          ],
-          ahead = traffic
-            .filter(
-              (other) =>
-                other.distance > r.distance &&
-                other.distance - r.distance < 650 &&
-                Math.abs(other.lane - r.lane) < 0.35,
-            )
-            .sort((a, b) => a.distance - b.distance)[0];
+        const r = rivals[i];
+        let ahead: (typeof traffic)[number] | undefined;
+        for (const other of traffic) {
+          if (
+            other !== r &&
+            other.distance > r.distance &&
+            other.distance - r.distance < 650 &&
+            Math.abs(other.lane - r.lane) < 0.35 &&
+            (!ahead || other.distance < ahead.distance)
+          )
+            ahead = other;
+        }
         let desired = r.home;
         if (ahead) {
           const left = r.lane <= 0 ? 0.62 : -0.62;
           desired = traffic.some(
             (other) =>
+              other !== r &&
               Math.abs(other.distance - r.distance) < 400 &&
               Math.abs(other.lane - left) < 0.35,
           )
             ? r.home
             : left;
         }
-        r.lane += clamp(desired - r.lane, -0.7 * dt, 0.7 * dt);
+        const laneStep = clamp(desired - r.lane, -0.7 * dt, 0.7 * dt);
+        r.turn = dt > 0 ? laneStep / dt : 0;
+        r.lane += laneStep;
         r.lane = clamp(r.lane, -0.78, 0.78);
-        r.distance +=
-          r.pace *
-          (1 - Math.abs(trackCurve(r.distance)) * 0.17) *
-          (ahead && Math.abs(desired - r.home) < 0.05 ? 0.88 : 1) *
-          dt;
+        let pace = r.pace * (1 - Math.abs(trackCurve(r.distance)) * 0.08);
+        if (ahead && Math.abs(ahead.lane - r.lane) < 0.35)
+          pace = Math.min(
+            pace,
+            Math.max(0, ahead.distance - r.distance - 130) * 2 +
+              ahead.pace * 0.85,
+          );
+        r.distance += pace * dt;
         if (
           Math.abs(r.distance - distance) < 110 &&
-          Math.abs(r.lane - lateral) < 0.27 &&
+          Math.abs(r.lane - lateral) < carContactWidth(r.bodyWidth) &&
           time > collisionUntil
         ) {
           speed *= 0.55;
@@ -222,7 +220,7 @@ export const createGame: GameFactory = (env) => {
           );
           collisionUntil = time + 1.1;
           env.sound("hurt");
-          say("SIEM BUMP!");
+          say(r.faction ? "SIEM BUMP!" : "BUMPER TAP!");
         }
         if (distance > r.distance && !r.passed) {
           r.passed = true;
@@ -260,14 +258,14 @@ export const createGame: GameFactory = (env) => {
         end(
           Math.max(
             0,
-            Math.round((60 - raceTime()) * 120) +
+            Math.round((GAME_DURATION.kart - raceTime()) * 120) +
               passes * 250 +
-              (5 - place) * 500,
+              (gridSize + 1 - place) * 200,
           ),
-          place <= 3,
-          `Finished ${["", "1st", "2nd", "3rd", "4th"][place]} in ${raceTime().toFixed(2)} seconds. ${place <= 3 ? "Post-SIEM finish reached." : "Finish in the top three to clear."}`,
+          place === 1 && raceTime() <= GAME_DURATION.kart,
+          `Finished ${place}${place < 4 ? ["", "st", "nd", "rd"][place] : "th"} in ${raceTime().toFixed(2)} seconds. ${place === 1 && raceTime() <= GAME_DURATION.kart ? "Post-SIEM victory." : "Finish first within 55 seconds to clear."}`,
         );
-      } else if (raceTime() >= 60) {
+      } else if (raceTime() >= GAME_DURATION.kart) {
         finished = true;
         env.motor?.(0);
         end(
@@ -398,11 +396,11 @@ export const createGame: GameFactory = (env) => {
         .forEach(({ r, z }) => {
           const q = project(z, r.lane),
             scale = (q.p / player.p) * playerScale;
-          drawCar(c, q.x, q.y, scale, r.car, r.lane - r.home, true);
-          if (q.p > 0.15)
+          drawCar(c, q.x, q.y, scale, r.car, r.turn);
+          if (z < 800)
             pixelText(
               c,
-              `SIEM · ${r.name}`,
+              r.faction ? `${r.faction} · ${r.name}` : r.name,
               q.x,
               q.y - 100 * scale,
               Math.max(portrait ? 22 : 10, 14 * scale),
@@ -431,7 +429,7 @@ export const createGame: GameFactory = (env) => {
       }
       const shake =
         !env.reducedMotion && time < collisionUntil ? Math.sin(t * 65) * 3 : 0;
-      drawCar(c, player.x + shake, player.y, playerScale, 0, steer, false);
+      drawCar(c, player.x + shake, player.y, playerScale, 0, steer);
       if (portrait)
         pixelText(
           c,
@@ -448,28 +446,28 @@ export const createGame: GameFactory = (env) => {
         c.strokeRect(2, 2, 636, viewHeight - 4);
       }
       c.fillStyle = C.ink;
-      c.fillRect(14, 13, portrait ? 110 : 74, portrait ? 76 : 58);
+      c.fillRect(14, 13, portrait ? 110 : 100, portrait ? 76 : 58);
       pixelText(
         c,
-        `${rank()}/4`,
-        portrait ? 69 : 51,
+        `${rank()}/${gridSize}`,
+        portrait ? 69 : 64,
         portrait ? 66 : 52,
-        portrait ? 44 : 32,
+        portrait ? 36 : 28,
         C.paper,
         "center",
       );
       c.fillStyle = C.paper;
       c.fillRect(
-        portrait ? 138 : 100,
+        portrait ? 138 : 130,
         13,
         portrait ? 76 : 56,
         portrait ? 76 : 58,
       );
-      drawSam(c, env.sprite, portrait ? 142 : 104, 17, portrait ? 68 : 48);
+      drawSam(c, env.sprite, portrait ? 142 : 134, 17, portrait ? 68 : 48);
       pixelText(
         c,
         "P1",
-        portrait ? 176 : 128,
+        portrait ? 176 : 158,
         portrait ? 115 : 85,
         portrait ? 22 : 14,
         C.ink,
@@ -494,18 +492,18 @@ export const createGame: GameFactory = (env) => {
         "right",
       );
       c.fillStyle = C.ink;
-      c.fillRect(18, 84, 5, 96);
-      c.fillStyle = C.yellow;
-      c.fillRect(16, 176 - Math.min(1, distance / TRACK_LENGTH) * 90, 9, 4);
+      c.fillRect(12, 84, 16, 96);
+      c.fillStyle = C.paper;
       rivals.forEach((r, i) => {
-        c.fillStyle = [C.yellow, C.green, C.paper][i];
         c.fillRect(
-          15 + i * 3,
+          14 + (i % 3) * 4,
           176 - Math.min(1, r.distance / TRACK_LENGTH) * 90,
-          4,
+          3,
           4,
         );
       });
+      c.fillStyle = C.yellow;
+      c.fillRect(10, 176 - Math.min(1, distance / TRACK_LENGTH) * 90, 20, 4);
       if (t < COUNTDOWN) {
         pixelText(
           c,
@@ -571,9 +569,9 @@ export const createGame: GameFactory = (env) => {
     },
     hud: () => ({
       score: Math.round((distance / TRACK_LENGTH) * 1000) + passes * 250,
-      time: Math.max(0, 60 - Math.floor(raceTime())),
+      time: Math.max(0, GAME_DURATION.kart - Math.floor(raceTime())),
       progress: Math.min(1, distance / TRACK_LENGTH),
-      message: `${rank()} / 4 · ${checkpoint}/3 checkpoints`,
+      message: `${rank()}/${gridSize} · CP ${checkpoint}/3`,
     }),
   };
 };

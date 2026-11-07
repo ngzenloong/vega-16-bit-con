@@ -1,0 +1,1674 @@
+[
+  {
+    "file": "car-mini.svg",
+    "id": "mini",
+    "model": "Classic Mini Cooper",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "straight",
+      "steering-left",
+      "steering-right"
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "rearLettering": "SIEM",
+    "frameBounds": [
+      [
+        18,
+        18,
+        61,
+        73
+      ],
+      [
+        12,
+        18,
+        69,
+        73
+      ],
+      [
+        15,
+        18,
+        69,
+        73
+      ]
+    ],
+    "bodyWidth": 59,
+    "rearWindowBoxes": [
+      [
+        27,
+        32,
+        42,
+        13
+      ],
+      [
+        34,
+        32,
+        38,
+        13
+      ],
+      [
+        24,
+        32,
+        38,
+        13
+      ]
+    ],
+    "rearLabelBoxes": [
+      [
+        38,
+        72,
+        21,
+        9
+      ],
+      [
+        44,
+        72,
+        21,
+        9
+      ],
+      [
+        31,
+        72,
+        21,
+        9
+      ]
+    ],
+    "identity": "Upright compact saloon, contrasting roof, separate boot, small vertical lamps and chrome bumper.",
+    "sources": [
+      "https://www.press.bmwgroup.com/united-kingdom/photo/compilation/T0330170EN_GB/classic-mini-timeline:-1959-2000?language=en_GB"
+    ],
+    "art": "Original code-native pixel illustration; no traced source pixels, manufacturer logo, external image, or font.",
+    "rendering": "Draw one 96x96 frame at square aspect. The three state poses are not an autoplay animation. Ground anchor is shared with the player.",
+    "driver": "Enclosed car or cab; no separate exposed driver sprite.",
+    "turnAngleDegrees": 30,
+    "sideExposureNative": 15,
+    "turnSourceProfile": "car-mini-side.svg",
+    "projectedSideWheels": [
+      {
+        "which": "front",
+        "center": [
+          17,
+          72
+        ],
+        "radii": [
+          4,
+          10
+        ]
+      },
+      {
+        "which": "rear",
+        "center": [
+          29,
+          78
+        ],
+        "radii": [
+          4,
+          10
+        ]
+      }
+    ],
+    "straightGroupSha256": "3d1c0f0bdc377b6286f7e137166bef492c37d88cc957114e26b814dd04726d45",
+    "turnConstruction": "Rear pixels remain a distinct face. Complete model-specific side profile, glazing, door boundaries, handles and bed details are projected into a stronger rear turn. Rear lettering is copied at native size after geometric mirroring.",
+    "maxVisibleWidth": 69,
+    "straightBodyBounds": [
+      19,
+      18,
+      59,
+      67
+    ],
+    "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
+  },
+  {
+    "file": "car-az1.svg",
+    "id": "az1",
+    "model": "Autozam AZ-1",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "straight",
+      "steering-left",
+      "steering-right"
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "rearLettering": "SIEM",
+    "frameBounds": [
+      [
+        16,
+        33,
+        64,
+        58
+      ],
+      [
+        9,
+        33,
+        73,
+        58
+      ],
+      [
+        14,
+        33,
+        73,
+        58
+      ]
+    ],
+    "bodyWidth": 64,
+    "rearWindowBoxes": [
+      [
+        28,
+        44,
+        41,
+        10
+      ],
+      [
+        33,
+        44,
+        36,
+        10
+      ],
+      [
+        27,
+        44,
+        36,
+        10
+      ]
+    ],
+    "rearLabelBoxes": [
+      [
+        38,
+        74,
+        21,
+        9
+      ],
+      [
+        44,
+        74,
+        21,
+        9
+      ],
+      [
+        31,
+        74,
+        21,
+        9
+      ]
+    ],
+    "identity": "Low mid-engined micro-coupe; short rear glass, louvered engine deck, four circular lamps.",
+    "sources": [
+      "https://www2.mazda.com/en/100th/cars/detail_030_az1.html"
+    ],
+    "art": "Original code-native pixel illustration; no traced source pixels, manufacturer logo, external image, or font.",
+    "rendering": "Draw one 96x96 frame at square aspect. The three state poses are not an autoplay animation. Ground anchor is shared with the player.",
+    "driver": "Enclosed car or cab; no separate exposed driver sprite.",
+    "turnAngleDegrees": 30,
+    "sideExposureNative": 16,
+    "turnSourceProfile": "car-az1-side.svg",
+    "projectedSideWheels": [
+      {
+        "which": "front",
+        "center": [
+          14,
+          73
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      },
+      {
+        "which": "rear",
+        "center": [
+          27,
+          79
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      }
+    ],
+    "straightGroupSha256": "f9102dc742e52d697821e71ef1297fbe109d2e4400a998929b76066f54562fd6",
+    "turnConstruction": "Rear pixels remain a distinct face. Complete model-specific side profile, glazing, door boundaries, handles and bed details are projected into a stronger rear turn. Rear lettering is copied at native size after geometric mirroring.",
+    "maxVisibleWidth": 73,
+    "straightBodyBounds": [
+      16,
+      33,
+      64,
+      53
+    ],
+    "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
+  },
+  {
+    "file": "car-isetta.svg",
+    "id": "isetta",
+    "model": "BMW Isetta 300 Export",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "straight",
+      "steering-left",
+      "steering-right"
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "rearLettering": "SIEM",
+    "frameBounds": [
+      [
+        25,
+        17,
+        46,
+        74
+      ],
+      [
+        22,
+        17,
+        52,
+        74
+      ],
+      [
+        22,
+        17,
+        52,
+        74
+      ]
+    ],
+    "bodyWidth": 46,
+    "rearWindowBoxes": [
+      [
+        33,
+        29,
+        30,
+        11
+      ],
+      [
+        40,
+        29,
+        26,
+        11
+      ],
+      [
+        30,
+        29,
+        26,
+        11
+      ]
+    ],
+    "rearLabelBoxes": [
+      [
+        38,
+        68,
+        21,
+        9
+      ],
+      [
+        44,
+        68,
+        21,
+        9
+      ],
+      [
+        31,
+        68,
+        21,
+        9
+      ]
+    ],
+    "identity": "Egg-shaped body with a small rear window, rear access panel and close-set twin rear wheels; standard four-wheel layout.",
+    "sources": [
+      "https://www.bmwgroup-classic.com/en/models/bmw-classics/product-description-page.ad-223-1.bmw-isetta-300-export.html"
+    ],
+    "art": "Original code-native pixel illustration; no traced source pixels, manufacturer logo, external image, or font.",
+    "rendering": "Draw one 96x96 frame at square aspect. The three state poses are not an autoplay animation. Ground anchor is shared with the player.",
+    "driver": "Enclosed car or cab; no separate exposed driver sprite.",
+    "turnAngleDegrees": 30,
+    "sideExposureNative": 12,
+    "turnSourceProfile": "car-isetta-side.svg",
+    "projectedSideWheels": [
+      {
+        "which": "front",
+        "center": [
+          30,
+          74
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      }
+    ],
+    "straightGroupSha256": "933a6b6981fdc132c297911ecd9dfbe8f870679924119e55497cfc329f0647b0",
+    "turnConstruction": "Rear pixels remain a distinct face. Complete model-specific side profile, glazing, door boundaries, handles and bed details are projected into a stronger rear turn. Rear lettering is copied at native size after geometric mirroring.",
+    "maxVisibleWidth": 52,
+    "straightBodyBounds": [
+      25,
+      17,
+      46,
+      66
+    ],
+    "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
+  },
+  {
+    "file": "car-p50.svg",
+    "id": "p50",
+    "model": "Peel P50",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "straight",
+      "steering-left",
+      "steering-right"
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "rearLettering": "SIEM",
+    "frameBounds": [
+      [
+        29,
+        23,
+        38,
+        68
+      ],
+      [
+        28,
+        23,
+        42,
+        68
+      ],
+      [
+        26,
+        23,
+        42,
+        68
+      ]
+    ],
+    "bodyWidth": 38,
+    "rearWindowBoxes": [
+      [
+        37,
+        34,
+        23,
+        12
+      ],
+      [
+        45,
+        34,
+        19,
+        12
+      ],
+      [
+        32,
+        34,
+        19,
+        12
+      ]
+    ],
+    "rearLabelBoxes": [
+      [
+        38,
+        63,
+        21,
+        9
+      ],
+      [
+        44,
+        63,
+        21,
+        9
+      ],
+      [
+        31,
+        63,
+        21,
+        9
+      ]
+    ],
+    "identity": "Smallest, narrow single-seat shell, centered single rear wheel and reversing handle.",
+    "sources": [
+      "https://www.peelengineering.com/about"
+    ],
+    "art": "Original code-native pixel illustration; no traced source pixels, manufacturer logo, external image, or font.",
+    "rendering": "Draw one 96x96 frame at square aspect. The three state poses are not an autoplay animation. Ground anchor is shared with the player.",
+    "driver": "Enclosed car or cab; no separate exposed driver sprite.",
+    "turnAngleDegrees": 30,
+    "sideExposureNative": 10,
+    "turnSourceProfile": "car-p50-side.svg",
+    "projectedSideWheels": [
+      {
+        "which": "front",
+        "center": [
+          43,
+          76
+        ],
+        "radii": [
+          3,
+          7
+        ]
+      }
+    ],
+    "straightGroupSha256": "f41df66aff09a31a3b5cfff6518db769d0014dfbdc39befa5f402d4b51f7e55b",
+    "turnConstruction": "Rear pixels remain a distinct face. Complete model-specific side profile, glazing, door boundaries, handles and bed details are projected into a stronger rear turn. Rear lettering is copied at native size after geometric mirroring.",
+    "maxVisibleWidth": 42,
+    "straightBodyBounds": [
+      29,
+      23,
+      38,
+      58
+    ],
+    "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
+  },
+  {
+    "file": "car-sambar-van.svg",
+    "id": "sambar-van",
+    "model": "Subaru Sambar van",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "straight",
+      "steering-left",
+      "steering-right"
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "rearLettering": "SIEM",
+    "frameBounds": [
+      [
+        18,
+        9,
+        60,
+        82
+      ],
+      [
+        11,
+        9,
+        69,
+        82
+      ],
+      [
+        16,
+        9,
+        69,
+        82
+      ]
+    ],
+    "bodyWidth": 60,
+    "rearWindowBoxes": [
+      [
+        24,
+        26,
+        47,
+        27
+      ],
+      [
+        33,
+        26,
+        41,
+        27
+      ],
+      [
+        22,
+        26,
+        41,
+        27
+      ]
+    ],
+    "rearLabelBoxes": [
+      [
+        38,
+        76,
+        21,
+        9
+      ],
+      [
+        44,
+        76,
+        21,
+        9
+      ],
+      [
+        31,
+        76,
+        21,
+        9
+      ]
+    ],
+    "identity": "1990-series high-roof van: upright body, tall cargo hatch, rectangular rear glass and low vertical lamps.",
+    "sources": [
+      "https://www.subaru.co.jp/news/archives/01_1_3/01_02_26_1.htm/"
+    ],
+    "art": "Original code-native pixel illustration; no traced source pixels, manufacturer logo, external image, or font.",
+    "rendering": "Draw one 96x96 frame at square aspect. The three state poses are not an autoplay animation. Ground anchor is shared with the player.",
+    "driver": "Enclosed car or cab; no separate exposed driver sprite.",
+    "turnAngleDegrees": 30,
+    "sideExposureNative": 16,
+    "turnSourceProfile": "car-sambar-van-side.svg",
+    "projectedSideWheels": [
+      {
+        "which": "front",
+        "center": [
+          16,
+          72
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      },
+      {
+        "which": "rear",
+        "center": [
+          29,
+          79
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      }
+    ],
+    "straightGroupSha256": "36b54162744c65818660c3b1b4481a86b7dedee8d2a856131b53e23f3c150d75",
+    "turnConstruction": "Rear pixels remain a distinct face. Complete model-specific side profile, glazing, door boundaries, handles and bed details are projected into a stronger rear turn. Rear lettering is copied at native size after geometric mirroring.",
+    "maxVisibleWidth": 69,
+    "straightBodyBounds": [
+      18,
+      9,
+      60,
+      77
+    ],
+    "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
+  },
+  {
+    "file": "car-sambar-truck.svg",
+    "id": "sambar-truck",
+    "model": "Subaru Sambar kei truck",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "straight",
+      "steering-left",
+      "steering-right"
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "rearLettering": "SIEM",
+    "frameBounds": [
+      [
+        18,
+        17,
+        61,
+        74
+      ],
+      [
+        11,
+        17,
+        70,
+        74
+      ],
+      [
+        15,
+        17,
+        70,
+        74
+      ]
+    ],
+    "bodyWidth": 60,
+    "rearWindowBoxes": [
+      [
+        29,
+        25,
+        38,
+        15
+      ],
+      [
+        27,
+        25,
+        32,
+        15
+      ],
+      [
+        37,
+        25,
+        32,
+        15
+      ]
+    ],
+    "rearLabelBoxes": [
+      [
+        38,
+        77,
+        21,
+        9
+      ],
+      [
+        44,
+        77,
+        21,
+        9
+      ],
+      [
+        31,
+        77,
+        21,
+        9
+      ]
+    ],
+    "identity": "Wide two-seat cab over a long open bed, ribbed floor, full-width tailgate and low horizontal lamps.",
+    "sources": [
+      "https://www.subaru.co.jp/news/archives/01_1_3/01_02_26_1.htm/"
+    ],
+    "art": "Original code-native pixel illustration; no traced source pixels, manufacturer logo, external image, or font.",
+    "rendering": "Draw one 96x96 frame at square aspect. The three state poses are not an autoplay animation. Ground anchor is shared with the player.",
+    "driver": "Enclosed car or cab; no separate exposed driver sprite.",
+    "turnAngleDegrees": 30,
+    "sideExposureNative": 16,
+    "turnSourceProfile": "car-sambar-truck-side.svg",
+    "projectedSideWheels": [
+      {
+        "which": "front",
+        "center": [
+          16,
+          71
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      },
+      {
+        "which": "rear",
+        "center": [
+          29,
+          79
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      }
+    ],
+    "straightGroupSha256": "4da2aec209b1fb5cf59443e989b6e366230c205fa96a54c2dc2dbc027b76ac37",
+    "turnConstruction": "Rear pixels remain a distinct face. Complete model-specific side profile, glazing, door boundaries, handles and bed details are projected into a stronger rear turn. Rear lettering is copied at native size after geometric mirroring.",
+    "maxVisibleWidth": 70,
+    "straightBodyBounds": [
+      18,
+      17,
+      60,
+      72
+    ],
+    "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
+  },
+  {
+    "file": "car-midget.svg",
+    "id": "midget",
+    "model": "Daihatsu Midget II pickup",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "straight",
+      "steering-left",
+      "steering-right"
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "rearLettering": "SIEM",
+    "frameBounds": [
+      [
+        24,
+        18,
+        49,
+        73
+      ],
+      [
+        20,
+        18,
+        56,
+        73
+      ],
+      [
+        20,
+        18,
+        56,
+        73
+      ]
+    ],
+    "bodyWidth": 46,
+    "rearWindowBoxes": [
+      [
+        38,
+        27,
+        20,
+        14
+      ],
+      [
+        35,
+        27,
+        18,
+        14
+      ],
+      [
+        43,
+        27,
+        18,
+        14
+      ]
+    ],
+    "rearLabelBoxes": [
+      [
+        38,
+        77,
+        21,
+        9
+      ],
+      [
+        44,
+        77,
+        21,
+        9
+      ],
+      [
+        31,
+        77,
+        21,
+        9
+      ]
+    ],
+    "identity": "1996 narrow-cab pickup, pinched one-seat rear window and exposed bed rails. Front spare wheel is not incorrectly drawn at the rear.",
+    "sources": [
+      "https://u-catch.daihatsu.co.jp/history/midget2/midget2/"
+    ],
+    "art": "Original code-native pixel illustration; no traced source pixels, manufacturer logo, external image, or font.",
+    "rendering": "Draw one 96x96 frame at square aspect. The three state poses are not an autoplay animation. Ground anchor is shared with the player.",
+    "driver": "Enclosed car or cab; no separate exposed driver sprite.",
+    "turnAngleDegrees": 30,
+    "sideExposureNative": 13,
+    "turnSourceProfile": "car-midget-side.svg",
+    "projectedSideWheels": [
+      {
+        "which": "front",
+        "center": [
+          24,
+          74
+        ],
+        "radii": [
+          3,
+          8
+        ]
+      },
+      {
+        "which": "rear",
+        "center": [
+          34,
+          80
+        ],
+        "radii": [
+          3,
+          8
+        ]
+      }
+    ],
+    "straightGroupSha256": "57e98d9549d6cd1bf7129cfd82e098902b3f2e28a7701b9ba36fb61c71d0529e",
+    "turnConstruction": "Rear pixels remain a distinct face. Complete model-specific side profile, glazing, door boundaries, handles and bed details are projected into a stronger rear turn. Rear lettering is copied at native size after geometric mirroring.",
+    "maxVisibleWidth": 56,
+    "straightBodyBounds": [
+      25,
+      18,
+      46,
+      69
+    ],
+    "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
+  },
+  {
+    "file": "car-smart.svg",
+    "id": "smart",
+    "model": "Smart Fortwo (450)",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "straight",
+      "steering-left",
+      "steering-right"
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "rearLettering": "SIEM",
+    "frameBounds": [
+      [
+        17,
+        17,
+        63,
+        74
+      ],
+      [
+        13,
+        17,
+        69,
+        74
+      ],
+      [
+        14,
+        17,
+        69,
+        74
+      ]
+    ],
+    "bodyWidth": 62,
+    "rearWindowBoxes": [
+      [
+        27,
+        31,
+        42,
+        25
+      ],
+      [
+        35,
+        31,
+        36,
+        25
+      ],
+      [
+        25,
+        31,
+        36,
+        25
+      ]
+    ],
+    "rearLabelBoxes": [
+      [
+        38,
+        74,
+        21,
+        9
+      ],
+      [
+        44,
+        74,
+        21,
+        9
+      ],
+      [
+        31,
+        74,
+        21,
+        9
+      ]
+    ],
+    "identity": "First-generation city coupe proportions, contrasting safety cell, short split hatch and three stacked rear lamps.",
+    "sources": [
+      "https://media.smart.com/en-INT/pages/heritage/"
+    ],
+    "art": "Original code-native pixel illustration; no traced source pixels, manufacturer logo, external image, or font.",
+    "rendering": "Draw one 96x96 frame at square aspect. The three state poses are not an autoplay animation. Ground anchor is shared with the player.",
+    "driver": "Enclosed car or cab; no separate exposed driver sprite.",
+    "turnAngleDegrees": 30,
+    "sideExposureNative": 13,
+    "turnSourceProfile": "car-smart-side.svg",
+    "projectedSideWheels": [
+      {
+        "which": "front",
+        "center": [
+          18,
+          73
+        ],
+        "radii": [
+          4,
+          8
+        ]
+      },
+      {
+        "which": "rear",
+        "center": [
+          28,
+          80
+        ],
+        "radii": [
+          4,
+          8
+        ]
+      }
+    ],
+    "straightGroupSha256": "565fe8e2cfdeeb83dad9f83a0af6486a2510ccd43c617ab0d9c04840d6927866",
+    "turnConstruction": "Rear pixels remain a distinct face. Complete model-specific side profile, glazing, door boundaries, handles and bed details are projected into a stronger rear turn. Rear lettering is copied at native size after geometric mirroring.",
+    "maxVisibleWidth": 69,
+    "straightBodyBounds": [
+      17,
+      17,
+      62,
+      69
+    ],
+    "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
+  },
+  {
+    "file": "car-be1.svg",
+    "id": "be1",
+    "model": "Nissan Be-1",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "straight",
+      "steering-left",
+      "steering-right"
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "rearLettering": "SIEM",
+    "frameBounds": [
+      [
+        16,
+        21,
+        65,
+        70
+      ],
+      [
+        10,
+        21,
+        72,
+        70
+      ],
+      [
+        14,
+        21,
+        72,
+        70
+      ]
+    ],
+    "bodyWidth": 64,
+    "rearWindowBoxes": [
+      [
+        26,
+        35,
+        45,
+        17
+      ],
+      [
+        34,
+        35,
+        39,
+        17
+      ],
+      [
+        23,
+        35,
+        39,
+        17
+      ]
+    ],
+    "rearLabelBoxes": [
+      [
+        38,
+        74,
+        21,
+        9
+      ],
+      [
+        44,
+        74,
+        21,
+        9
+      ],
+      [
+        31,
+        74,
+        21,
+        9
+      ]
+    ],
+    "identity": "Soft compact hatch, broad round-corner rear glass and full-width dark bumper.",
+    "sources": [
+      "https://www.nissan-global.com/EN/HERITAGE_COLLECTION/Be_1_standardroof.html"
+    ],
+    "art": "Original code-native pixel illustration; no traced source pixels, manufacturer logo, external image, or font.",
+    "rendering": "Draw one 96x96 frame at square aspect. The three state poses are not an autoplay animation. Ground anchor is shared with the player.",
+    "driver": "Enclosed car or cab; no separate exposed driver sprite.",
+    "turnAngleDegrees": 30,
+    "sideExposureNative": 15,
+    "turnSourceProfile": "car-be1-side.svg",
+    "projectedSideWheels": [
+      {
+        "which": "front",
+        "center": [
+          15,
+          72
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      },
+      {
+        "which": "rear",
+        "center": [
+          27,
+          79
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      }
+    ],
+    "straightGroupSha256": "58296f151de1206d16d36daae4b6a0d5997df93c4dfaf6a9930529753a0a125c",
+    "turnConstruction": "Rear pixels remain a distinct face. Complete model-specific side profile, glazing, door boundaries, handles and bed details are projected into a stronger rear turn. Rear lettering is copied at native size after geometric mirroring.",
+    "maxVisibleWidth": 72,
+    "straightBodyBounds": [
+      16,
+      21,
+      64,
+      64
+    ],
+    "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
+  },
+  {
+    "file": "car-pao.svg",
+    "id": "pao",
+    "model": "Nissan Pao",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "straight",
+      "steering-left",
+      "steering-right"
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "rearLettering": "SIEM",
+    "frameBounds": [
+      [
+        16,
+        17,
+        65,
+        74
+      ],
+      [
+        11,
+        17,
+        71,
+        74
+      ],
+      [
+        14,
+        17,
+        71,
+        74
+      ]
+    ],
+    "bodyWidth": 63,
+    "rearWindowBoxes": [
+      [
+        26,
+        33,
+        45,
+        19
+      ],
+      [
+        35,
+        33,
+        39,
+        19
+      ],
+      [
+        22,
+        33,
+        39,
+        19
+      ]
+    ],
+    "rearLabelBoxes": [
+      [
+        38,
+        76,
+        21,
+        9
+      ],
+      [
+        44,
+        76,
+        21,
+        9
+      ],
+      [
+        31,
+        76,
+        21,
+        9
+      ]
+    ],
+    "identity": "Canvas roof, separate upper glass and smooth lower tailgate, exposed hinges and three stacked circular lamps.",
+    "sources": [
+      "https://www.nissan-global.com/EN/HERITAGE_COLLECTION/Pao.html"
+    ],
+    "art": "Original code-native pixel illustration; no traced source pixels, manufacturer logo, external image, or font.",
+    "rendering": "Draw one 96x96 frame at square aspect. The three state poses are not an autoplay animation. Ground anchor is shared with the player.",
+    "driver": "Enclosed car or cab; no separate exposed driver sprite.",
+    "turnAngleDegrees": 30,
+    "sideExposureNative": 15,
+    "turnSourceProfile": "car-pao-side.svg",
+    "projectedSideWheels": [
+      {
+        "which": "front",
+        "center": [
+          16,
+          72
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      },
+      {
+        "which": "rear",
+        "center": [
+          27,
+          79
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      }
+    ],
+    "straightGroupSha256": "8598b56915b55d15efb8edb224936a293531aa2df1fc0883ecf19919aba0e5b0",
+    "turnConstruction": "Rear pixels remain a distinct face. Complete model-specific side profile, glazing, door boundaries, handles and bed details are projected into a stronger rear turn. Rear lettering is copied at native size after geometric mirroring.",
+    "maxVisibleWidth": 71,
+    "straightBodyBounds": [
+      17,
+      17,
+      63,
+      68
+    ],
+    "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
+  },
+  {
+    "file": "car-figaro.svg",
+    "id": "figaro",
+    "model": "Nissan Figaro",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "straight",
+      "steering-left",
+      "steering-right"
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "rearLettering": "SIEM",
+    "frameBounds": [
+      [
+        14,
+        23,
+        69,
+        68
+      ],
+      [
+        8,
+        23,
+        76,
+        68
+      ],
+      [
+        12,
+        23,
+        76,
+        68
+      ]
+    ],
+    "bodyWidth": 67,
+    "rearWindowBoxes": [
+      [
+        32,
+        37,
+        31,
+        10
+      ],
+      [
+        36,
+        37,
+        27,
+        10
+      ],
+      [
+        33,
+        37,
+        27,
+        10
+      ]
+    ],
+    "rearLabelBoxes": [
+      [
+        38,
+        75,
+        21,
+        9
+      ],
+      [
+        44,
+        75,
+        21,
+        9
+      ],
+      [
+        31,
+        75,
+        21,
+        9
+      ]
+    ],
+    "identity": "Ivory roof over green body, small rear window, separate sculpted boot and vertically paired circular lamps.",
+    "sources": [
+      "https://www.nissan-global.com/EN/HERITAGE_COLLECTION/397_figaro.html",
+      "https://global.nissannews.com/en/heritage_model_figaro"
+    ],
+    "art": "Original code-native pixel illustration; no traced source pixels, manufacturer logo, external image, or font.",
+    "rendering": "Draw one 96x96 frame at square aspect. The three state poses are not an autoplay animation. Ground anchor is shared with the player.",
+    "driver": "Enclosed car or cab; no separate exposed driver sprite.",
+    "turnAngleDegrees": 30,
+    "sideExposureNative": 16,
+    "turnSourceProfile": "car-figaro-side.svg",
+    "projectedSideWheels": [
+      {
+        "which": "front",
+        "center": [
+          13,
+          73
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      },
+      {
+        "which": "rear",
+        "center": [
+          25,
+          80
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      }
+    ],
+    "straightGroupSha256": "30d24ebca9c046667cccb84fd67066922245ca76230c0bbe3effafe79586ce2e",
+    "turnConstruction": "Rear pixels remain a distinct face. Complete model-specific side profile, glazing, door boundaries, handles and bed details are projected into a stronger rear turn. Rear lettering is copied at native size after geometric mirroring.",
+    "maxVisibleWidth": 76,
+    "straightBodyBounds": [
+      15,
+      23,
+      67,
+      62
+    ],
+    "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
+  },
+  {
+    "file": "car-scargo.svg",
+    "id": "scargo",
+    "model": "Nissan S-Cargo",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": [
+      "straight",
+      "steering-left",
+      "steering-right"
+    ],
+    "fps": 0,
+    "groundAnchor": [
+      48,
+      90
+    ],
+    "rearLettering": "茶",
+    "frameBounds": [
+      [
+        14,
+        7,
+        69,
+        84
+      ],
+      [
+        8,
+        7,
+        76,
+        84
+      ],
+      [
+        12,
+        7,
+        76,
+        84
+      ]
+    ],
+    "bodyWidth": 68,
+    "rearWindowBoxes": [
+      [
+        24,
+        26,
+        48,
+        31
+      ],
+      [
+        33,
+        26,
+        42,
+        31
+      ],
+      [
+        21,
+        26,
+        42,
+        31
+      ]
+    ],
+    "rearLabelBoxes": [
+      [
+        38,
+        70,
+        21,
+        15
+      ],
+      [
+        44,
+        70,
+        21,
+        15
+      ],
+      [
+        31,
+        70,
+        21,
+        15
+      ]
+    ],
+    "identity": "Tall cargo shell, large rear glass and low oval lamps. Marine-blue body, white arches/bumper and dark roof follow the user-supplied Yokohama Version poster.",
+    "sources": [
+      "https://www.nissan-global.com/EN/HERITAGE_COLLECTION/s_cargo_129.html"
+    ],
+    "art": "Original code-native pixel illustration; no traced source pixels, manufacturer logo, external image, or font.",
+    "rendering": "Draw one 96x96 frame at square aspect. The three state poses are not an autoplay animation. Ground anchor is shared with the player.",
+    "driver": "Enclosed car or cab; no separate exposed driver sprite.",
+    "requestedColor": "Yokohama Version marine blue",
+    "bodyColor": "#4384D6",
+    "bodyHighlight": "#7BADE1",
+    "bodyShade": "#2166C3",
+    "roofColor": "#2D4560",
+    "sourcePhotos": [
+      "91DE6246-D45D-4898-9559-780AA18A3652/1-Photo-1.jpg supplied by user",
+      "2B6ABA25-A49F-4774-AF84-823F7772D107/1-Photo-1.jpg supplied by user"
+    ],
+    "colorNote": "Approximation of the first user-supplied printed Yokohama Version poster. Clean side-panel sample medians #4384D6 and #4684D4; shaded hood #2166C3. These are photo samples, not a verified factory paint-code conversion. Explicit blue-body exception applies only to S-Cargo.",
+    "liveryDetails": "White left/right REAR-edge strips stay visible in every pose on the rear plane (z=0). Exposed side panels remain marine blue. White rear bumper and wheel-arch trims; dark canvas roof. Second poster supplies the two visible headrests and outward red rear lamps. Side porthole motif omitted at this mild rear camera angle to preserve 96px readability. No promotional poster text or quantity claims copied.",
+    "rearLabelGlyphOffset": [
+      5,
+      2
+    ],
+    "rearLabelGlyphSize": [
+      11,
+      11
+    ],
+    "plateNote": "User-requested single Chinese plate glyph, hand-drawn as integer pixels. The central plate is the car's only lettering; the white bumper has no additional badge. The glyph is stamped after pose mirroring.",
+    "rearWhiteStripPlane": "rear plane z=0; both strips present in every pose; no white side-plane wrap",
+    "rearWhiteStripSamples": [
+      {
+        "left": [
+          [
+            19,
+            35
+          ],
+          [
+            18,
+            40
+          ],
+          [
+            18,
+            50
+          ],
+          [
+            18,
+            58
+          ],
+          [
+            18,
+            64
+          ],
+          [
+            18,
+            70
+          ]
+        ],
+        "right": [
+          [
+            75,
+            35
+          ],
+          [
+            76,
+            40
+          ],
+          [
+            77,
+            50
+          ],
+          [
+            77,
+            58
+          ],
+          [
+            77,
+            64
+          ],
+          [
+            77,
+            70
+          ]
+        ]
+      },
+      {
+        "left": [
+          [
+            29,
+            35
+          ],
+          [
+            28,
+            40
+          ],
+          [
+            28,
+            50
+          ],
+          [
+            28,
+            58
+          ],
+          [
+            28,
+            64
+          ],
+          [
+            28,
+            70
+          ]
+        ],
+        "right": [
+          [
+            77,
+            35
+          ],
+          [
+            78,
+            40
+          ],
+          [
+            79,
+            50
+          ],
+          [
+            79,
+            58
+          ],
+          [
+            79,
+            64
+          ],
+          [
+            79,
+            70
+          ]
+        ]
+      },
+      {
+        "left": [
+          [
+            18,
+            35
+          ],
+          [
+            17,
+            40
+          ],
+          [
+            16,
+            50
+          ],
+          [
+            16,
+            58
+          ],
+          [
+            16,
+            64
+          ],
+          [
+            16,
+            70
+          ]
+        ],
+        "right": [
+          [
+            66,
+            35
+          ],
+          [
+            67,
+            40
+          ],
+          [
+            67,
+            50
+          ],
+          [
+            67,
+            58
+          ],
+          [
+            67,
+            64
+          ],
+          [
+            67,
+            70
+          ]
+        ]
+      }
+    ],
+    "sideBlueSamples": [
+      [],
+      [
+        [
+          23,
+          52
+        ],
+        [
+          20,
+          61
+        ],
+        [
+          20,
+          70
+        ]
+      ],
+      [
+        [
+          72,
+          52
+        ],
+        [
+          75,
+          61
+        ],
+        [
+          75,
+          70
+        ]
+      ]
+    ],
+    "sideBlueSampleColor": "#4384D6",
+    "turnAngleDegrees": 30,
+    "sideExposureNative": 16,
+    "turnSourceProfile": "car-scargo-side.svg",
+    "projectedSideWheels": [
+      {
+        "which": "front",
+        "center": [
+          13,
+          72
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      },
+      {
+        "which": "rear",
+        "center": [
+          25,
+          79
+        ],
+        "radii": [
+          4,
+          9
+        ]
+      }
+    ],
+    "straightGroupSha256": "660c47f1fd1154492ca7dc1c2bfe998b81ce004809c1b94da401d0efd41fd009",
+    "turnConstruction": "Rear pixels remain a distinct face. Complete model-specific side profile, glazing, door boundaries, handles and bed details are projected into a stronger rear turn. Rear lettering is copied at native size after geometric mirroring.",
+    "maxVisibleWidth": 76,
+    "straightBodyBounds": [
+      14,
+      7,
+      68,
+      81
+    ],
+    "boundsNote": "frameBounds/maxVisibleWidth include all opaque body and tire pixels. Where present, bodyWidth/straightBodyBounds retain the original straight-body collision reference; yaw bounds are conservative visible bounds."
+  }
+]

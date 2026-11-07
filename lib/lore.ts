@@ -46,7 +46,7 @@ export const CHARACTERS: LoreCharacter[] = [
       "The sources stay put. Even I know better than to move the whole archive.",
     ],
     choices: [
-      { label: "Find Cartridge Run", action: "find-runner" },
+      { label: "Play Cartridge Run", action: "find-runner" },
       { label: "Nice collection", action: "close" },
     ],
   },
@@ -60,7 +60,7 @@ export const CHARACTERS: LoreCharacter[] = [
       "I've been practicing. The corners are still winning.",
     ],
     choices: [
-      { label: "Find Sam Circuit", action: "find-kart" },
+      { label: "Play Sam Circuit", action: "find-kart" },
       { label: "Keep practicing", action: "close" },
     ],
   },
@@ -74,7 +74,7 @@ export const CHARACTERS: LoreCharacter[] = [
       "Perfect is Post-SIEM. Button mashing is a very expensive legacy strategy.",
     ],
     choices: [
-      { label: "Find Sam's Beat", action: "find-beat" },
+      { label: "Play Sam's Beat", action: "find-beat" },
       { label: "Change my outfit", action: "register" },
     ],
   },
@@ -103,7 +103,7 @@ export const CHARACTERS: LoreCharacter[] = [
       "No coins needed. All four games are free to play.",
     ],
     choices: [
-      { label: "Find Daisy Breaker", action: "find-breaker" },
+      { label: "Play Daisy Breaker", action: "find-breaker" },
       { label: "Enjoy your coffee", action: "close" },
     ],
   },

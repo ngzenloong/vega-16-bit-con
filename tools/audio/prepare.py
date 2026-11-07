@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""Prepare licensed, composer-made FM music for the convention.
+"""Prepare the licensed FM rhythm recording; preserve the current hall by default.
 
 Source: Welcome to the Item Shop by congusbongus, CC0 1.0.
 This script edits an existing recording; it does not generate a composition.
 Requires Python 3 and FFmpeg, with no Python packages or API credentials.
 Run from the project root: python3 tools/audio/prepare.py
+The superseded FM hall export requires the explicit --legacy-hall flag.
+Use prepare_hall_bossa.py for the current hall recording.
 """
 
 from array import array
+import argparse
 import hashlib
 import json
 import math
@@ -173,6 +176,10 @@ def prepare(name, bars, bpm, target_lufs, work):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--legacy-hall", action="store_true",
+                        help="Explicitly replace the current hall with the superseded FM hall, as well as preparing beat.")
+    args = parser.parse_args()
     if not FFMPEG:
         raise SystemExit("FFmpeg is required to prepare the licensed recording.")
     if not SOURCE.is_file():
@@ -180,23 +187,28 @@ def main():
     assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == SOURCE_SHA256, "Source hash changed"
     PUBLIC.mkdir(parents=True, exist_ok=True)
     tracks = {}
+    jobs = [("beat", 16, 120, -21.5)]
+    if args.legacy_hall:
+        jobs.insert(0, ("hall", 32, 115, -23.5))
     with tempfile.TemporaryDirectory(prefix="prepare-", dir=HERE) as temporary:
-        for name, bars, bpm, level in [("hall", 32, 115, -23.5), ("beat", 16, 120, -21.5)]:
+        for name, bars, bpm, level in jobs:
             print(f"Preparing {name}...", flush=True)
             tracks[name] = prepare(name, bars, bpm, level, Path(temporary))
             print(json.dumps({"track": name, "duration": tracks[name]["durationSeconds"],
                               "levels": tracks[name]["levels"]}), flush=True)
-    manifest = {
-        "provenance": "Composer-made recording by congusbongus, reused under CC0 1.0. The assistant selected excerpts, adjusted tempo/EQ/gain, and prepared loop boundaries. No AI music-generation provider was used.",
-        "preparationSource": "tools/audio/prepare.py", "sourcePage": SOURCE_PAGE,
-        "sourceDownload": SOURCE_URL, "sourceSha256": SOURCE_SHA256,
-        "license": "CC0-1.0", "licenseUrl": LICENSE_URL,
-        "instrumentation": "Author-created BambooTracker/YM2608 FM arrangement with flute, bells, vibraphone, soft brass, choir and plucked accompaniment.",
-        "playback": "Decode once with Web Audio, set loop=true, loopStart=0, and loopEnd to the selected track duration. The beat track is exactly 32 seconds at 120 BPM; beat n is startTime + n * 0.5 seconds.",
-        "tracks": tracks,
-    }
-    (PUBLIC / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
-    print("Prepared both loops and 14-second playback previews.", flush=True)
+    manifest_path = PUBLIC / "manifest.json"
+    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {"tracks": {}}
+    for track in tracks.values():
+        track.update({"preparationSource": "tools/audio/prepare.py", "sourceDownload": SOURCE_URL,
+                      "sourceSha256": SOURCE_SHA256,
+                      "instrumentation": "Author-created BambooTracker/YM2608 FM arrangement with flute, bells, vibraphone, soft brass, choir and plucked accompaniment."})
+    manifest.setdefault("tracks", {}).update(tracks)
+    manifest["provenance"] = "Separately credited composer-made CC0 recordings; see each track for its source. No music-generation provider was used."
+    manifest.setdefault("license", "CC0-1.0")
+    manifest.setdefault("licenseUrl", LICENSE_URL)
+    manifest.setdefault("playback", "Loop each decoded buffer from zero to its own duration. Beat remains exactly 32 seconds at 120 BPM.")
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
+    print("Prepared beat and its preview." + (" Explicit legacy hall export also completed." if args.legacy_hall else " Current hall preserved."), flush=True)
 
 
 if __name__ == "__main__":

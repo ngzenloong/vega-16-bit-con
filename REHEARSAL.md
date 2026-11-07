@@ -1,42 +1,40 @@
-# Verification — 16-Bit Con
+# Verification: 16-Bit Con
 
-Reviewed November 7, 2026. The initial repair was followed by two complete review/repair rounds using make-interfaces-feel-better, Vercel React best practices, humanizer, Hallmark and Stageshow. Each round compared the implementation with the Figma instructions, brand guide and supplied copy.
+Reviewed November 7, 2026. The initial repair and two subsequent five-skill review rounds are retained in the workspace audit directory. The mobile/vehicles/music follow-up adds a further code and five-skill review against the same Figma PRD, brand guide and supplied copy.
 
-## Automated checks
+## Current automated checks
 
-- `npm test`: 35 passing tests. They cover crossed-platform landing, physical input ownership, stored-profile validation, fixed-step clock fairness, continuous Breaker contacts, serve timing, rotation at the paddle, Runner grace/buffer/release/checkpoints/rewards, timestamped rhythm grading/calibration/anti-mash behavior, authored road continuity and matching visible/off-road boundaries.
-- TypeScript and production/static builds passed. The page is prerendered; game controllers remain dynamically imported.
-- Separate deterministic audio fixtures exercised pending-load cancellation, latest-track ownership, mute during load, the complete hall-loop duration and output-clock mapping.
-- Simulated controller playthroughs reached wins in all four games. Portrait Breaker also cleared at tested sizes. These simulations do not establish human difficulty.
+- 50 tests pass, including integer sprite clocks, physical key ownership, legacy profile normalization, score migration, every12-rival grid, campaign lettering, contact widths, rhythm grading/anti-mashing and the two new audio cancellation/obsolete-error regressions.
+- TypeScript and production build pass. Static export is checked separately for publication. Game controllers remain dynamically imported.
+- All12 grid rotations can finish first using the simulation's clean-line controller. That proves a feasible route, not human difficulty.
+- Asset checks pass for twelve distinct rival silhouettes, integer2x rendering, alpha/bounds/ground anchors, forward-readable badges and the S-Cargo tea-only exception. The13-car turn preview validates39 frames and preserves every approved straight group. Full side profiles cover all13 cars.
 
-## Observed browser checks
+## Current observed browser checks
 
-- Hero, schedule and existing-player form at 320, 375, 414 and 768 CSS px; ordinary 1280px desktop; 320×568 short portrait; 768×540 and 844×390 landscape. No horizontal document overflow in the measured page matrix. Important schedule/exit controls measured 44px.
-- Immediate keyboard movement, direct station/NPC controls, repeated lift activation, per-floor position/camera preservation during reading scroll, explicit navigation, handheld exit and schedule handoff.
-- Fixed dialogue text/choice geometry, keyboard response selection, original game font roles and matching activity portraits. Normal-speed and interrupted states were inspected.
-- A fresh local-origin guest form rejected malformed email. Three outfit parts were changed and a player was created. Editing an existing player did not ask for email again.
-- Player-pass flip/morph/drop completed. Escape during another entry preserved the player, removed all temporary pass/ghost elements and restored scrolling.
-- Every game opened, accepted input and supported keyboard start/pause/resume/replay/exit. Phone games adapt their field or camera instead of shrinking a widescreen scene into a tall screen.
-- A real automated keyboard rhythm round lasted 32 seconds and hit 52/52 notes, with 0 extra taps, 90% accuracy and 4,160 points. It showed Round cleared and New personal best, then replayed from Enter. This is UI input evidence, not a human playtest or audio-latency measurement.
-- The race shows three rivals, authored bends, a complete New York skyline and the PostSIEM.com Fiat. Portrait road, cars and props share the same projection scale. Speed rose above 300 km/h after acceleration.
-- A local QA server intentionally returned 503 for audio, then restored 200 responses. The active game showed a visible fallback and Retry action; recovery cleared it. A paused retry restored dialog focus and Enter resumed.
-- The same server returned 503 for the game font. Game unavailable stayed cancellable. After the file recovered, keyboard Try again loaded a fresh font face and returned to the game.
-- Session add/remove actions exposed their state and announced the actual title. Footer keyboard focus was visibly distinct from its green background.
+The QA profile uses a different local origin from the user's saved player on port3000.
 
-The test profile used a separate local origin. The user's existing player on port 3000 was preserved. RSVP remained local; no attendance registration, email, analytics or multiplayer traffic was introduced.
+- Page widths320,375,414,768 and1280 were measured and inspected. No horizontal document overflow was observed. A320px title/booth overlap found in that pass was corrected with fluid title sizing; short desktop floors retain additional space.
+- The phone look step keeps its preview fixed while options scroll. Six preset looks were inspected. At568×320 the preview and options form two columns and Continue remains fully visible.
+- A new guest selected a preset, advanced to details, received native rejection for a malformed email, corrected it, returned to the look step without losing the selection, then created a player. At390×380, the focused email and actions remained reachable through the scrolling form. This is a reduced viewport test, not a physical keyboard test.
+- Existing-player editing omitted email and retained world position. New-player entry completes at the shared booth anchor. Profiles remain local; email is discarded.
+- Tapping the venue enters handheld mode. Dialogue close and dialogue-to-game handoff preserve that mode. Escape from a paused game returns to the same character position. Only explicit world exit restores page scrolling.
+- Sam remains stationary after dialogue; walking is400px/s. The pup's idle/run poses share the ground, and the new companions follow. Background-motion pause is reachable inside handheld mode; NPC frames remain frozen while deliberate player movement still works.
+- All four games opened and accepted keyboard start, movement/action, pause/resume and exit. Runner replay was exercised. Racing displays13-car ranking, distinct cars and a keyboard-accessible optional garage. Rhythm uses24 spaced notes with a3-second lead-in and60% clear target.
+- Direct lift travel and repeated input settle into one floor with stable player/world transforms. Reading scroll retains per-floor state; explicit navigation is camera-owned.
+- Sound enable succeeded in the observed game flows without visible audio errors. Final audio files and their licenses are recorded in the public manifest; subjective audio quality is not inferred from this check. The user first selected Cozy Puzzle, then requested a more Japanese life-sim direction; the final hall uses Apple Cider.
 
-## Design and provenance
+## Brand and sources
 
-The active hardware is a System 16-era arcade, Mega Drive, SNES and Mega Drive + Mega-CD. Original Vega art, paired marks, shallow pixel perspective and font/palette roles remain the foundation. The modern Fiat is a deliberate campaign reference rendered as pixel art.
+The event remains October3-5,2026 at Javits Center,New York, with the supplied three sessions and Booth630. Hardware is the System16-era arcade, Mega Drive, SNES and Mega Drive+Mega-CD. The full desktop world and mobile handheld distinction remain. Original Vega marks, sprites, shallow perspective and typography roles are retained. S-Cargo's marine blue and tea plate are explicit user exceptions.
 
-Music is edited from congusbongus's CC0 recording, not claimed as AI-generated. The hall loop is 66.783492 seconds; the rhythm edit is 32 seconds. The 52-note chart is authored from the accompanying tracker score. See ASSET_SOURCES.md, THIRD_PARTY_NOTICES.md and tools/audio/PROVENANCE.md.
+Each of the four games has a separate score; the hall uses Apple Cider. All public recordings are composer-published CC0. The MIT Riftpane recording is a separately credited research reference only. The race score is Fever Stadium, not a copied Deja Vu melody. Sources and exact edits are in ASSET_SOURCES.md and public/audio/ATTRIBUTION.txt.
 
-The additive [Figma drafts page](https://www.figma.com/design/ntMv2Sr2WTPuAtRljGxoOa/?node-id=9543-4) preserves ten decision categories and thirty editable line-art alternatives. Historical NES/PS1 options are explicitly superseded by the final 16-bit lineup.
+The additive Figma drafts page retains ten categories and thirty editable line-art alternatives. Earlier NES/PS1 alternatives remain historical, not live hardware.
 
-## Verification limits
+## Limits
 
-No physical iPhone/Android multitouch or soft-keyboard test, VoiceOver review, full cross-browser matrix, acoustic/output-latency measurement or formal frame-time/memory profile was performed. Browser viewport tests are not physical-device certification. Not every game was manually won.
+No physical iPhone/Android multitouch, software-keyboard, VoiceOver, acoustic/output-latency, full cross-browser or formal frame-time/heap test was performed. Not every game was manually won. Reduced-motion/interruption cleanup was reviewed in source and deterministic tests; live OS preference switching was not tested.
 
-Reduced-motion behavior and interruption cleanup were reviewed in source; live OS preference switching was not tested. The browser Animations panel at 10% speed and Stageshow's faux Stage/Act film gate were not available/run. The playable application's observed states do not imply those gates passed.
+The DevTools Animations panel at10% speed and Stageshow's faux Stage/Act film gate were not run. Normal-speed CUA observations and source review do not imply those gates passed. Private deployment success is reported from the hosting service; authenticated production visual QA is a separate boundary.
 
-Detailed initial reports, both five-skill rounds, issue dispositions and before/after captures remain in the workspace's audit-2026-11-06 folder. Historical notes were preserved there separately from this current record.
+Detailed findings, dispositions and captures remain in audit-2026-11-06/mobile-follow-up. Historical proof, including the old52-note rhythm run, is preserved separately and is not claimed as verification of the current24-note chart.

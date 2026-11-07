@@ -1,0 +1,131 @@
+#!/usr/bin/env python3
+"""Prepare a fuller bossa-nova hall arrangement; preserve every game recording.
+
+Source: Cozy Puzzle In-Game 1 by MintoDog, CC0 1.0.
+Run after prepare.py and prepare_games.py when rebuilding all audio assets.
+prepare.py now prepares beat only unless --legacy-hall is explicitly supplied.
+No composition model, generated melody, or chiptune synthesis is used here.
+"""
+from array import array
+import hashlib
+import json
+import math
+from pathlib import Path
+import subprocess
+import tempfile
+import prepare as audio_utils
+
+HERE = Path(__file__).resolve().parent
+PUBLIC = HERE.parents[1] / "public" / "audio"
+SOURCE = HERE / "references" / "cozy-puzzle-118.ogg"
+SOURCE_SHA = "afa440cb8814907b215b285a0503d39b125b6c83d9fca3f686c969107f04c7f7"
+SOURCE_PAGE = "https://opengameart.org/content/cozy-puzzle-in-game-1"
+SOURCE_URL = "https://opengameart.org/sites/default/files/cozy_puzzle_in-game_1_bpm118_0.ogg"
+LICENSE_URL = "https://creativecommons.org/publicdomain/zero/1.0/"
+RATE = 44100
+BPM = 118
+BARS = 32
+FRAMES = math.ceil((BARS * 4 * 60 / BPM) * RATE / 64) * 64
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def run(args, **kwargs):
+    return subprocess.run(args, check=True, **kwargs)
+
+
+def main():
+    assert sha(SOURCE) == SOURCE_SHA
+    protected = {path.name: sha(path) for name in ("beat", "breaker", "runner", "kart")
+                 for ext in ("wav", "ogg") for path in [PUBLIC / f"{name}.{ext}"] if path.exists()}
+    with tempfile.TemporaryDirectory(prefix="hall-bossa-", dir=HERE) as temporary:
+        work = Path(temporary)
+        prepared = work / "prepared.wav"
+        run([audio_utils.FFMPEG, "-v", "error", "-y", "-i", str(SOURCE),
+             "-af", "highpass=f=30:p=2,treble=g=-1:f=5000:w=0.7,lowpass=f=12500:p=2",
+             "-t", str(FRAMES / RATE + .2), "-ar", str(RATE), "-ac", "2",
+             "-c:a", "pcm_f32le", str(prepared)])
+        samples = audio_utils.floats(prepared)
+        seam = round(.025 * RATE)
+        assert len(samples) >= (FRAMES + seam) * 2
+        for i in range(seam):
+            weight = (1 - math.cos(math.pi * i / (seam - 1))) / 2
+            for c in (0, 1):
+                index = i * 2 + c
+                samples[index] = samples[(FRAMES + i) * 2 + c] * (1 - weight) + samples[index] * weight
+        del samples[FRAMES * 2:]
+        loop = work / "loop.wav"
+        audio_utils.write_float(loop, samples)
+        gain = -23.5 - audio_utils.loudness(loop)["integratedLufs"]
+        wav = PUBLIC / "hall.wav"
+        run([audio_utils.FFMPEG, "-v", "error", "-y", "-i", str(loop),
+             "-af", f"volume={gain}dB", "-ar", str(RATE), "-ac", "2",
+             "-c:a", "pcm_s16le", str(wav)])
+        levels = audio_utils.pcm_metrics(wav)
+        levels.update(audio_utils.loudness(wav))
+        assert levels["sampleFrames"] == FRAMES and levels["truePeakDbfs"] < -3
+        encoders = run([audio_utils.FFMPEG, "-hide_banner", "-encoders"], capture_output=True, text=True).stdout
+        codec = ["-c:a", "libvorbis"] if " libvorbis " in encoders else ["-c:a", "vorbis", "-strict", "-2"]
+        ogg = PUBLIC / "hall.ogg"
+        run([audio_utils.FFMPEG, "-v", "error", "-y", "-i", str(wav), *codec, "-q:a", "5",
+             "-metadata", "ARTIST=MintoDog", "-metadata", "TITLE=Cozy Puzzle In-Game 1",
+             "-metadata", f"COPYRIGHT=CC0 1.0; {SOURCE_PAGE}",
+             "-metadata", "COMMENT=32-bar excerpt; gentle EQ, quiet gain and loop splice; original 118 BPM.",
+             "-metadata", "BPM=118", "-metadata", "LOOPSTART=0",
+             "-metadata", f"LOOPEND={FRAMES}", str(ogg)])
+        decoded = audio_utils.floats(ogg)
+        assert len(decoded) == FRAMES * 2 and max(abs(v) for v in decoded) < 1
+        levels["oggDecodedFrames"] = len(decoded) // 2
+        levels["oggPeakDbfs"] = round(20 * math.log10(max(abs(v) for v in decoded)), 3)
+        levels["oggClippedSamples"] = sum(abs(v) >= 1 for v in decoded)
+        previews = HERE / "previews"
+        run([audio_utils.FFMPEG, "-v", "error", "-y", "-i", str(wav), "-t", "14",
+             "-af", "afade=t=in:d=0.03,afade=t=out:st=13.6:d=0.4", "-c:a", "libmp3lame",
+             "-b:a", "128k", str(previews / "hall-preview.mp3")])
+        join = array("f", samples[-4 * RATE * 2:]); join.extend(samples[:4 * RATE * 2])
+        join_file = work / "join.wav"
+        audio_utils.write_float(join_file, join)
+        run([audio_utils.FFMPEG, "-v", "error", "-y", "-i", str(join_file),
+             "-af", f"volume={gain}dB,afade=t=in:d=0.03,afade=t=out:st=7.6:d=0.4",
+             "-c:a", "libmp3lame", "-b:a", "128k", str(previews / "hall-loop-preview.mp3")])
+        hall = {
+            "title": "Cozy Puzzle In-Game 1", "artist": "MintoDog",
+            "purpose": "Convention hall background", "files": {"ogg": "/audio/hall.ogg", "wav": "/audio/hall.wav"},
+            "license": "CC0-1.0", "licenseUrl": LICENSE_URL, "sourcePage": SOURCE_PAGE,
+            "sourceDownload": SOURCE_URL, "sourceSha256": SOURCE_SHA,
+            "preparationSource": "tools/audio/prepare_hall_bossa.py",
+            "instrumentation": "Author-described saxophone, flute, mallets and bossa nova arrangement.",
+            "bpm": BPM, "sourceBpm": BPM, "timeSignature": "4/4", "bars": BARS,
+            "beats": BARS * 4, "durationSeconds": FRAMES / RATE, "sampleRateHz": RATE,
+            "sampleFrames": FRAMES, "channels": 2, "beatOffsetSeconds": 0, "secondsPerBeat": 60 / BPM,
+            "loop": {"enabled": True, "startSeconds": 0, "endSeconds": FRAMES / RATE},
+            "edit": {"sourceStartSeconds": 0, "sourceDurationSeconds": BARS * 4 * 60 / BPM,
+                     "tempoRatio": 1, "preservePitch": True, "seamBlendSeconds": .025,
+                     "gainDb": round(gain, 3), "highShelfDb": -1, "lowpassHz": 12500},
+            "levels": levels, "bytes": {"wav": wav.stat().st_size, "ogg": ogg.stat().st_size},
+            "wavSha256": sha(wav), "oggSha256": sha(ogg),
+        }
+    for filename, expected in protected.items():
+        assert sha(PUBLIC / filename) == expected, f"Game audio changed: {filename}"
+    manifest_path = PUBLIC / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    beat = manifest["tracks"]["beat"]
+    for field in ("sourcePage", "sourceDownload", "sourceSha256", "instrumentation", "preparationSource"):
+        if field in manifest:
+            beat.setdefault(field, manifest.pop(field))
+    manifest["tracks"]["hall"] = hall
+    extra = HERE / "game-tracks-manifest.json"
+    if extra.exists():
+        manifest["tracks"].update(json.loads(extra.read_text())["tracks"])
+    manifest["provenance"] = "Separately credited composer-made CC0 recordings; see each track for its source. Hall uses MintoDog's bossa nova arrangement. Rhythm retains congusbongus's FM recording. No music-generation provider was used."
+    manifest["preparationScripts"] = ["tools/audio/prepare.py", "tools/audio/prepare_games.py", "tools/audio/prepare_hall_bossa.py"]
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
+    (HERE / "hall-bossa-manifest.json").write_text(json.dumps({"hall": hall, "protectedGameAudioSha256": protected}, indent=2) + "\n")
+    print(json.dumps({"duration": hall["durationSeconds"], "bpm": BPM, "bytes": hall["bytes"], "levels": levels}, indent=2))
+    print("Hall changed to the bossa recording; all game audio is byte-identical.")
+
+
+if __name__ == "__main__":
+    main()

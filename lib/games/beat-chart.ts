@@ -1,57 +1,101 @@
-// Authored from the replacement recording's BambooTracker note-on rows.
-// Provenance and score alignment: tools/audio/beat-chart.json.
+// Beginner chart selected from the original tracker-score onsets.
+// The full source chart and this selection are recorded in tools/audio/beat-chart.json.
 export const SONG = { bpm: 120, duration: 32, offset: 0 } as const;
 export const BEAT_CHART = [
-  { beat: 4, lane: 0 },
-  { beat: 5, lane: 1 },
-  { beat: 6, lane: 2 },
-  { beat: 7.5, lane: 3 },
-  { beat: 8.5, lane: 3 },
-  { beat: 9.5, lane: 2 },
-  { beat: 10.5, lane: 1 },
-  { beat: 11.25, lane: 1 },
-  { beat: 11.75, lane: 2 },
-  { beat: 13, lane: 1 },
-  { beat: 15.5, lane: 0 },
-  { beat: 16.5, lane: 2 },
-  { beat: 17.5, lane: 1 },
-  { beat: 18, lane: 0 },
-  { beat: 19.5, lane: 2 },
-  { beat: 20, lane: 3 },
-  { beat: 21.5, lane: 0 },
-  { beat: 22, lane: 1 },
-  { beat: 24.5, lane: 3 },
-  { beat: 25.5, lane: 2 },
-  { beat: 26, lane: 1 },
-  { beat: 27.5, lane: 0 },
-  { beat: 28, lane: 1 },
-  { beat: 30, lane: 2 },
-  { beat: 31.5, lane: 0 },
-  { beat: 32.5, lane: 0 },
-  { beat: 33.5, lane: 2 },
-  { beat: 34.5, lane: 1 },
-  { beat: 35.75, lane: 3 },
-  { beat: 37, lane: 3 },
-  { beat: 38, lane: 2 },
-  { beat: 39, lane: 0 },
-  { beat: 40, lane: 0 },
-  { beat: 41, lane: 1 },
-  { beat: 42, lane: 1 },
-  { beat: 43.75, lane: 3 },
-  { beat: 45, lane: 3 },
-  { beat: 46, lane: 2 },
-  { beat: 47, lane: 0 },
-  { beat: 48.5, lane: 1 },
-  { beat: 49.5, lane: 0 },
-  { beat: 50.75, lane: 1 },
-  { beat: 51.5, lane: 2 },
-  { beat: 52, lane: 3 },
-  { beat: 54, lane: 0 },
-  { beat: 55, lane: 2 },
-  { beat: 56.5, lane: 3 },
-  { beat: 57.5, lane: 2 },
-  { beat: 58.75, lane: 1 },
-  { beat: 59.5, lane: 0 },
-  { beat: 60, lane: 1 },
-  { beat: 62, lane: 2 },
+  {
+    beat: 6,
+    lane: 2,
+  },
+  {
+    beat: 8.5,
+    lane: 3,
+  },
+  {
+    beat: 10.5,
+    lane: 1,
+  },
+  {
+    beat: 13,
+    lane: 1,
+  },
+  {
+    beat: 15.5,
+    lane: 0,
+  },
+  {
+    beat: 17.5,
+    lane: 1,
+  },
+  {
+    beat: 19.5,
+    lane: 2,
+  },
+  {
+    beat: 21.5,
+    lane: 0,
+  },
+  {
+    beat: 24.5,
+    lane: 3,
+  },
+  {
+    beat: 27.5,
+    lane: 0,
+  },
+  {
+    beat: 30,
+    lane: 2,
+  },
+  {
+    beat: 32.5,
+    lane: 0,
+  },
+  {
+    beat: 34.5,
+    lane: 1,
+  },
+  {
+    beat: 37,
+    lane: 3,
+  },
+  {
+    beat: 39,
+    lane: 0,
+  },
+  {
+    beat: 41,
+    lane: 1,
+  },
+  {
+    beat: 43.75,
+    lane: 3,
+  },
+  {
+    beat: 47,
+    lane: 0,
+  },
+  {
+    beat: 49.5,
+    lane: 0,
+  },
+  {
+    beat: 51.5,
+    lane: 2,
+  },
+  {
+    beat: 54,
+    lane: 0,
+  },
+  {
+    beat: 56.5,
+    lane: 3,
+  },
+  {
+    beat: 58.75,
+    lane: 1,
+  },
+  {
+    beat: 62,
+    lane: 2,
+  },
 ] as const;

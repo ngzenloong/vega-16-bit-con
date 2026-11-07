@@ -8,6 +8,34 @@ export type SpriteAsset = {
 };
 
 export const SPRITES: Record<string, SpriteAsset> = {
+  "pet-cat": {
+    src: "/assets/vega/pet-cat.svg",
+    width: 24,
+    height: 24,
+    frames: 4,
+    fps: 6,
+  },
+  "pet-daisy": {
+    src: "/assets/vega/pet-daisy.svg",
+    width: 24,
+    height: 24,
+    frames: 4,
+    fps: 4,
+  },
+  "pet-bot": {
+    src: "/assets/vega/pet-bot.svg",
+    width: 24,
+    height: 24,
+    frames: 4,
+    fps: 6,
+  },
+  "pet-firefly": {
+    src: "/assets/vega/pet-firefly.svg",
+    width: 24,
+    height: 24,
+    frames: 4,
+    fps: 8,
+  },
   "a-button": {
     src: "/assets/vega/a-button.png",
     width: 22,

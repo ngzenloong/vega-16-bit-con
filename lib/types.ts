@@ -1,9 +1,22 @@
 export type GameId = "breaker" | "runner" | "kart" | "beat";
-export type OutfitPart = "hat" | "glasses" | "shirt";
+export type OutfitPart =
+  | "hat"
+  | "glasses"
+  | "shirt"
+  | "neck"
+  | "bag"
+  | "shoes"
+  | "item"
+  | "companion";
 export interface Appearance {
   hat: number;
   glasses: number;
   shirt: number;
+  neck?: number;
+  bag?: number;
+  shoes?: number;
+  item?: number;
+  companion?: number;
 }
 export interface Player {
   name: string;
@@ -17,7 +30,22 @@ export interface GameResult {
   detail: string;
 }
 export type Scores = Partial<Record<GameId, number>>;
-export const DEFAULT_APPEARANCE: Appearance = { hat: 0, glasses: 0, shirt: 0 };
+export const GAME_DURATION = {
+  breaker: 60,
+  runner: 60,
+  kart: 55,
+  beat: 32,
+} as const;
+export const DEFAULT_APPEARANCE: Appearance = {
+  hat: 0,
+  glasses: 0,
+  shirt: 0,
+  neck: 0,
+  bag: 0,
+  shoes: 0,
+  item: 0,
+  companion: 0,
+};
 export const GAMES: {
   id: GameId;
   machine: string;
@@ -52,7 +80,7 @@ export const GAMES: {
     machine: "16-BIT / SNES",
     name: "Sam Circuit",
     instructions:
-      "Drive the PostSIEM.com Fiat past three Legacy Stack rivals. Finish in the top three within 60 seconds. Catch the yellow boosts and brake before bends.",
+      "Beat all 12 rivals to first place within 55 seconds. Drive the PostSIEM.com Fiat, catch the yellow boosts and keep a clean line through the bends.",
     controls: "← → Steer · ↑ / Space Gas · ↓ Brake",
     action: "GAS",
     secondary: "BRAKE",
@@ -62,7 +90,7 @@ export const GAMES: {
     machine: "16-BIT / MEGA DRIVE + MEGA-CD",
     name: "Sam’s Beat",
     instructions:
-      "Press each direction as its arrow reaches the target. Reach 70% accuracy for a Post-SIEM clear. Misses and extra taps reduce your grade.",
+      "Follow 24 notes at an easy pace. Tap the matching direction when an arrow reaches its target. Reach 60% accuracy for a Post-SIEM clear.",
     controls: "← ↓ ↑ → or A S W D · Follow the visual pulse",
     action: "PAUSE",
     secondary: "PAUSE",
