@@ -39,7 +39,13 @@ export default function SiteHeader({
     const items = [
       ...(panel.current?.querySelectorAll<HTMLButtonElement>("button") || []),
     ].filter((item) => item.getClientRects().length);
-    items[position < 0 ? items.length - 1 : 0]?.focus({ preventScroll: true });
+    const item = items[position < 0 ? items.length - 1 : position];
+    item?.focus({ preventScroll: true });
+    item?.scrollIntoView({
+      block: "nearest",
+      inline: "nearest",
+      behavior: "instant",
+    });
   }, []);
   useLayoutEffect(() => {
     if (open && initialItem.current !== null) focusItem(initialItem.current);
@@ -224,7 +230,7 @@ export default function SiteHeader({
                           : 1) +
                         items.length) %
                       items.length;
-              items[index]?.focus({ preventScroll: true });
+              focusItem(index);
             }}
           >
             <button className="nav-link" onClick={() => choose(onExplore)}>

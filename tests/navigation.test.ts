@@ -129,6 +129,7 @@ function header(t: TestContext) {
       getClientRects() {
         return this.rendered ? [{}] : [];
       },
+      scrollIntoView() {},
       closest: () => ({
         contains: (node: unknown) => headerControls.has(node),
       }),
