@@ -4,7 +4,7 @@ Reviewed November 8, 2026. This record covers the mobile interface changes and d
 
 ## Automated checks
 
-- `npm test`: 112 passed, 0 failed. Coverage includes game outcomes, race balance, collisions, pointer/keyboard ownership, audio cancellation, modal focus, scroll locks, progress migration, sprite geometry, snack interruption, bounded asset loading and page-mode return.
+- `npm test`: 119 passed, 0 failed. Coverage includes game outcomes, race balance, collisions, pointer/keyboard ownership, audio cancellation, modal focus, scroll locks, progress migration, sprite geometry, snack interruption, bounded asset loading, same-floor page return and lift arrival ownership.
 - `tsc --noEmit --incremental false`: passed.
 - `npm run build`: passed, with the landing page prerendered.
 - `git diff --check`: passed.
@@ -71,11 +71,13 @@ These results are in `audit-2026-11-06/navigation-round-7`. Ordinary Chromium cl
 
 ## Returning from exploration to the page
 
-Handheld exit now cancels lift travel and held input before changing layout. Once page geometry and saved scroll are restored, the engine reconciles the visible floor, returns focus to the floor itself, and walks Sam toward the center of both rooms. The camera eases toward the hero and schedule while keeping the walking actor inside the frame. Desktop wheel, touch scrolling, scrollbar scrolling and released controls use the same return. New movement, reentry, navigation or deliberate target focus interrupts it at the current position.
+Handheld exit cancels lift travel and held input before changing layout. A layout effect releases the scroll lock and frames the current floor before paint. It does not restore the entry floor's scroll position. The engine keeps one current Sam, returns focus to that floor, and walks him toward its center. The other floor's camera can recenter, but its inactive render surface does not move another Sam. Reading or keyboard inspection changes the viewed floor for music and entry hints without transferring the player. Only explicit movement/control, interaction or navigation can transfer him.
+
+The camera eases toward the hero and schedule while keeping the walking actor inside the frame. Desktop wheel, touch scrolling, scrollbar scrolling and released controls use the same current-floor return. New movement, reentry, navigation or deliberate target focus interrupts it at the current position. Arrival holds the destination lift open without replaying its opening animation; walking beyond the doorway or leaving that floor clears the hold. Proximity is invalidated on a floor transfer so the empty departure lift can close.
 
 The engine distinguishes its own floor framing, focus and navigation scrolls from reading scroll, including the final event after a navigation ends. Blur, hidden tabs and overlays suspend movement; they do not exit the handheld session. Reduced motion settles the centered composition immediately. A buffered jump also keeps the frame loop awake when background motion is paused.
 
-Nineteen real-engine regression cases use controlled DOM geometry and a frame clock. They cover both floors, repeated release, mid-lift exit, an unchanged restored scroll offset, compact/hidden handheld geometry, reacquisition, focus, blur/visibility/overlay suspension, airborne release, resize, live reduced-motion changes, offscreen suspension, scrollbar interruption and navigation scroll ownership. The camera containment check samples every return frame at 240, 393, 760 and 1280 px widths. These are simulated geometry checks, not browser rendering evidence.
+Twenty-six real-engine regression cases use controlled DOM geometry and a frame clock. They cover both exit directions, a single visible player, current-floor return, reading and focus without player transfer, held arrival doors, empty departure doors, a lift link to the player's existing floor, repeated release, mid-lift exit, compact/hidden handheld geometry, reacquisition, blur/visibility/overlay suspension, airborne release, resize, live reduced-motion changes, offscreen suspension, scrollbar interruption and navigation scroll ownership. The camera containment check samples both approach directions on each floor at 240, 393, 760 and 1280 px widths. These are simulated geometry checks, not browser rendering evidence. The previous two-body return and saved-entry-scroll expectations were replaced after the user's same-floor clarification.
 
 The existing Figma instruction, copy and brand snapshots were checked again: the repair restores access to the required hero, schedule and registration information. Event facts, typography, palette and the continuous-venue design are unchanged. Source and interaction reviewers found and repaired an initial camera-outruns-player case and a same-floor scrollbar gap before this record was written.
 

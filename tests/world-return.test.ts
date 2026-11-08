@@ -30,6 +30,7 @@ function fixture(t: TestContext, reduced = false) {
   const frames = new Map<number, FrameRequestCallback>();
   const scrolls: number[] = [];
   const sounds: string[] = [];
+  const viewedFloors: number[] = [];
   const media = { matches: reduced };
   const windowMock = new EventTarget();
   const page = Object.assign(new EventTarget(), {
@@ -132,6 +133,30 @@ function fixture(t: TestContext, reduced = false) {
   floors.forEach((floor, i) => {
     floor.dataset.floor = String(i);
     floor.dataset.visible = "true";
+    let height = floor.offsetHeight;
+    Object.defineProperty(floor, "offsetHeight", {
+      get: () =>
+        root.classList.contains("is-handheld") &&
+        floor.dataset.current === "false"
+          ? 0
+          : height,
+      set: (value: number) => {
+        height = value;
+      },
+    });
+    floor.getBoundingClientRect = () => {
+      const top = root.classList.contains("is-handheld")
+        ? 0
+        : floor.top - Number(globals.scrollY);
+      return {
+        top,
+        bottom: top + floor.offsetHeight,
+        left: 0,
+        right: floor.clientWidth,
+        width: floor.clientWidth,
+        height: floor.offsetHeight,
+      };
+    };
     inners[i].getBoundingClientRect = () => ({
       ...floor.getBoundingClientRect(),
       width: 3600,
@@ -252,6 +277,8 @@ function fixture(t: TestContext, reduced = false) {
     root,
     () => {},
     () => {},
+    () => {},
+    (floor: number) => viewedFloors.push(floor),
   );
   engine.setAmbient(true);
   t.after(() => engine.destroy());
@@ -265,6 +292,7 @@ function fixture(t: TestContext, reduced = false) {
     media,
     scrolls,
     sounds,
+    viewedFloors,
     position(i: number) {
       const [, x, y] = actors[i].style
         .getPropertyValue("transform")
@@ -280,6 +308,18 @@ function fixture(t: TestContext, reduced = false) {
       windowMock.dispatchEvent(new Event("scroll"));
     },
     currentScroll: () => Number(globals.scrollY),
+    viewportHeight(value: number) {
+      globals.innerHeight = value;
+      windowMock.dispatchEvent(new Event("resize"));
+    },
+    restorePage() {
+      const before = Number(globals.scrollY);
+      engine.restorePage();
+      if (Number(globals.scrollY) !== before) {
+        windowMock.dispatchEvent(new Event("scroll"));
+        windowMock.dispatchEvent(new Event("scrollend"));
+      }
+    },
     event(name: string) {
       windowMock.dispatchEvent(new Event(name));
     },
@@ -305,16 +345,30 @@ function fixture(t: TestContext, reduced = false) {
       }
     },
     assertHome() {
-      for (let i = 0; i < 2; i++)
-        assert.deepEqual(this.position(i), { x: 1800, y: 912, camera: 1420 });
+      const current = engine.position().floor;
+      assert.equal(this.position(current).x, 1800);
+      assert.equal(
+        this.position(current).y,
+        floors[current].offsetHeight - SCENE.walkline,
+      );
+      for (let i = 0; i < 2; i++) {
+        assert.equal(
+          this.position(i).camera,
+          Math.round(1800 - floors[i].clientWidth / 2),
+        );
+        assert.equal(
+          actors[i].style.getPropertyValue("visibility"),
+          i === current ? "visible" : "hidden",
+        );
+      }
     },
   };
 }
 
-test("page release walks both floors home without teleporting or scrolling", (t) => {
+test("page release walks only the current Sam home and restores both cameras", (t) => {
   const scene = fixture(t);
-  scene.engine.goTo(0, 520, false);
   scene.engine.goTo(1, 3100, false);
+  scene.engine.goTo(0, 520, false);
   scene.engine.control(0);
   const scrolls = scene.scrolls.length;
   scene.event("wheel");
@@ -332,10 +386,15 @@ test("page release walks both floors home without teleporting or scrolling", (t)
   );
   scene.step(420);
   scene.assertHome();
+  assert.equal(
+    scene.position(1).x,
+    3100,
+    "inactive render surface does not walk a second Sam",
+  );
   assert.equal(scene.scrolls.length, scrolls);
 });
 
-test("handheld exit reconciles the restored page floor even without a scroll event", (t) => {
+test("handheld exit stays on the destination floor even when the page is still at its entry floor", (t) => {
   const scene = fixture(t);
   scene.handheld(true);
   scene.engine.goTo(0, 520, false);
@@ -346,11 +405,16 @@ test("handheld exit reconciles the restored page floor even without a scroll eve
   scene.handheld(false);
   const scrolls = scene.scrolls.length;
   scene.engine.restorePage();
-  assert.equal(scene.engine.position().floor, 0);
-  assert.equal(Reflect.get(scene.page, "activeElement"), scene.floors[0]);
+  assert.equal(scene.engine.position().floor, 1);
+  assert.equal(Reflect.get(scene.page, "activeElement"), scene.floors[1]);
+  assert.equal(
+    scene.currentScroll(),
+    1276,
+    "page follows the destination floor baseline",
+  );
   scene.step(480);
   scene.assertHome();
-  assert.equal(scene.scrolls.length, scrolls);
+  assert.equal(scene.scrolls.length, scrolls + 1);
 });
 
 test("exit cancels an unfinished lift flight and its stale animation frame", (t) => {
@@ -420,7 +484,7 @@ test("reduced motion restores the centered, grounded page immediately", (t) => {
   const scrolls = scene.scrolls.length;
   scene.engine.restorePage();
   scene.assertHome();
-  assert.equal(scene.scrolls.length, scrolls);
+  assert.equal(scene.scrolls.length, scrolls + 1);
 });
 
 test("ordinary page scroll repairs a focus-owned camera pan without manual control", (t) => {
@@ -444,19 +508,20 @@ test("handheld reentry stops the pending page return before measuring its new fr
   assert.equal(scene.position(0).x, before);
 });
 
-test("scrolling between floors preserves the return instead of restarting or stranding it", (t) => {
+test("reading another floor changes ambience but never transfers Sam", (t) => {
   const scene = fixture(t);
   scene.engine.goTo(0, 520, false);
   scene.engine.goTo(1, 3100, false);
-  scene.engine.restorePage();
+  scene.restorePage();
   scene.step(50);
   const first = [scene.position(0).x, scene.position(1).x];
-  scene.scroll(1000);
-  assert.equal(scene.engine.position().floor, 1);
-  scene.step(50);
-  assert.ok(scene.position(0).x > first[0]);
-  assert.ok(scene.position(1).x < first[1]);
   scene.scroll(0);
+  assert.equal(scene.engine.position().floor, 1);
+  assert.equal(scene.viewedFloors.at(-1), 0);
+  scene.step(50);
+  assert.equal(scene.position(0).x, first[0]);
+  assert.ok(scene.position(1).x < first[1]);
+  scene.scroll(1000);
   scene.step(480);
   scene.assertHome();
 });
@@ -563,28 +628,34 @@ test("handheld exit rebases both floors from hidden/compact geometry before retu
   scene.floors[1].top = 1000;
   scene.engine.restorePage();
   scene.step(480);
-  assert.deepEqual(scene.position(0), { x: 1800, y: 912, camera: 1420 });
+  assert.deepEqual(scene.position(0), { x: 520, y: 912, camera: 1420 });
   assert.deepEqual(scene.position(1), { x: 1800, y: 1112, camera: 1420 });
-  assert.equal(scene.engine.position().floor, 0);
+  assert.equal(scene.engine.position().floor, 1);
 });
 
-test("the camera keeps Sam in frame throughout a return from either side", (t) => {
+test("the camera keeps the single Sam visible on either floor and approach", (t) => {
   for (const width of [240, 393, 760, 1280]) {
-    const scene = fixture(t);
-    scene.floors.forEach((floor) => {
-      floor.clientWidth = width;
-    });
-    scene.engine.goTo(0, 520, false);
-    scene.engine.goTo(1, 3100, false);
-    scene.engine.restorePage();
-    for (let frame = 0; frame < 480; frame++) {
-      scene.step();
-      for (let i = 0; i < 2; i++) {
-        const { x, camera } = scene.position(i);
-        assert.ok(
-          x - camera >= 60 && x - camera <= width - 60,
-          `Sam leaves floor ${i} at frame ${frame}, width ${width}`,
-        );
+    for (const floor of [0, 1]) {
+      for (const start of [520, 3100]) {
+        const scene = fixture(t);
+        scene.floors.forEach((room) => {
+          room.clientWidth = width;
+        });
+        scene.engine.goTo(floor, start, false);
+        scene.restorePage();
+        for (let frame = 0; frame < 480; frame++) {
+          scene.step();
+          const { x, camera } = scene.position(floor);
+          assert.ok(
+            x - camera >= 60 && x - camera <= width - 60,
+            `Sam leaves floor ${floor} at frame ${frame}, width ${width}`,
+          );
+          assert.equal(
+            scene.actors[1 - floor].style.getPropertyValue("visibility"),
+            "hidden",
+          );
+        }
+        scene.assertHome();
       }
     }
   }
@@ -636,4 +707,129 @@ test("the final navigation scroll event does not undo a deliberate destination",
   scene.scroll(scene.currentScroll() - 20);
   scene.step(480);
   scene.assertHome();
+});
+
+test("exit remains on either arrival floor and frames that floor exactly once", (t) => {
+  for (const destination of [0, 1]) {
+    const scene = fixture(t);
+    scene.engine.goTo(1 - destination, 520, false);
+    scene.handheld(true);
+    scene.engine.control(1 - destination);
+    scene.engine.travel(destination);
+    scene.step(60);
+    assert.equal(scene.engine.position().floor, destination);
+    scene.engine.cancelTravel();
+    scene.engine.release();
+    scene.handheld(false);
+    const before = scene.scrolls.length;
+    scene.restorePage();
+    assert.equal(scene.engine.position().floor, destination);
+    assert.equal(scene.currentScroll(), destination ? 1276 : 276);
+    assert.equal(
+      Reflect.get(scene.page, "activeElement"),
+      scene.floors[destination],
+    );
+    scene.step(480);
+    assert.equal(scene.engine.position().floor, destination);
+    assert.equal(scene.scrolls.length, before + 1);
+    scene.assertHome();
+  }
+});
+
+test("focus on another floor changes only the view until the user explicitly takes control", (t) => {
+  const scene = fixture(t);
+  scene.engine.goTo(1, 2100, false);
+  scene.focusLift(0);
+  assert.equal(scene.engine.position().floor, 1);
+  assert.equal(scene.engine.position().x, 2100);
+  assert.equal(scene.viewedFloors.at(-1), 0);
+  assert.equal(scene.actors[0].style.getPropertyValue("visibility"), "hidden");
+  scene.engine.control(0);
+  assert.equal(scene.engine.position().floor, 0);
+  assert.equal(
+    scene.engine.position().x,
+    2100,
+    "the same Sam transfers, not an old floor snapshot",
+  );
+  assert.equal(scene.actors[1].style.getPropertyValue("visibility"), "hidden");
+});
+
+test("arrival keeps the lift open until Sam walks away and then clears its hold", (t) => {
+  const scene = fixture(t);
+  scene.handheld(true);
+  scene.engine.control(0);
+  scene.engine.travel(1);
+  scene.step(60);
+  assert.equal(scene.lifts[1].dataset.arrived, "true");
+  scene.step(600);
+  assert.equal(
+    scene.lifts[1].dataset.arrived,
+    "true",
+    "idle time does not close the arrival door",
+  );
+  scene.engine.virtual("right", true);
+  scene.step(120);
+  scene.engine.virtual("right", false);
+  assert.ok(scene.engine.position().x > 710);
+  assert.equal(scene.lifts[1].dataset.arrived, undefined);
+  assert.equal(scene.lifts[1].classList.contains("is-near"), false);
+});
+
+test("travelling straight back closes the previous floor's empty lift", (t) => {
+  const scene = fixture(t);
+  scene.handheld(true);
+  scene.engine.control(0);
+  scene.engine.travel(1);
+  scene.step(60);
+  assert.equal(scene.lifts[1].dataset.arrived, "true");
+  scene.engine.travel(0);
+  scene.step(60);
+  assert.equal(scene.lifts[1].dataset.arrived, undefined);
+  assert.equal(scene.lifts[1].classList.contains("is-near"), false);
+  assert.equal(scene.lifts[0].dataset.arrived, "true");
+  assert.equal(scene.actors[0].style.getPropertyValue("visibility"), "visible");
+  assert.equal(scene.actors[1].style.getPropertyValue("visibility"), "hidden");
+});
+
+test("exiting at the lift holds its door while Sam starts the same-floor walk home", (t) => {
+  const scene = fixture(t);
+  scene.handheld(true);
+  scene.engine.control(0);
+  scene.engine.travel(1);
+  scene.step(60);
+  scene.engine.release();
+  scene.handheld(false);
+  scene.restorePage();
+  assert.equal(scene.lifts[1].dataset.arrived, "true");
+  scene.step(30);
+  assert.equal(scene.lifts[1].dataset.arrived, "true");
+  scene.step(90);
+  assert.equal(scene.lifts[1].dataset.arrived, undefined);
+  assert.equal(scene.engine.position().floor, 1);
+  scene.step(360);
+  scene.assertHome();
+});
+
+test("a page lift link to Sam's existing floor only brings that floor into view", (t) => {
+  const scene = fixture(t);
+  scene.engine.goTo(1, 2100, false);
+  scene.scroll(0);
+  scene.engine.travel(1);
+  assert.equal(scene.root.dataset.travelling, "false");
+  scene.step(60);
+  assert.equal(scene.engine.position().floor, 1);
+  assert.equal(scene.engine.position().x, 2100);
+  assert.equal(scene.lifts[1].dataset.arrived, undefined);
+});
+
+test("a viewport-only resize updates the viewed floor without moving Sam or page scroll", (t) => {
+  const scene = fixture(t);
+  scene.engine.goTo(1, 2100, false);
+  scene.scroll(800);
+  assert.equal(scene.viewedFloors.at(-1), 1);
+  const before = scene.engine.position();
+  scene.viewportHeight(320);
+  assert.equal(scene.viewedFloors.at(-1), 0);
+  assert.deepEqual(scene.engine.position(), before);
+  assert.equal(scene.currentScroll(), 800);
 });

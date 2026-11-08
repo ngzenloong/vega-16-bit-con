@@ -53,7 +53,7 @@ type Props = {
   onAnnounce: (text: string) => void;
   onHandheld: () => void;
   onEnterScene: (floor: number) => void;
-  onFloorChange: (floor: number) => void;
+  onViewFloorChange: (floor: number) => void;
   onExitHandheld: () => void;
   onToggleMotion: () => void;
 };
@@ -73,7 +73,7 @@ const World = forwardRef<WorldController, Props>(function World(
     onAnnounce,
     onHandheld,
     onEnterScene,
-    onFloorChange,
+    onViewFloorChange,
     onExitHandheld,
     onToggleMotion,
     soundControl,
@@ -87,14 +87,14 @@ const World = forwardRef<WorldController, Props>(function World(
       onAnnounce,
       onSession,
       onEnterScene,
-      onFloorChange,
+      onViewFloorChange,
     });
   callbacks.current = {
     onTarget,
     onAnnounce,
     onSession,
     onEnterScene,
-    onFloorChange,
+    onViewFloorChange,
   };
   const [sheets, setSheets] = useState<CharacterSheets>(defaultSheets),
     [snackSrc, setSnackSrc] = useState(""),
@@ -130,7 +130,7 @@ const World = forwardRef<WorldController, Props>(function World(
       },
       (text) => callbacks.current.onAnnounce(text),
       (floor) => callbacks.current.onEnterScene(floor),
-      (floor) => callbacks.current.onFloorChange(floor),
+      (floor) => callbacks.current.onViewFloorChange(floor),
     );
     engine.current = controller;
     return () => {
