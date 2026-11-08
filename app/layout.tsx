@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./tokens.css";
 import "./globals.css";
 import "./world.css";
@@ -6,6 +6,10 @@ import "./interaction.css";
 import "./controls.css";
 import "./registration.css";
 import "./venue.css";
+import "./navigation.css";
+import "./mobile.css";
+import "./player-select.css";
+export const viewport: Viewport = { viewportFit: "cover" };
 export const metadata: Metadata = {
   title: "16-Bit Con — Never stopped playing",
   description:
@@ -23,6 +27,13 @@ export default function RootLayout({
         <link
           rel="preload"
           href="/fonts/mondwest.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/geist-mono.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"

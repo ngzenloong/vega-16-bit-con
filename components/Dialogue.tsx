@@ -45,7 +45,8 @@ export default function Dialogue({
     [closing, setClosing] = useState(false);
   const [portrait, setPortrait] = useState("/assets/vega/sam-portrait.png");
   const pagesByLine = useMemo(
-    () => character.lines.map((text) => (touch ? dialoguePages(text) : [text])),
+    () =>
+      character.lines.map((text) => (touch ? dialoguePages(text, 64) : [text])),
     [character, touch],
   );
   const pageIndex = Math.min(page, pagesByLine[line].length - 1);
@@ -287,6 +288,12 @@ export default function Dialogue({
       data-closing={closing}
       aria-labelledby="speaker-name"
       onKeyDown={keyboard}
+      onClick={(event) => {
+        if (last && complete) return;
+        if ((event.target as Element).closest("button,a,input,select,textarea"))
+          return;
+        advance();
+      }}
     >
       <div className="cinematic-top">
         {soundControl}
@@ -317,12 +324,13 @@ export default function Dialogue({
         <button
           className="dialogue-copy"
           onClick={advance}
+          disabled={last && complete}
           aria-label={
             !complete
               ? "Reveal full dialogue"
               : !last
                 ? "Continue dialogue"
-                : `Choose: ${choices[selected].label}`
+                : "Choose a response below"
           }
         >
           <span className="dialogue-text-stack" aria-hidden="true">
@@ -370,8 +378,8 @@ export default function Dialogue({
               ? last && complete
                 ? "Tap a response."
                 : complete
-                  ? "Tap Continue."
-                  : "Tap Reveal line."
+                  ? "Tap anywhere to continue."
+                  : "Tap anywhere to reveal."
               : last && complete
                 ? "↑ ↓ Choose · Enter Select"
                 : "Enter / Space Continue"}

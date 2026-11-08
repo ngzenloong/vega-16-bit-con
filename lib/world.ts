@@ -12,7 +12,7 @@ import type { GameButton } from "./games/types";
 
 export const WORLD_WIDTH = SCENE.width;
 export type WorldTarget = {
-  kind: "game" | "npc" | "lift" | "register" | "session" | "food";
+  kind: "game" | "npc" | "lift" | "register" | "session" | "food" | "schedule";
   id: string;
   label: string;
   element: HTMLElement;
@@ -378,6 +378,17 @@ export function createWorld(
   function measure() {
     const viewportHeightChanged = measuredViewportHeight !== innerHeight;
     measuredViewportHeight = innerHeight;
+    // Keep the stacked agenda clear of the ground-level furnishings as its text reflows.
+    const agenda = root.querySelector<HTMLElement>(".schedule-board");
+    if (
+      !root.classList.contains("is-handheld") &&
+      root.dataset.conversation !== "true" &&
+      agenda?.offsetHeight
+    ) {
+      const required =
+        Math.ceil((agenda.offsetTop + agenda.offsetHeight + 360) / 8) * 8;
+      setStyle(floors[1], "--content-floor-height", `${required}px`);
+    }
     refreshSprites();
     // Cinematic scaling is presentation-only; it must not alter collision geometry.
     if (root.dataset.conversation === "true") {
@@ -651,7 +662,10 @@ export function createWorld(
       return null;
     let closest: HTMLElement | null = null,
       distance = Infinity;
+    const mode = root.classList.contains("is-handheld") ? "handheld" : "page";
     for (const element of targets[floor]) {
+      if (element.dataset.activeMode && element.dataset.activeMode !== mode)
+        continue;
       const gap = Math.abs(targetX(element) - v.x),
         radius =
           element.dataset.kind === "npc"
@@ -860,7 +874,7 @@ export function createWorld(
           !gameArrow ||
           !target.closest("button,a,summary") ||
           target.closest(
-            'input,textarea,select,[contenteditable],[role="slider"],[role="tab"],[role="combobox"],dialog',
+            'input,textarea,select,[contenteditable],[role="slider"],[role="tab"],[role="combobox"],dialog,.nav-dropdown,.nav-toggle',
           )
         )
           return;
@@ -1090,6 +1104,8 @@ export function createWorld(
   );
   const resize = new ResizeObserver(measure);
   floors.forEach((f) => resize.observe(f));
+  const agenda = root.querySelector<HTMLElement>(".schedule-board");
+  if (agenda) resize.observe(agenda);
   platforms.flat().forEach((el) => resize.observe(el));
   const intersection = new IntersectionObserver(
     (entries) => {
@@ -1383,7 +1399,8 @@ export function createWorld(
     if (target) {
       const head =
         target.kind === "npc" ? heads.get(target.element) : undefined;
-      if (head) setStyle(prompt, "top", `${Math.round(head.y - 12)}px`);
+      if (head)
+        setStyle(prompt, "top", `${Math.max(44, Math.round(head.y - 12))}px`);
       else prompt.style.removeProperty("top");
       const edge = Math.min(110, width / 2);
       const anchor = targetX(target.element) - v.camera;
@@ -1423,11 +1440,13 @@ export function createWorld(
                 ? "TALK"
                 : target.kind === "register"
                   ? target.element.dataset.actionLabel || "REGISTER"
-                  : target.kind === "session"
-                    ? target.element.getAttribute("aria-pressed") === "true"
-                      ? "REMOVE INTEREST"
-                      : "SAVE INTEREST"
-                    : "PLAY",
+                  : target.kind === "schedule"
+                    ? "VIEW"
+                    : target.kind === "session"
+                      ? target.element.getAttribute("aria-pressed") === "true"
+                        ? "REMOVE INTEREST"
+                        : "SAVE INTEREST"
+                      : "PLAY",
         hint = prompt.querySelector("[data-prompt-action]")!,
         text = snack.active ? "ENJOY YOUR SLICE" : `${key} · ${verb}`;
       if (hint.textContent !== text) hint.textContent = text;

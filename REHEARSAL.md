@@ -1,32 +1,48 @@
-# Verification — November 7, 2026
+# Verification: responsive interface pass
 
-This pass covers the revisions after commit 39e10c0. Earlier initial repairs and two additional five-skill rounds remain preserved in the workspace audit directory. The latest user decisions supersede older screenshots and layout choices.
+Reviewed November 7, 2026. This record covers the mobile interface changes and dedicated desktop review after the first PR was merged. Earlier game, art, audio, focus and camera repairs remain in the workspace evidence ledger. The local review address is http://127.0.0.1:3001/.
 
 ## Automated checks
 
-The suite contains 63 regressions for game outcomes, physics, keyboard/pointer ownership, audio cancellation, modal focus and nested scroll locks, score migration, sprite frame geometry, driver passing/balance, bumper integration, facade ground contact, snack interruption and walking acceleration. TypeScript and production builds are required before publication. The final execution ledger records the exact final results and deployment SHA.
+- `npm test`: 86 passed, 0 failed. Coverage includes game outcomes, race balance, collisions, pointer/keyboard ownership, audio cancellation, modal focus, scroll locks, progress migration, sprite geometry, snack interruption and bounded asset loading.
+- `tsc --noEmit --incremental false`: passed.
+- `npm run build`: passed, with the landing page prerendered.
+- `git diff --check`: passed.
 
-The race's clean-line simulation can finish first. Across eleven sampled shuffled grids, S-Cargo is the leading rival in most runs. These are arcade balance checks, not a guarantee that every player or every route wins. All eleven rivals are loaded each round; only the player's Fiat carries PostSIEM.com, and S-Cargo keeps its requested blue livery, rear white strips and 茶 plate without SIEM lettering.
+Tests establish the behavior they exercise. They do not certify native iOS gestures, subjective game difficulty, screen-reader output or frame rate.
 
-## Observed interface checks
+## Browser evidence
 
-- Footer/page layouts were measured at 320,375,414,768,1024 and1440 px widths without document/footer overflow. Footer actions remain48/44 px and their labels fit on one line.
-- Phone preview cards are centered, with50 px accessory choices, conditional edge fades and no horizontal scrollbar. Mouse dragging, native touch scrolling and keyboard radio selection are retained.
-- The reduced320×380 details viewport kept the focused email input visible. The real software keyboard itself was not automated.
-- Guest creation and returning-player editing preserve details locally. Confirmation holds for two seconds of visible/focused time before flip/reframe/drop. The recorded sequence held2267 ms and removed its temporary card/ghost elements.
-- Dialogue return retained the exact recorded player transform and camera coordinate. Handheld mode and its scroll lock remained active after closing dialogue/game overlays.
-- Both floor controls reflected the same sound and ambience values. Pause freezes decorative motion and hall music; late loads are guarded against hidden/unfocused state. The user previously completed a real software-switch return and reported success.
-- Phone rotation pauses an active game, clears held input and preserves the round. The landscape Resume button is fully visible at44 px; long instructions/results scroll separately. World jumps rebase to the new floor and available headroom.
-- Four game palettes, keyboard start/pause/exit paths, matching attract screens, graffiti facades and the racing roster were inspected. Cars and scenery share depth order; impacts use decay and sparks rather than instant lateral movement.
-- Original careers movement was inspected again. Gradual walking, delayed camera, pooled dust and speed-linked footstep timing were adapted to this venue. Sam stays stationary without user control; ambient guests remain active.
-- Pizza uses composed head/arm/slice frames and restores the held item. Repeated input does not restart it; Escape/movement cancels while retaining control. Merch opens the existing wardrobe.
+The first-visitor reviewer exercised the event, editor, dialogue, lift and all four games in the in-app Chromium browser. After the user requested Ego Browser, the owner used Ego for final device metrics, touch input, guest registration, reduced-motion and transition checks. The separate desktop reviewer inspected captured evidence independently; that reviewer did not operate the browser. The senior engineer reviewed source and dependency harnesses independently.
 
-## Design and source review
+| Scope | Observed result |
+| --- | --- |
+| Desktop sizes | 1920×1080, 2560×1440, 3840×2160, 1440×900, 1024×768, 1280×600, 900×1200, 900×900, 720×720 and 640×900. Header text shares one baseline; no horizontal document overflow. The scene covers the 4K right edge. |
+| Narrow navigation | 240, 280, 320, 360, 393, 560, 768 and 1440 px widths. Menu and registration actions remain reachable with 44 px targets. |
+| Full-screen player selection | 393×660, 320×480, 280×568, 240×480, 568×320, 768×1024, 1440×900, 900×900 and 1280×600. Direct character preview, eight visual strips and persistent actions. The details form also fits all nine sizes without horizontal overflow. |
+| Keyboard registration | In Ego, a guest chose outfit and headwear with arrows, moved to Continue, entered test name/email, reached Confirm with Down, and submitted with Enter. Success confirmation and direct hall drop completed. The card/flip/morph sequence was removed at the user's request. Only the test profile was removed afterwards. |
+| Touch ownership | Ego's Chromium touch emulation held steering and gas together, slid Right to Left, slid steering off while gas remained pressed, and released all input. No text selection remained. |
+| Dialogue | Scene and blank-area taps advance dialogue; final choices require explicit selection. Tab/Enter and Escape remain available. The recorded desktop player transform was identical before and after return. |
+| Handheld schedule | A compact lineup sign opens shared session tickets in a scrollable dialog. Page-size tickets no longer overlap the sofa or player. The narrow page schedule has enough floor height for its stacked content. |
+| Prompts and garage | Handheld machine/lift prompts remain within the scene. Narrow portrait car selection uses a stacked layout with complete selected-car art and ratings. |
+| Entry motion | Ego slowed browser animation playback to 10%; captures show the scene, header and controls at approximately 122, 192 and 293 ms of the 360 ms sequence. Entry completed and Escape restored page mode. |
+| Reduced motion | Ego emulated the preference. Handheld mode entered successfully with zero active frame animations after entry. |
+| Four games | Independent short start/input/pause/return passes covered Sam Circuit, Daisy Breaker, Cartridge Run and Sam's Beat. These were not full manual completion runs. |
 
-The five lenses were make-interfaces-feel-better, vercel-react-best-practices, humanizer, hallmark and stageshow. Each comparison uses the retained Figma PRD/brand/copy snapshots and the later user decisions. The reports, evidence matrix and final execution ledger live in the sibling `audit-2026-11-06/interaction-round-3` directory.
+The full reports and screenshots are in the sibling `audit-2026-11-06/mobile-round-5` directory. Superseded screenshots remain labelled as pre-repair evidence. The execution record supplies the commit, PR and Vercel deployment; localhost checks are separate from deployment verification.
 
-Critical token contrasts include ink on the dusk header colors 6.39:1 or better, body on paper 13.47:1, primary yellow 9.63:1 and focus on the darkest header sky 4.12:1. Gameplay labels on changing scenery use opaque readable grounds. These are targeted checks, not a complete WCAG certification.
+## Brand and brief
+
+The retained Figma instruction, brand and copy snapshots were compared again. Event name, tagline, October 3–5, 2026, Javits Center, Booth 630 and the three supplied session titles/times remain intact. The brief does not assign session days, so the schedule describes event highlights without inventing a daily agenda. Original logo/daisy, Mondwest game text, Geist body/command roles and existing palette remain the foundation. The dusk city, continuous venue, four era-specific games and local player follow the user's approved direction.
+
+Five review lenses were applied: make-interfaces-feel-better, vercel-react-best-practices, humanizer, hallmark and stageshow. Reports distinguish source checks, browser observations and independent artifact review. No animation framework or design-system package was introduced. A fresh independent finish reviewer approved the full-screen selector after reviewing the nine viewport pairs, customization, success, mid-drop and landed evidence.
+
+## Direct arrival and follow-up review
+
+The latest player-selection follow-up adds eight arrival lifecycle tests. Escape, blur, hidden state and owner cancellation reveal the saved actor and release animation/keyboard ownership; reduced motion skips the drop. Browser evidence confirms that a returning desktop player remains visible at 1280×720, handheld editing retains handheld mode and the same page scroll, and lower-floor editing returns to that same floor. Registration rejects whitespace-only names, keeps preparation errors beside the form fields and uses one page-scroll owner during arrival. The follow-up evidence lives under `mobile-round-5/player-select`; earlier card screenshots are superseded.
 
 ## Verification limits
 
-Viewport and pointer/keyboard checks are not physical iPhone/Android multitouch certification. A complete VoiceOver matrix, acoustic/output-latency measurement and formal FPS/heap benchmark were not performed. Stageshow's faux Stage/Act film gate and a DevTools 10% animation replay were not used; actual UI captures, measured geometry and source review are reported. Not every game was manually won. Local demo details belong to their site origin and do not transfer between different preview domains.
+Chromium touch emulation does not prove that the native iOS magnifier is suppressed on a physical phone. The WebKit-specific gesture guard is implemented and scoped to the game pad; actual Safari/software-keyboard, hardware multitouch and complete VoiceOver checks remain unverified. No formal GPU/heap benchmark or acoustic latency measurement was performed. Sound remained muted during this round's visual tests.
+
+Stageshow's Stage/Act film gate does not run this live application. Its framing and motion criteria were reviewed against actual UI captures; no film-gate pass is claimed. Earlier targeted contrast checks are preserved, but this is not a complete WCAG certification. Local demo profiles remain specific to each site origin.

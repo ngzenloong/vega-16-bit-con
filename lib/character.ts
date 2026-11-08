@@ -1,3 +1,5 @@
+import { loadImage } from "./image";
+export { loadImage } from "./image";
 import type { Appearance } from "./types";
 import { completeAppearance } from "./appearance";
 import {
@@ -9,29 +11,8 @@ import {
 } from "./outfit-art";
 export type CharacterSheets = { idle: string; run: string; jump: string };
 const cache = new Map<string, Promise<CharacterSheets>>();
-const images = new Map<string, Promise<HTMLImageElement>>();
 const portraits = new Map<string, Promise<string>>();
 const colors = new Map<string, number[]>();
-export function loadImage(src: string) {
-  let p = images.get(src);
-  if (!p) {
-    p = new Promise<HTMLImageElement>((resolve, reject) => {
-      const i = new Image();
-      i.onload = () => resolve(i);
-      i.onerror = () => reject(Error(`Could not load ${src}`));
-      i.src = src;
-    });
-    images.set(src, p);
-    if (images.size > 128) {
-      const oldest = [...images.keys()].find((key) => key.startsWith("data:"));
-      if (oldest && oldest !== src) images.delete(oldest);
-    }
-    p.catch(() => {
-      if (images.get(src) === p) images.delete(src);
-    });
-  }
-  return p;
-}
 function color(hex: string) {
   const cached = colors.get(hex);
   if (cached) return cached;

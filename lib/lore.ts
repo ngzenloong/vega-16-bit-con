@@ -18,6 +18,16 @@ export function dialoguePages(line: string, limit = 86) {
     } else current += `${current ? " " : ""}${word}`;
   }
   if (current) pages.push(current);
+  if (pages.length > 1 && pages.at(-1)!.length < limit * 0.35) {
+    const previous = pages[pages.length - 2].split(" ");
+    while (previous.length > 1 && pages.at(-1)!.length < limit * 0.35) {
+      const word = previous.at(-1)!;
+      if (word.length + 1 + pages.at(-1)!.length > limit) break;
+      previous.pop();
+      pages[pages.length - 1] = `${word} ${pages.at(-1)}`;
+    }
+    pages[pages.length - 2] = previous.join(" ");
+  }
   return pages;
 }
 export type LoreCharacter = {

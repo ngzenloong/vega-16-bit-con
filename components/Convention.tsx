@@ -1,21 +1,27 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { GameId, GameResult, Player, Scores } from "@/lib/types";
-import { DEFAULT_APPEARANCE, GAMES, SESSIONS } from "@/lib/types";
+import { DEFAULT_APPEARANCE, SESSIONS } from "@/lib/types";
 import type { WorldController, WorldTarget } from "@/lib/world";
 import type { LoreAction } from "@/lib/lore";
 import { MACHINES, SCENE } from "@/lib/scene";
 import { lockPageScroll } from "@/lib/dialog-focus";
 import { safePlayer } from "@/lib/math";
 import { audio } from "@/lib/audio";
-import { enterFromPass } from "@/lib/arrival";
+import { dropIntoHall } from "@/lib/arrival";
 import World from "./World";
 import Registration from "./Registration";
 import Dialogue from "./Dialogue";
+import ScheduleDialog from "./ScheduleDialog";
 import GameHost from "./GameHost";
 import SoundControl from "./SoundControl";
-import Icon from "./Icon";
 import { readScoreProgress, SCORE_RULES } from "@/lib/scores";
+import SiteHeader from "./SiteHeader";
+import {
+  prepareHandheld,
+  awaitHandheldAssets,
+  animateHandheldEntry,
+} from "@/lib/handheld-entry";
 import { hallAudioShouldPlay } from "@/lib/ambience";
 
 const STORE = "vega-16-bit-con-v1";
@@ -23,6 +29,7 @@ type Panel =
   | { kind: "register"; interest: number | null }
   | { kind: "game"; id: GameId }
   | { kind: "npc"; id: string }
+  | { kind: "schedule" }
   | null;
 export default function Convention() {
   const [player, setPlayer] = useState<Player | null>(null),
@@ -36,11 +43,19 @@ export default function Convention() {
     [soundError, setSoundError] = useState("");
   const [handheld, setHandheld] = useState(false),
     [touch, setTouch] = useState(false),
+    [coarseInput, setCoarseInput] = useState(false),
     [reduced, setReduced] = useState(false),
     [ambientPaused, setAmbientPaused] = useState(false),
     [arrival, setArrival] = useState(false),
     [ready, setReady] = useState(false),
     [saveStatus, setSaveStatus] = useState<"saved" | "session">("saved");
+  const [handheldPending, setHandheldPending] = useState(false),
+    [handheldError, setHandheldError] = useState(false),
+    [footerVisible, setFooterVisible] = useState(false),
+    [hintObscured, setHintObscured] = useState(false);
+  const handheldEntry = useRef<AbortController | null>(null),
+    handheldTrigger = useRef<HTMLElement | null>(null),
+    entryHint = useRef<HTMLButtonElement>(null);
   const [announcement, setAnnouncement] = useState({ text: "", id: 0 });
   const world = useRef<WorldController>(null),
     panelRef = useRef(panel),
@@ -83,6 +98,13 @@ export default function Convention() {
       }),
     ];
   }, []);
+  const cancelHandheldEntry = useCallback(() => {
+    const active = handheldEntry.current;
+    handheldEntry.current = null;
+    active?.abort();
+    world.current?.pause("handheld-entry", false);
+    setHandheldPending(false);
+  }, []);
   const close = useCallback(() => {
     const kind = panelRef.current?.kind,
       target = trigger.current;
@@ -98,15 +120,20 @@ export default function Convention() {
       else world.current?.focus();
     });
   }, [afterLayout]);
-  const open = useCallback((next: Panel, source?: HTMLElement) => {
-    if (arrivalRef.current) return;
-    handoff.current++;
-    frames.current.forEach(cancelAnimationFrame);
-    world.current?.cancelTravel();
-    trigger.current = source || (document.activeElement as HTMLElement | null);
-    audio.effect("click");
-    setPanel(next);
-  }, []);
+  const open = useCallback(
+    (next: Panel, source?: HTMLElement) => {
+      if (arrivalRef.current) return;
+      cancelHandheldEntry();
+      handoff.current++;
+      frames.current.forEach(cancelAnimationFrame);
+      world.current?.cancelTravel();
+      trigger.current =
+        source || (document.activeElement as HTMLElement | null);
+      audio.effect("click");
+      setPanel(next);
+    },
+    [cancelHandheldEntry],
+  );
   const register = useCallback(
     () => open({ kind: "register", interest: null }),
     [open],
@@ -114,25 +141,140 @@ export default function Convention() {
   const navigate = useCallback(
     (floor: number, x?: number) => {
       if (arrivalRef.current) return;
+      cancelHandheldEntry();
       setPanel(null);
       afterLayout(() => {
         world.current?.refresh();
         world.current?.reveal(floor, x);
       });
     },
-    [afterLayout],
+    [afterLayout, cancelHandheldEntry],
   );
   const exitHandheld = useCallback(() => {
+    cancelHandheldEntry();
     handheldRef.current = false;
     setHandheld(false);
-    afterLayout(() => world.current?.release());
-  }, [afterLayout]);
-  const startHandheld = useCallback(() => {
-    if (handheldRef.current) return;
-    handheldScroll.current = scrollY;
-    handheldRef.current = true;
-    setHandheld(true);
+    afterLayout(() => {
+      world.current?.release();
+      const source = handheldTrigger.current;
+      if (source?.isConnected && source !== document.body)
+        source.focus({ preventScroll: true });
+      else entryHint.current?.focus({ preventScroll: true });
+    });
+  }, [afterLayout, cancelHandheldEntry]);
+  const startHandheld = useCallback(
+    async (floor: number) => {
+      if (handheldRef.current) return true;
+      if (handheldEntry.current) return false;
+      const entry = new AbortController();
+      handheldEntry.current = entry;
+      handheldTrigger.current = document.activeElement as HTMLElement | null;
+      setHandheldPending(true);
+      setHandheldError(false);
+      try {
+        await awaitHandheldAssets(
+          scenePlayer?.appearance || DEFAULT_APPEARANCE,
+          entry.signal,
+        );
+        if (
+          entry.signal.aborted ||
+          document.hidden ||
+          !document.hasFocus() ||
+          panelRef.current
+        )
+          return false;
+        world.current?.cancelTravel();
+        const frame = document.getElementById(
+          floor ? "social-floor" : "main-hall",
+        )!;
+        const rect = frame.getBoundingClientRect();
+        const from = new DOMRect(
+          0,
+          Math.max(0, rect.top),
+          innerWidth,
+          Math.max(
+            1,
+            Math.min(innerHeight, rect.bottom) - Math.max(0, rect.top),
+          ),
+        );
+        handheldScroll.current = scrollY;
+        handheldRef.current = true;
+        setHandheld(true);
+        await new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        );
+        if (entry.signal.aborted) return false;
+        world.current?.refresh();
+        world.current?.control(floor);
+        world.current?.pause("handheld-entry", true);
+        await animateHandheldEntry(frame, from, reduced, entry.signal);
+        return !entry.signal.aborted;
+      } catch (error) {
+        if (!entry.signal.aborted) {
+          setHandheldError(true);
+          announce("The controls could not load. Tap again to retry.");
+        }
+        return false;
+      } finally {
+        if (handheldEntry.current === entry) {
+          handheldEntry.current = null;
+          world.current?.pause("handheld-entry", false);
+          setHandheldPending(false);
+        }
+      }
+    },
+    [scenePlayer?.appearance, reduced, announce],
+  );
+  useEffect(() => {
+    if (touch)
+      void prepareHandheld(scenePlayer?.appearance || DEFAULT_APPEARANCE).catch(
+        () => {},
+      );
+  }, [touch, scenePlayer?.appearance]);
+  useEffect(() => {
+    const footer = document.querySelector(".venue-footer");
+    const footerObserver = new IntersectionObserver(
+      ([entry]) => setFooterVisible(entry.isIntersecting),
+      { threshold: 0.05 },
+    );
+    if (footer) footerObserver.observe(footer);
+    const boards = [
+      ...document.querySelectorAll(".event-board,.schedule-board"),
+    ];
+    let bandObserver: IntersectionObserver;
+    const observeHintBand = () => {
+      bandObserver?.disconnect();
+      const overlapping = new Set<Element>();
+      bandObserver = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) overlapping.add(entry.target);
+            else overlapping.delete(entry.target);
+          }
+          setHintObscured(overlapping.size > 0);
+        },
+        { rootMargin: `-${Math.max(0, innerHeight - 76)}px 0px -8px 0px` },
+      );
+      boards.forEach((board) => bandObserver.observe(board));
+    };
+    observeHintBand();
+    window.addEventListener("resize", observeHintBand);
+    return () => {
+      footerObserver.disconnect();
+      bandObserver.disconnect();
+      window.removeEventListener("resize", observeHintBand);
+    };
   }, []);
+  useEffect(() => {
+    if (!handheldPending || handheld) return;
+    const cancel = () => cancelHandheldEntry();
+    window.addEventListener("wheel", cancel, { passive: true });
+    window.addEventListener("touchmove", cancel, { passive: true });
+    return () => {
+      window.removeEventListener("wheel", cancel);
+      window.removeEventListener("touchmove", cancel);
+    };
+  }, [handheldPending, handheld, cancelHandheldEntry]);
   useEffect(() => {
     try {
       const stored = JSON.parse(localStorage.getItem(STORE) || "null");
@@ -151,6 +293,7 @@ export default function Convention() {
     const update = () => {
       setReduced(motion.matches);
       setTouch(narrow.matches || coarse.matches);
+      setCoarseInput(coarse.matches);
     };
     update();
     motion.addEventListener("change", update);
@@ -166,6 +309,9 @@ export default function Convention() {
       const activeEntrance = entrance.current;
       entrance.current = null;
       activeEntrance?.abort();
+      const activeHandheld = handheldEntry.current;
+      handheldEntry.current = null;
+      activeHandheld?.abort();
     };
   }, []);
   useEffect(() => {
@@ -322,7 +468,7 @@ export default function Convention() {
         event.key === "Escape" &&
         !event.defaultPrevented &&
         !event.repeat &&
-        handheldRef.current &&
+        (handheldRef.current || handheldEntry.current) &&
         !panelRef.current &&
         !arrivalRef.current
       ) {
@@ -338,19 +484,17 @@ export default function Convention() {
       if (arrivalRef.current || panelRef.current) return;
       audio.effect("click");
       if (touch && !handheldRef.current) {
-        startHandheld();
-        afterLayout(() => {
-          world.current?.refresh();
-          world.current?.control(floor);
-        });
+        void startHandheld(floor);
       } else world.current?.control(floor);
     },
-    [touch, afterLayout, startHandheld],
+    [touch, startHandheld],
   );
   const openTarget = useCallback(
     (target: WorldTarget) => {
       const show = () => {
         if (target.kind === "food") world.current?.eat();
+        else if (target.kind === "schedule")
+          open({ kind: "schedule" }, target.element);
         else if (target.kind === "register")
           open({ kind: "register", interest: null }, target.element);
         else if (target.kind === "game")
@@ -363,15 +507,12 @@ export default function Convention() {
           target.element.closest<HTMLElement>("[data-floor]")?.dataset.floor ||
             0,
         );
-        startHandheld();
-        afterLayout(() => {
-          world.current?.refresh();
-          world.current?.control(floor);
-          show();
+        void startHandheld(floor).then((entered) => {
+          if (entered) show();
         });
       } else show();
     },
-    [open, touch, afterLayout, startHandheld],
+    [open, touch, startHandheld],
   );
   const onResult = useCallback(
     (result: GameResult) =>
@@ -408,7 +549,7 @@ export default function Convention() {
     [player, open, announce],
   );
   const submit = useCallback(
-    async (next: Player, card: HTMLElement, updating = player !== null) => {
+    async (next: Player, updating = player !== null) => {
       if (arrivalRef.current) return;
       const location = world.current?.position() || {
         floor: 0,
@@ -427,8 +568,7 @@ export default function Convention() {
             ? "Entering the hall."
             : "Entering the hall. Press Escape to skip the animation.",
       );
-      await enterFromPass({
-        card,
+      await dropIntoHall({
         reduced,
         signal: owner.signal,
         prepare: async () => {
@@ -441,9 +581,12 @@ export default function Convention() {
           );
           if (updating) world.current?.refresh();
           const floor = updating ? location.floor : 0;
-          const actor = updating
-            ? world.current!.reframe(floor, location.x)
-            : world.current!.goTo(0, SCENE.booth, false);
+          // Arrival owns page framing; don't launch a competing world scroll flight.
+          const actor = world.current!.goTo(
+            floor,
+            updating ? location.x : SCENE.booth,
+            false,
+          );
           return {
             player: actor,
             world: document.querySelector<HTMLElement>(
@@ -499,6 +642,7 @@ export default function Convention() {
     <div
       className={`convention ${handheld ? "handheld-active" : ""}`}
       data-arrival={arrival ? "active" : "idle"}
+      data-handheld-entry={handheldPending}
     >
       <a
         className="skip-link"
@@ -510,35 +654,31 @@ export default function Convention() {
       >
         Skip to schedule
       </a>
-      <header className="site-header" inert={handheld || arrival}>
-        <a
-          href="https://vega.io/"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="Visit Vega"
+      <SiteHeader
+        registered={!!player}
+        inactive={handheld || arrival}
+        onExplore={explore}
+        onSchedule={() => navigate(1, SCENE.booth)}
+        onRegister={register}
+      />
+      {ready && touch && !handheld && !panel && !arrival && !footerVisible && (
+        <button
+          ref={entryHint}
+          className="scene-entry-hint"
+          aria-busy={handheldPending}
+          disabled={handheldPending}
+          hidden={hintObscured}
+          onClick={() => enterScene(floorRef.current)}
         >
-          <img src="/assets/vega/logo.svg" alt="Vega" width={111} height={36} />
-        </a>
-        <nav aria-label="Convention navigation">
-          <button onClick={explore} disabled={arrival}>
-            Explore
-          </button>
-          <button onClick={() => navigate(1, SCENE.booth)} disabled={arrival}>
-            Schedule
-          </button>
-          <button
-            className="pixel-button primary"
-            onClick={register}
-            disabled={arrival}
-            aria-label={player ? "My player" : "Register now"}
-          >
-            <span className="nav-wide">
-              {player ? "My player" : "Register now"}
-            </span>
-            <span className="nav-narrow">{player ? "Player" : "RSVP"}</span>
-          </button>
-        </nav>
-      </header>
+          {handheldPending
+            ? "Preparing the hall…"
+            : handheldError
+              ? "Tap to try exploring again"
+              : coarseInput
+                ? "Tap the scene to explore"
+                : "Click the scene to explore"}
+        </button>
+      )}
       <div className="global-notices">
         {soundError && (
           <p className="global-notice" role="status">
@@ -557,6 +697,7 @@ export default function Convention() {
         player={scenePlayer}
         paused={!!panel || arrival}
         arriving={arrival}
+        entering={handheldPending}
         handheld={handheld}
         reduced={reduced}
         ambientPaused={ambientPaused}
@@ -627,6 +768,14 @@ export default function Convention() {
             setPlayer(next);
           }}
           sessionOnly={saveStatus === "session"}
+          soundControl={soundControl}
+        />
+      )}
+      {panel?.kind === "schedule" && (
+        <ScheduleDialog
+          interests={player?.interests || []}
+          onSession={session}
+          onClose={close}
           soundControl={soundControl}
         />
       )}

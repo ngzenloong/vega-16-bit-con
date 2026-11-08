@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Open http://127.0.0.1:3000. For a stable review build, use `npm run build` followed by `npm run start`.
+Open http://127.0.0.1:3001. For a production build, stop the development server, run `npm run build`, then `npm run start` on the same port.
 
 For static hosting, run `VEGA_STATIC_EXPORT=1 npm run build`. The deployable files are written to `out/`. Run a normal `npm run build` again before using `npm run start`; local development still uses `npm run dev`.
 
@@ -26,19 +26,25 @@ npm run build
 The page is a 3,600 px-wide convention: the main hall is 2F and the social floor is 1F. Sam stays where you leave him. Arrow keys or a deliberate tap take control, with gradual acceleration, a delayed camera and speed-linked footsteps. Machines, guests, stalls and the lift use HTML buttons. Selecting a guest or pizza stand guides Sam over; selecting merch opens the wardrobe. Intentional floor navigation carries the player and camera together.
 
 - **Hall:** Left/Right or A/D move; Space or Up jumps; Enter interacts; Down + Space drops through a platform; Escape releases movement; Tab follows the document's controls.
-- **Conversation:** Enter, Space, or Down reveals then advances a line. At the final line, arrows choose a response and Enter selects it. Escape returns to the hall.
+- **Conversation:** Enter, Space, or Down reveals then advances a line. On touch screens, tap the scene or text to advance. At the final line, select a response explicitly; arrows and Enter work too. Escape returns to the hall.
 - **Games:** Enter starts or resumes; Enter/P pauses; R restarts; Escape/X exits; M toggles sound. Each machine shows its own movement/action controls. Normal Tab navigation remains available.
-- **Phone:** Tap the venue or choose Explore to open a handheld layout with D-pad, A/B, sound, background-motion pause, and a fixed close button. Conversations and games return to the same handheld session. Pointer capture prevents dragging off a pressed control from leaving movement stuck. Closing restores the previous page scroll position.
+- **Phone:** Tap the venue or choose Explore to open a handheld layout with D-pad, A/B, sound, background-motion pause, and a fixed close button. Required control and player images decode before the scene moves into place. Conversations and games return to the same handheld session. Each finger owns its input: slide between directions while holding A/B with another finger, or slide off to release. Closing restores the previous page scroll position.
+
+The header keeps its full links at 560 px and wider, uses Menu beside the registration action below that, and moves all actions into Menu below 352 px. In handheld mode, the social floor's lineup sign opens the same three session tickets in a scrollable dialog. The provided times are event highlights; the brief does not assign individual session dates.
 
 Four games are open to guests: Daisy Breaker, Cartridge Run, Sam Circuit, and Sam's Beat. Sam Circuit opens a separate car-selection screen after Play game. Start with the PostSIEM.com Fiat; first-place wins unlock cars in four groups, saved locally. Every race includes all twelve distinct models: the selected player car plus eleven rivals. The Fiat has 55 seconds; slower unlocked cars get a proportional time budget. Corners, traffic, collision penalties and boosts affect the result. S-Cargo is the strongest rival. Every car has its own speed, launch, cornering and braking profile; garage meters use that same data. Collisions apply a strong slowdown, a small decaying impulse and sparks. The rhythm game has 24 spaced notes and a 60% clear threshold.
 
-Player creation offers eight compact rows of visual accessories and five optional companions. Choose an outfit with a fixed preview, then enter details in a separate step. The phone card is centered and larger; accessory rows use edge fades instead of horizontal scrollbars. Desktop and phone use the same image-only accessory strips. Mouse dragging, touch scrolling and radio-group keyboard navigation are supported. Older three-part player profiles still load.
+Player creation opens a full-screen 16-bit selection menu with the character and companion on a pixel platform. Eight image-only accessory rows support mouse dragging, touch scrolling, and arrow-key selection; edge fades indicate more options. The yellow header keeps sound and close available, and the primary action stays below the scrollable content. Desktop places the preview beside the inventory; portrait stacks a compact preview above it. Continue opens native name and email fields. Down moves from name to email to confirmation, Up returns, and Enter activates the focused action. Five companions are optional, and older three-part player profiles still load.
+
+Confirmation saves the player before a two-second visible success hold, which pauses while the window is inactive. The character then drops directly into the hall. Returning players can save a new look or edit their details and return to their current floor and position. Reduced motion skips the drop; handheld entry preserves the surrounding page scroll.
 
 ## Implementation
 
 `Convention` owns profile, overlay, audio, and entry state. `World` renders the semantic scene. `lib/world.ts` owns a fixed-step movement loop, support surfaces measured from the DOM, the camera, proximity targets, and NPC routes. Per-frame movement writes transforms directly rather than rerendering React.
 
 `GameHost` provides an immediately available loading/error shell; each game controller is loaded on demand. It owns the canvas, input, timing, menus, focus, pause/resume, and result handling. Games implement a small `update / draw / press / hud` contract. The environment supplies character art and sound, keeping the rules testable without a browser.
+
+Shared image and game-font loaders bound stalled requests, evict failed cache entries and permit retry. Handheld entry waits only for the images it needs. Optional document fonts cannot hold the controls behind an unrelated request. Pointer, keyboard and assistive activation keep separate input owners, with cleanup on cancellation, blur and unmount.
 
 Native dialogs make other content inert. Game and dialogue states explicitly restore focus. Dialogue reserves the complete text and response area, so typewriter animation does not change its geometry. Its dark bars and speaker portrait reuse the original game's presentation. Reduced motion removes automatic sprite/cloud motion and the cinematic zoom; gameplay remains available through deliberate input.
 
@@ -56,10 +62,9 @@ Audio starts muted. The upper hall shares Sam’s Beat’s score; the lower offi
 - [Raw explorations and approved choices](https://www.figma.com/design/ntMv2Sr2WTPuAtRljGxoOa/?node-id=9543-4)
 - [Vega careers game](https://vega.io/careers)
 - [Asset and audio sources](ASSET_SOURCES.md)
+- [Player selection layout and behavior](docs/player-selection.md)
 - [Verification and remaining limits](REHEARSAL.md)
 
-The Figma palette and fonts govern the page. Existing Vega pixel assets, character animation, window behavior, and controls provide continuity. The new venue, console stations, player pass, conversations, and four game rules are the assignment's additions. The later direction uses a dusk skyline, a cable-hung billboard, unframed floor controls and a footer on the fading foreground floor. All four games include architectural Vega advertisements and daisy marks. Buildings, cars and attached adverts in the race share one depth order.
+The Figma palette and fonts govern the page. Existing Vega pixel assets, character animation, window behavior, and controls provide continuity. The new venue, console stations, player customization, conversations, and four game rules are the assignment's additions. The venue uses a dusk skyline, a cable-hung billboard, unframed floor controls and a footer on the fading foreground floor. All four games include architectural Vega advertisements and daisy marks. Buildings, cars and attached adverts in the race share one depth order.
 
 Rivals have model-specific acceleration, pace, cornering and driver confidence. They commit to passing lines, reconsider blocked overtakes and exchange places. Near cars remain in the draw list until they move below the camera, with depth-correct occlusion and held steering poses. These are arcade parameters informed by vehicle character, not a road-speed simulator.
-
-Player creation saves the local pass before a two-second visible confirmation. The hold pauses when the window is inactive, followed by the card flip, camera framing and character drop. Returning players can save a new look or edit remembered details.

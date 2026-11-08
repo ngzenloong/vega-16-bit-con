@@ -4,13 +4,18 @@ import {
   DEFAULT_APPEARANCE,
   SESSIONS,
   type Appearance,
+  type OutfitPart,
   type Player,
 } from "@/lib/types";
 import { characterSheets, loadImage } from "@/lib/character";
-import { completeAppearance } from "@/lib/appearance";
+import {
+  completeAppearance,
+  OUTFIT_LABELS,
+  OUTFIT_OPTIONS,
+} from "@/lib/appearance";
 import { retainDialogFocus } from "@/lib/dialog-focus";
 import { audio } from "@/lib/audio";
-import PlayerCard from "./PlayerCard";
+import PlayerPreview from "./PlayerPreview";
 import OutfitPicker from "./OutfitPicker";
 import Icon from "./Icon";
 
@@ -27,11 +32,7 @@ export default function Registration({
   interest: number | null;
   onClose: () => void;
   onSave: (player: Player) => void;
-  onSubmit: (
-    player: Player,
-    card: HTMLElement,
-    updating: boolean,
-  ) => Promise<void>;
+  onSubmit: (player: Player, updating: boolean) => Promise<void>;
   sessionOnly?: boolean;
   soundControl: ReactNode;
 }) {
@@ -39,15 +40,11 @@ export default function Registration({
     alive = useRef(true),
     timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const registered = useRef(!!player).current;
-  const [compact, setCompact] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      matchMedia("(max-width: 700px), (max-height: 600px)").matches,
-  );
   const entering = useRef(false);
   const confirmed = useRef<Player | null>(null);
   const enterCallback = useRef<() => void>(() => {});
   const [step, setStep] = useState<"look" | "details" | "confirmed">("look");
+  const [inspected, setInspected] = useState<OutfitPart>("shirt");
   const [name, setName] = useState(player?.name || "");
   const [email, setEmail] = useState(player?.email || "");
   const [appearance, setAppearance] = useState<Required<Appearance>>(
@@ -58,6 +55,13 @@ export default function Registration({
     [saving, setSaving] = useState(false),
     [error, setError] = useState("");
   const [retry, setRetry] = useState(0);
+  useEffect(() => {
+    if (error && step === "details")
+      dialog.current?.querySelector(".registration-error")?.scrollIntoView({
+        block: "nearest",
+        behavior: "instant",
+      });
+  }, [error, step]);
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       const d = dialog.current;
@@ -123,7 +127,6 @@ export default function Registration({
     let frame = 0,
       fieldFrame = 0;
     const measure = () => {
-      setCompact(matchMedia("(max-width: 700px), (max-height: 600px)").matches);
       dialog.current?.style.setProperty(
         "--registration-vh",
         `${viewport?.height || innerHeight}px`,
@@ -175,16 +178,12 @@ export default function Registration({
     entering.current = true;
     if (timer.current) clearTimeout(timer.current);
     try {
-      await onSubmit(
-        next,
-        dialog.current!.querySelector<HTMLElement>("[data-player-pass]")!,
-        registered,
-      );
+      await onSubmit(next, registered);
     } catch {
       if (alive.current) {
         entering.current = false;
         setSaving(false);
-        setError("Your pass is saved. Try entering again.");
+        setError("Your player is saved. Try entering again.");
       }
     }
   };
@@ -253,20 +252,16 @@ export default function Registration({
   const title =
     step === "confirmed"
       ? registered
-        ? "Pass updated."
-        : "Pass confirmed."
+        ? "LOOK SAVED"
+        : "PLAYER READY"
       : step === "details"
-        ? registered
-          ? "Your details."
-          : "Make it official."
-        : registered
-          ? "Welcome back."
-          : "Make your player.";
+        ? "DETAILS"
+        : "PLAYER SELECT";
   return (
     <dialog
       ref={dialog}
       tabIndex={-1}
-      className={`registration-dialog ${compact ? "registration-mobile" : ""}`}
+      className="registration-dialog player-select-dialog"
       data-step={step}
       data-error={Boolean(error)}
       aria-labelledby="registration-title"
@@ -275,23 +270,70 @@ export default function Registration({
           event.defaultPrevented ||
           event.ctrlKey ||
           event.metaKey ||
-          event.altKey
+          event.altKey ||
+          event.nativeEvent.isComposing
         )
           return;
         const target = event.target as HTMLElement;
-        if (step !== "look" || !target.closest(".registration-actions")) return;
-        if (event.key === "ArrowUp") {
-          event.preventDefault();
-          const options = dialog.current!.querySelectorAll<HTMLElement>(
-            '.accessory-option[aria-checked="true"]',
-          );
-          const last = options[options.length - 1];
-          last?.focus({ preventScroll: true });
-          last?.scrollIntoView({
+        const fields = [
+          ...dialog.current!.querySelectorAll<HTMLInputElement>(
+            ".registration-details input:not(:disabled)",
+          ),
+        ];
+        const focus = (element?: HTMLElement | null) => {
+          element?.focus({ preventScroll: true });
+          element?.scrollIntoView({
             block: "nearest",
-            inline: "center",
+            inline: "nearest",
             behavior: "instant",
           });
+        };
+        if (
+          step === "details" &&
+          target === fields[0] &&
+          event.key === "Enter"
+        ) {
+          event.preventDefault();
+          focus(fields[1]);
+          return;
+        }
+        if (
+          step === "details" &&
+          target instanceof HTMLInputElement &&
+          ["ArrowUp", "ArrowDown"].includes(event.key)
+        ) {
+          event.preventDefault();
+          const index = fields.indexOf(target);
+          if (event.key === "ArrowUp") focus(fields[Math.max(0, index - 1)]);
+          else
+            focus(
+              fields[index + 1] ||
+                dialog.current!.querySelector<HTMLButtonElement>(
+                  ".register-submit:not(:disabled)",
+                ),
+            );
+          return;
+        }
+        if (!target.closest(".registration-actions") || step === "confirmed")
+          return;
+        if (event.key === "ArrowUp") {
+          event.preventDefault();
+          if (step === "details") focus(fields.at(-1));
+          else {
+            const items = dialog.current!.querySelectorAll<HTMLElement>(
+              '.accessory-option[aria-checked="true"]',
+            );
+            focus(items[items.length - 1]);
+          }
+        } else if (event.key === "ArrowDown") {
+          event.preventDefault();
+          focus(
+            step === "details"
+              ? fields[0]
+              : dialog.current!.querySelector<HTMLElement>(
+                  '.accessory-option[aria-checked="true"]',
+                ),
+          );
         } else if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
           event.preventDefault();
           const buttons = [
@@ -300,15 +342,17 @@ export default function Registration({
             ),
           ];
           const index = buttons.indexOf(target as HTMLButtonElement);
-          buttons[
-            (index + (event.key === "ArrowRight" ? 1 : -1) + buttons.length) %
-              buttons.length
-          ]?.focus();
+          focus(
+            buttons[
+              (index + (event.key === "ArrowRight" ? 1 : -1) + buttons.length) %
+                buttons.length
+            ],
+          );
         }
       }}
     >
-      <header className="window-title">
-        <span>Player pass</span>
+      <header className="player-select-top">
+        <h2 id="registration-title">{title}</h2>
         <div className="window-actions">
           {soundControl}
           <button
@@ -331,37 +375,42 @@ export default function Registration({
           } else void confirm();
         }}
       >
-        <div className="registration-copy" aria-live="polite">
-          <h2 id="registration-title">{title}</h2>
-          <p>
-            {step === "confirmed"
-              ? `See you at 16-Bit Con, ${name}.`
-              : step === "details"
-                ? registered
-                  ? "Update the details on your saved pass."
-                  : "Add your details to finish your demo pass."
-                : registered
-                  ? `See you at the con, ${name}. Your pass is ready.`
-                  : "Pick a look, then add your details."}
-          </p>
-        </div>
-        <div className="registration-content">
-          <div className="registration-preview">
-            <div className="registration-card-window">
-              <PlayerCard
-                name={name}
-                sprite={sprite}
-                companion={appearance.companion}
-                ready={step === "confirmed"}
-              />
-            </div>
-            <p className="look-status" role="status">
-              {pending
-                ? "Preparing your look…"
-                : error ||
-                  (step === "confirmed" ? "Saved. Entering the hall…" : "")}
-            </p>
-            {error && (
+        <div
+          className={
+            step === "look"
+              ? "player-select-content"
+              : step === "confirmed"
+                ? "player-ready-content"
+                : "registration-content player-details-content"
+          }
+        >
+          <div
+            className={
+              step === "details"
+                ? "registration-preview"
+                : "player-select-preview"
+            }
+          >
+            <PlayerPreview
+              name={name}
+              sprite={sprite}
+              companion={appearance.companion}
+              ready={step === "confirmed"}
+              detail={
+                step === "look"
+                  ? `${OUTFIT_LABELS[inspected]} · ${OUTFIT_OPTIONS[inspected][appearance[inspected]]}`
+                  : undefined
+              }
+            />
+            {step !== "details" && (
+              <p className="look-status" role="status">
+                {pending
+                  ? "Preparing your look…"
+                  : error ||
+                    (step === "confirmed" ? "Saved. Entering the hall…" : "")}
+              </p>
+            )}
+            {error && step !== "details" && (
               <button
                 className="text-link"
                 type="button"
@@ -375,19 +424,28 @@ export default function Registration({
             <OutfitPicker
               value={appearance}
               onChange={setAppearance}
+              onInspect={setInspected}
               disabled={saving}
             />
           )}
           {step === "details" && (
             <div className="registration-details">
+              <p className="details-intro">
+                {registered
+                  ? "Update your saved details."
+                  : "One last step. Make this player yours."}
+              </p>
               <label>
                 Your name
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
+                  pattern={".*\\S.*"}
+                  title="Enter a name with at least one non-space character."
                   maxLength={24}
                   autoComplete="given-name"
+                  enterKeyHint="next"
                   placeholder="What should we call you?"
                   disabled={saving}
                 />
@@ -401,6 +459,7 @@ export default function Registration({
                   required={!registered}
                   maxLength={254}
                   autoComplete="email"
+                  enterKeyHint="done"
                   inputMode="email"
                   autoCapitalize="none"
                   spellCheck={false}
@@ -408,6 +467,11 @@ export default function Registration({
                   disabled={saving}
                 />
               </label>
+              {error && (
+                <p className="registration-error" role="alert">
+                  {error}
+                </p>
+              )}
               {interest !== null && (
                 <p className="registration-interest">
                   Your list: {SESSIONS[interest].title}
@@ -421,21 +485,16 @@ export default function Registration({
           )}
           {step === "confirmed" && (
             <div className="registration-confirmation">
-              <Icon name="check" />
-              <h3>
-                {registered
-                  ? "Ready for another round?"
-                  : "You're ready for the con."}
-              </h3>
+              <h3>See you at the con, {name}.</h3>
               <p>
                 {sessionOnly
-                  ? "Your pass is available for this visit."
-                  : "Your name, details and look are saved for this site in this browser."}
+                  ? "Your player is ready for this visit."
+                  : "Your player and details are saved in this browser."}
               </p>
             </div>
           )}
         </div>
-        <footer className="registration-actions">
+        <footer className="registration-actions player-select-actions">
           {step === "details" ? (
             <button
               type="button"
@@ -455,30 +514,42 @@ export default function Registration({
             </button>
           ) : (
             <span className="pass-step">
-              {step === "confirmed"
-                ? "See you on the floor."
-                : "1 / 2 · Your look"}
+              {step === "confirmed" ? (
+                "See you on the floor."
+              ) : (
+                <>
+                  <span className="select-keyboard-help">
+                    ← → Choose · ↑ ↓ Row
+                  </span>
+                  <span className="select-touch-help">
+                    Swipe to choose. Tap to wear.
+                  </span>
+                </>
+              )}
             </span>
           )}
           <button
-            className="pixel-button primary register-submit"
+            className="car-race-button register-submit"
             disabled={pending || saving}
             aria-busy={step === "confirmed" && saving}
             type="submit"
           >
-            {step === "confirmed"
-              ? error
-                ? "Try entering"
-                : "Entering…"
-              : saving
-                ? "Saving…"
-                : step === "look"
-                  ? registered
-                    ? "Save look"
-                    : "Continue"
-                  : registered
-                    ? "Save player"
-                    : "Confirm my pass"}
+            {step === "look" && <Icon name="play" size={16} />}
+            <span>
+              {step === "confirmed"
+                ? error
+                  ? "Try entering"
+                  : "Entering…"
+                : saving
+                  ? "Saving…"
+                  : step === "look"
+                    ? registered
+                      ? "Save look"
+                      : "Continue"
+                    : registered
+                      ? "Save player"
+                      : "Confirm my player"}
+            </span>
           </button>
         </footer>
       </form>

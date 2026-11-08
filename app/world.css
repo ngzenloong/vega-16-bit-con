@@ -22,6 +22,7 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: var(--world-width, 3600px);
+  min-width: 100%;
   transform: translate3d(calc(-1 * var(--camera-x)), 0, 0);
   will-change: transform;
 }
@@ -803,11 +804,6 @@
 }
 .companion[data-floating="true"] > .sprite {
   translate: 0 -16px;
-}
-.pass-companion {
-  position: absolute;
-  right: -20px;
-  bottom: calc(-1 * var(--pet-baseline, 0px));
 }
 .world-stage:not(.is-handheld) .world-floor {
   cursor: pointer;

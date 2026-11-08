@@ -16,18 +16,23 @@ const rows: OutfitPart[] = [
   "companion",
 ];
 function updateOverflow(strip: HTMLDivElement) {
-  strip.dataset.overflowStart = String(strip.scrollLeft > 2);
+  const style = getComputedStyle(strip);
+  const startInset = parseFloat(style.paddingLeft) || 0;
+  const endInset = parseFloat(style.paddingRight) || 0;
+  strip.dataset.overflowStart = String(strip.scrollLeft > startInset + 2);
   strip.dataset.overflowEnd = String(
-    strip.scrollWidth - strip.clientWidth - strip.scrollLeft > 2,
+    strip.scrollWidth - strip.clientWidth - strip.scrollLeft > endInset + 2,
   );
 }
 export default function OutfitPicker({
   value,
   onChange,
+  onInspect,
   disabled,
 }: {
   value: Required<Appearance>;
   onChange: (value: Required<Appearance>) => void;
+  onInspect?: (part: OutfitPart) => void;
   disabled: boolean;
 }) {
   const [icons, setIcons] = useState<Record<string, string>>({});
@@ -95,6 +100,7 @@ export default function OutfitPicker({
     };
   }, [retry]);
   const choose = (part: OutfitPart, i: number) => {
+    onInspect?.(part);
     audio.effect("click");
     if (value[part] === i) return;
     onChange({ ...value, [part]: i });
@@ -171,6 +177,7 @@ export default function OutfitPicker({
               aria-checked={value[part] === i}
               tabIndex={value[part] === i ? 0 : -1}
               disabled={disabled}
+              onFocus={() => onInspect?.(part)}
               onClick={() => choose(part, i)}
               onKeyDown={(event) => {
                 if (event.ctrlKey || event.metaKey || event.altKey) return;
