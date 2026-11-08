@@ -14,6 +14,7 @@ export default function SoundControl({
   return (
     <>
       <button
+        type="button"
         className="icon-button sound-toggle"
         onClick={() => void onToggle()}
         aria-label={

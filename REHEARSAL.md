@@ -1,10 +1,10 @@
 # Verification: responsive interface pass
 
-Reviewed November 7, 2026. This record covers the mobile interface changes and dedicated desktop review after the first PR was merged. Earlier game, art, audio, focus and camera repairs remain in the workspace evidence ledger. The local review address is http://127.0.0.1:3001/.
+Reviewed November 8, 2026. This record covers the mobile interface changes and dedicated desktop review after the first PR was merged. Earlier game, art, audio, focus and camera repairs remain in the workspace evidence ledger. The local review address is http://127.0.0.1:3001/.
 
 ## Automated checks
 
-- `npm test`: 86 passed, 0 failed. Coverage includes game outcomes, race balance, collisions, pointer/keyboard ownership, audio cancellation, modal focus, scroll locks, progress migration, sprite geometry, snack interruption and bounded asset loading.
+- `npm test`: 93 passed, 0 failed. Coverage includes game outcomes, race balance, collisions, pointer/keyboard ownership, audio cancellation, modal focus, scroll locks, progress migration, sprite geometry, snack interruption and bounded asset loading.
 - `tsc --noEmit --incremental false`: passed.
 - `npm run build`: passed, with the landing page prerendered.
 - `git diff --check`: passed.
@@ -58,3 +58,13 @@ A blocked music request and successful retry during racing leave the landscape f
 The shared menu-action family also serves desktop game actions and the player editor. The new responsive check covers eight handheld sizes plus a separate desktop garage, and the independent visual review closes the tablet spacing and landscape-label findings. Physical iOS and other limits above still apply.
 
 Focus recovery now skips hidden, inert, disabled and non-rendered controls, including the retained garage and the hidden mobile Hall button. Regression assertions cover the first lost-focus Tab, reverse Tab and remembered inactive-menu focus. The suite remains at 86 tests.
+
+## Navigation and toggle follow-up
+
+The header no longer treats a null focus handoff as dismissal before the same click. Pointer opening keeps focus on Menu; keyboard opening focuses a visible item, including when ArrowDown/ArrowUp enters an already-open popup. Escape, real focus departure, outside click, scroll and both responsive breakpoints have explicit dismissal paths. Menu actions return focus to the stable trigger before opening a modal.
+
+Conversation toolbar buttons keep their own native Enter/Space action; the sound button no longer reveals dialogue or selects a final response. The existing repeat guard and normal dialogue continuation remain.
+
+Seven actual-component/handler regressions extend the suite to 93 tests. Ego checks at 320 and 393 px cover repeated pointer and native touch toggles, a controlled null-blur handoff, item activation, return focus, Escape, outside click, scroll, and the 352/560 px breakpoints. Native timing details alternate open/closed through pointer and keyboard activation; both venue ambience controls alternate together. Sound Enter enables and Space mutes without changing the current dialogue line; Continue still advances.
+
+These results are in `audit-2026-11-06/navigation-round-7`. Ordinary Chromium clicks alternated normally in the initial pass; the original menu failure was established by the actual 713bd67 handler sequence with a null blur before click, not by claiming a physical Safari reproduction. Native-device limits above remain unchanged.
