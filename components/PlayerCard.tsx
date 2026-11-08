@@ -20,14 +20,15 @@ export default function PlayerCard({
             <span>PLAYER PASS</span>
           </div>
           <div className="pass-character">
-            <Sprite name="sam-idle" src={sprite} />
-            <Companion kind={companion} className="pass-companion" />
+            <div className="pass-character-scene">
+              <Sprite name="sam-idle" src={sprite} />
+              <Companion kind={companion} className="pass-companion" />
+            </div>
           </div>
           <strong>{name || "Your player"}</strong>
-          <p>
-            16-Bit Con
-            <br />
-            October 3–5, 2026
+          <p className="pass-event">
+            <span>16-Bit Con</span>
+            <time dateTime="2026-10-03">October 3–5, 2026</time>
           </p>
           <div className="pass-code">JAVITS CENTER / 630</div>
         </div>
@@ -36,8 +37,10 @@ export default function PlayerCard({
             {ready ? "PLAYER READY" : "SEE YOU ON THE FLOOR"}
           </div>
           <div className="pass-character">
-            <Sprite name="sam-idle" src={sprite} />
-            <Companion kind={companion} className="pass-companion" />
+            <div className="pass-character-scene">
+              <Sprite name="sam-idle" src={sprite} />
+              <Companion kind={companion} className="pass-companion" />
+            </div>
           </div>
           <strong>{name || "Your player"}</strong>
           <p>Meet us in the middle.</p>

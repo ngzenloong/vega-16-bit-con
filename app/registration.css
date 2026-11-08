@@ -29,8 +29,23 @@
 }
 .registration-dialog .window-title {
   flex: none;
+  justify-content: flex-end;
   padding: 10px 28px;
   min-height: 64px;
+  border: 0;
+}
+.registration-dialog[data-step="look"] .window-title {
+  position: absolute;
+  top: var(--space-4);
+  right: 28px;
+  min-height: 0;
+  padding: 0;
+}
+.registration-dialog[data-step="look"] .registration-content {
+  padding-top: var(--space-4);
+}
+.registration-dialog:not(.registration-mobile)[data-step="look"] .wardrobe-rows {
+  margin-top: calc(var(--control-hit) + var(--space-4));
 }
 .registration-dialog .pass-editor {
   display: flex;
@@ -151,19 +166,6 @@
   background: transparent;
   border: 0;
   color: var(--ink);
-}
-.registration-mobile {
-  width: calc(100vw - 24px);
-  max-width: calc(100vw - 24px);
-  height: calc(var(--registration-vh, 100dvh) - 24px);
-  max-height: calc(var(--registration-vh, 100dvh) - 24px);
-  top: calc(var(--registration-top, 0px) + 12px);
-  bottom: auto;
-  margin: 0 12px;
-}
-.registration-mobile .window-title {
-  padding: 8px 18px;
-  min-height: 60px;
 }
 .registration-mobile .registration-copy {
   padding: 14px 18px 12px;

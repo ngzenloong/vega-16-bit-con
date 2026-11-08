@@ -270,16 +270,6 @@
   .cinematic-close > span {
     font-size: 24px;
   }
-  .conversation-frame {
-    height: 320px;
-    padding: var(--space-4) 18px
-      max(var(--space-4), env(safe-area-inset-bottom));
-    grid-template-columns: 70px minmax(0, 1fr);
-    grid-template-rows: 150px 1fr;
-    column-gap: var(--space-4);
-    row-gap: 6px;
-    align-items: start;
-  }
   .dialogue-identity {
     align-self: start;
   }

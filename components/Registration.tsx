@@ -275,23 +275,70 @@ export default function Registration({
           event.defaultPrevented ||
           event.ctrlKey ||
           event.metaKey ||
-          event.altKey
+          event.altKey ||
+          event.nativeEvent.isComposing
         )
           return;
         const target = event.target as HTMLElement;
-        if (step !== "look" || !target.closest(".registration-actions")) return;
-        if (event.key === "ArrowUp") {
-          event.preventDefault();
-          const options = dialog.current!.querySelectorAll<HTMLElement>(
-            '.accessory-option[aria-checked="true"]',
-          );
-          const last = options[options.length - 1];
-          last?.focus({ preventScroll: true });
-          last?.scrollIntoView({
+        const fields = [
+          ...dialog.current!.querySelectorAll<HTMLInputElement>(
+            ".registration-details input:not(:disabled)",
+          ),
+        ];
+        const focus = (element?: HTMLElement | null) => {
+          element?.focus({ preventScroll: true });
+          element?.scrollIntoView({
             block: "nearest",
-            inline: "center",
+            inline: "nearest",
             behavior: "instant",
           });
+        };
+        if (
+          step === "details" &&
+          target === fields[0] &&
+          event.key === "Enter"
+        ) {
+          event.preventDefault();
+          focus(fields[1]);
+          return;
+        }
+        if (
+          step === "details" &&
+          target instanceof HTMLInputElement &&
+          ["ArrowUp", "ArrowDown"].includes(event.key)
+        ) {
+          event.preventDefault();
+          const index = fields.indexOf(target);
+          if (event.key === "ArrowUp") focus(fields[Math.max(0, index - 1)]);
+          else
+            focus(
+              fields[index + 1] ||
+                dialog.current!.querySelector<HTMLButtonElement>(
+                  ".register-submit:not(:disabled)",
+                ),
+            );
+          return;
+        }
+        if (!target.closest(".registration-actions") || step === "confirmed")
+          return;
+        if (event.key === "ArrowUp") {
+          event.preventDefault();
+          if (step === "details") focus(fields.at(-1));
+          else {
+            const items = dialog.current!.querySelectorAll<HTMLElement>(
+              '.accessory-option[aria-checked="true"]',
+            );
+            focus(items[items.length - 1]);
+          }
+        } else if (event.key === "ArrowDown") {
+          event.preventDefault();
+          focus(
+            step === "details"
+              ? fields[0]
+              : dialog.current!.querySelector<HTMLElement>(
+                  '.accessory-option[aria-checked="true"]',
+                ),
+          );
         } else if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
           event.preventDefault();
           const buttons = [
@@ -300,15 +347,16 @@ export default function Registration({
             ),
           ];
           const index = buttons.indexOf(target as HTMLButtonElement);
-          buttons[
-            (index + (event.key === "ArrowRight" ? 1 : -1) + buttons.length) %
-              buttons.length
-          ]?.focus();
+          focus(
+            buttons[
+              (index + (event.key === "ArrowRight" ? 1 : -1) + buttons.length) %
+                buttons.length
+            ],
+          );
         }
       }}
     >
       <header className="window-title">
-        <span>Player pass</span>
         <div className="window-actions">
           {soundControl}
           <button
@@ -331,7 +379,10 @@ export default function Registration({
           } else void confirm();
         }}
       >
-        <div className="registration-copy" aria-live="polite">
+        <div
+          className={`registration-copy ${step === "look" ? "sr-only" : ""}`}
+          aria-live="polite"
+        >
           <h2 id="registration-title">{title}</h2>
           <p>
             {step === "confirmed"
@@ -388,6 +439,7 @@ export default function Registration({
                   required
                   maxLength={24}
                   autoComplete="given-name"
+                  enterKeyHint="next"
                   placeholder="What should we call you?"
                   disabled={saving}
                 />
@@ -401,6 +453,7 @@ export default function Registration({
                   required={!registered}
                   maxLength={254}
                   autoComplete="email"
+                  enterKeyHint="done"
                   inputMode="email"
                   autoCapitalize="none"
                   spellCheck={false}

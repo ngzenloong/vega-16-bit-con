@@ -14,7 +14,7 @@ import {
   type WorldTarget,
 } from "@/lib/world";
 import { SPRITES } from "@/lib/assets";
-import { GAMES, SESSIONS, DEFAULT_APPEARANCE, type Player } from "@/lib/types";
+import { GAMES, DEFAULT_APPEARANCE, type Player } from "@/lib/types";
 import {
   characterSheets,
   ACTIVITY_PORTRAITS,
@@ -28,6 +28,7 @@ import AttractScreen from "./AttractScreen";
 import Icon from "./Icon";
 import Companion from "./Companion";
 import VenueLife from "./VenueLife";
+import SessionTickets from "./SessionTickets";
 import { snackSheet } from "@/lib/snack-art";
 import { SCENE, MACHINES } from "@/lib/scene";
 
@@ -41,6 +42,7 @@ type Props = {
   player: Player | null;
   paused: boolean;
   arriving?: boolean;
+  entering?: boolean;
   handheld: boolean;
   reduced: boolean;
   ambientPaused: boolean;
@@ -60,6 +62,7 @@ const World = forwardRef<WorldController, Props>(function World(
     player,
     paused,
     arriving = false,
+    entering = false,
     handheld,
     reduced,
     ambientPaused,
@@ -698,36 +701,29 @@ const World = forwardRef<WorldController, Props>(function World(
           <div className="concourse-ceiling" aria-hidden="true" />
           <div className="schedule-board">
             <h2>The lineup.</h2>
-            <p>Plan a stop for a talk or the Vega After Party.</p>
-            <div className="event-tickets">
-              {SESSIONS.map((session, i) => (
-                <article className="event-ticket" key={session.time}>
-                  <div className="ticket-top">
-                    <time>{session.time}</time>
-                    <span>16-BIT CON</span>
-                  </div>
-                  <h3>{session.title}</h3>
-                  <p>{session.kind}</p>
-                  <button
-                    className="ticket-action"
-                    data-target={String(i)}
-                    data-kind="session"
-                    data-label={session.title}
-                    data-x={SCENE.booth}
-                    onClick={() => onSession(i)}
-                    aria-pressed={interests.includes(i)}
-                    aria-label={`${interests.includes(i) ? "Remove" : "Add"} ${session.title} ${interests.includes(i) ? "from" : "to"} my list`}
-                  >
-                    {interests.includes(i)
-                      ? "On my list ✓"
-                      : "I’m interested ↗"}
-                  </button>
-                  <div className="ticket-perforation" aria-hidden="true" />
-                </article>
-              ))}
-            </div>
-            <small>Featured sessions · New York time</small>
+            <p>Three highlights from 16-Bit Con.</p>
+            <SessionTickets
+              interests={interests}
+              onSession={onSession}
+              inWorld
+            />
+            <small>Featured sessions · October 3–5 · New York time</small>
           </div>
+          <button
+            className="handheld-lineup"
+            data-target="schedule"
+            data-kind="schedule"
+            data-label="The lineup"
+            data-x={SCENE.booth}
+            data-active-mode="handheld"
+            onClick={(event) =>
+              target("schedule", "schedule", "The lineup", event.currentTarget)
+            }
+            aria-label="Open the event schedule"
+          >
+            <strong>The lineup.</strong>
+            <span>View sessions</span>
+          </button>
           {prop("window", 160, 180)}
           {prop("window", 3500, 230)}
           {prop("plant-2", 160)}
@@ -762,7 +758,7 @@ const World = forwardRef<WorldController, Props>(function World(
       </section>
       {handheld && (
         <Controls
-          disabled={paused || arriving}
+          disabled={paused || arriving || entering}
           onPress={(key, down, source) =>
             engine.current?.virtual(key, down, source)
           }

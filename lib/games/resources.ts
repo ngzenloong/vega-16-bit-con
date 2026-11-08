@@ -2,26 +2,7 @@ import { characterSheets, loadImage } from "../character";
 import type { Appearance } from "../types";
 import { selectRivalCars, ALL_CARS, FIAT } from "./cars";
 import { duskBackdrop } from "./scenery";
-let fontReady: Promise<FontFace[]> | null = null;
-let fontFailed = false;
-function prepareGameFont() {
-  if (!fontReady) {
-    const load = fontFailed
-      ? new FontFace("PP Mondwest", 'url("/fonts/mondwest.woff2")')
-          .load()
-          .then((face) => {
-            document.fonts.add(face);
-            return [face];
-          })
-      : document.fonts.load('16px "PP Mondwest"');
-    fontReady = load.catch((error) => {
-      fontFailed = true;
-      fontReady = null;
-      throw error;
-    });
-  }
-  return fontReady;
-}
+import { prepareGameFont } from "../game-font";
 export async function gameResources(
   appearance: Appearance,
   racing = false,

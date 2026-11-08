@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 type Name =
+  | "chevron"
   | "lock"
   | "close"
   | "pause"
@@ -30,6 +31,7 @@ export default function Icon({
       focusable="false"
       style={style}
     >
+      {name === "chevron" && <path d="m6 9 6 6 6-6" />}
       {name === "lock" && (
         <path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5zM12 14v3" />
       )}

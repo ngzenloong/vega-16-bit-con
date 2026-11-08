@@ -138,3 +138,30 @@ test("floor framing keeps the brick baseline at the bottom instead of centering 
   assert.equal(floorFrameScroll(900, 1080, 1000), 0);
   assert.equal(floorFrameScroll(2400, 900, 1200), 1200);
 });
+
+test("simultaneous steering and gas keep separate owners through a directional change", () => {
+  const input = new HeldInput();
+  input.down("finger:1", "right");
+  input.down("finger:2", "action");
+  assert.equal(input.horizontal(), 1);
+  assert.equal(input.has("action"), true);
+  input.up("finger:1");
+  input.down("finger:1", "left");
+  assert.equal(input.horizontal(), -1);
+  assert.equal(input.has("action"), true);
+  input.up("finger:2");
+  assert.equal(input.has("action"), false);
+  assert.equal(input.horizontal(), -1);
+  input.clear();
+  assert.equal(input.horizontal(), 0);
+});
+test("mobile dialogue pagination avoids an orphan last word without dropping copy", async () => {
+  const { dialoguePages } = await import("../lib/lore.ts");
+  const line =
+    "That yellow Fiat? PostSIEM.com on the back. Extremely subtle branding.";
+  const pages = dialoguePages(line, 64);
+  assert.equal(pages.join(" "), line);
+  assert.ok(pages.every((page) => page.length <= 64));
+  assert.notEqual(pages.at(-1), "branding.");
+  assert.ok(pages.at(-1)!.length >= 20);
+});
