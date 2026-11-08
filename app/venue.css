@@ -10,14 +10,11 @@
 .world-stage:not(.is-handheld):not([data-conversation="true"]) .world-floor {
   height: var(--floor-height);
 }
-.world-stage:not(.is-handheld) .main-hall:not(.is-conversation) .steel-roof {
-  top: 98px;
+.world-stage:not(.is-handheld) .main-hall:not(.is-conversation) {
+  --roof-top: 98px;
 }
 .world-stage:not(.is-handheld) .main-hall:not(.is-conversation) .glass-wall {
   top: 148px;
-}
-.world-stage:not(.is-handheld) .main-hall:not(.is-conversation) .venue-sign {
-  top: 111px;
 }
 .event-board {
   --hero-cta-width: 140px;
@@ -75,31 +72,31 @@
   scrollbar-color: var(--scroll-thumb) var(--scroll-track);
 }
 :is(
-    .registration-dialog,
-    .registration-content,
-    .wardrobe-rows,
-    .accessory-strip,
-    .game-message
-  )::-webkit-scrollbar {
+  .registration-dialog,
+  .registration-content,
+  .wardrobe-rows,
+  .accessory-strip,
+  .game-message
+)::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 :is(
-    .registration-dialog,
-    .registration-content,
-    .wardrobe-rows,
-    .accessory-strip,
-    .game-message
-  )::-webkit-scrollbar-track {
+  .registration-dialog,
+  .registration-content,
+  .wardrobe-rows,
+  .accessory-strip,
+  .game-message
+)::-webkit-scrollbar-track {
   background: var(--scroll-track);
 }
 :is(
-    .registration-dialog,
-    .registration-content,
-    .wardrobe-rows,
-    .accessory-strip,
-    .game-message
-  )::-webkit-scrollbar-thumb {
+  .registration-dialog,
+  .registration-content,
+  .wardrobe-rows,
+  .accessory-strip,
+  .game-message
+)::-webkit-scrollbar-thumb {
   background: var(--scroll-thumb);
   border: 2px solid var(--scroll-track);
 }
@@ -1188,37 +1185,6 @@ html {
   margin-top: 4px;
   font-size: 12px;
 }
-.car-race-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  min-height: 44px;
-  padding: 8px 16px;
-  border: 0;
-  background: var(--yellow);
-  color: var(--ink);
-  box-shadow: 0 4px 0 var(--color-orange);
-  font: 20px/1 var(--font-game);
-  cursor: pointer;
-}
-.car-race-button kbd {
-  font: inherit;
-}
-.car-race-button:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 var(--color-orange);
-}
-.car-race-button:disabled {
-  background: var(--color-grey-dark);
-  color: var(--color-grey);
-  box-shadow: none;
-  cursor: not-allowed;
-}
-.car-race-button:focus-visible {
-  outline: 2px solid var(--paper);
-  outline-offset: 4px;
-}
 .game-dialog.is-touch .car-selection-overlay {
   padding: 0;
 }
@@ -1298,20 +1264,6 @@ html {
     font-size: 17px;
     gap: 8px;
     padding: 8px 12px;
-  }
-}
-@media (max-height: 600px) {
-  .game-dialog.is-touch[data-mode="garage"] .game-screen {
-    margin-inline: 0;
-  }
-  .game-dialog.is-touch[data-mode="garage"] .game-hud {
-    padding-inline: 8px;
-  }
-  .game-dialog.is-touch[data-mode="garage"] .game-mobile-controls {
-    display: none;
-  }
-  .game-dialog.is-touch[data-mode="garage"] .game-overlay {
-    padding: 0;
   }
 }
 @media (min-width: 480px) and (max-height: 560px) and (min-aspect-ratio: 1/1) {
@@ -1396,15 +1348,6 @@ html {
     min-height: 44px;
     padding: 6px 12px;
   }
-}
-.game-dialog[data-mode="garage"] .game-hud,
-.game-dialog[data-mode="garage"] .desktop-game-help {
-  display: none;
-}
-
-.car-race-button {
-  white-space: nowrap;
-  flex-shrink: 0;
 }
 .car-selection-actions p {
   min-width: 0;

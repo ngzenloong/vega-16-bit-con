@@ -1,11 +1,19 @@
 "use client";
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import {
+  forwardRef,
+  memo,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { ALL_CARS, driverProfile } from "@/lib/games/cars";
 import { UNLOCK_WINS, type RaceProgress } from "@/lib/games/progression";
 import type { GameButton } from "@/lib/games/types";
 import { audio } from "@/lib/audio";
 import Icon from "./Icon";
 import { PointerIntent } from "@/lib/pointer-intent";
+import { updateHorizontalOverflow } from "@/lib/overflow";
 
 export type CarSelectionController = { press: (button: GameButton) => void };
 const CarSelection = forwardRef<
@@ -26,6 +34,32 @@ const CarSelection = forwardRef<
   const pointer = useRef(new PointerIntent());
   const grid = useRef<HTMLDivElement>(null);
   const start = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const element = grid.current!;
+    let width = 0,
+      height = 0;
+    const observer = new ResizeObserver(() => {
+      if (!element.clientWidth || !element.clientHeight) return;
+      if (element.clientWidth <= 1 || element.clientHeight <= 1) {
+        width = element.clientWidth;
+        height = element.clientHeight;
+        return;
+      }
+      // Preserve ordinary back/forward scroll; reframe selection only after resizing.
+      if (width !== element.clientWidth || height !== element.clientHeight) {
+        width = element.clientWidth;
+        height = element.clientHeight;
+        element.querySelector('[data-current="true"]')?.scrollIntoView({
+          block: "nearest",
+          inline: "nearest",
+          behavior: "instant",
+        });
+      }
+      updateHorizontalOverflow(element);
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
   const selected = ALL_CARS[cursor];
   const car = ALL_CARS[preview ?? cursor];
   const profile = driverProfile(car.id);
@@ -49,9 +83,11 @@ const CarSelection = forwardRef<
     else audio.effect("hurt");
   };
   const move = (direction: GameButton) => {
-    const columns = getComputedStyle(grid.current!).gridTemplateColumns.split(
-      " ",
-    ).length;
+    const layout = getComputedStyle(grid.current!);
+    const columns =
+      layout.display === "grid"
+        ? layout.gridTemplateColumns.split(" ").length
+        : 1;
     if (document.activeElement === start.current) {
       if (direction === "up") pick(cursor, true);
       return;
@@ -65,7 +101,12 @@ const CarSelection = forwardRef<
             ? -columns
             : columns;
     const next = cursor + offset;
-    if (next >= ALL_CARS.length && direction === "down" && unlocked)
+    if (
+      next >= ALL_CARS.length &&
+      direction === "down" &&
+      unlocked &&
+      start.current?.getClientRects().length
+    )
       start.current?.focus();
     else pick(Math.max(0, Math.min(ALL_CARS.length - 1, next)), true);
   };
@@ -178,6 +219,7 @@ const CarSelection = forwardRef<
         className="car-grid"
         role="radiogroup"
         aria-label="Cars"
+        onScroll={(event) => updateHorizontalOverflow(event.currentTarget)}
         onPointerLeave={() => setPreview(null)}
       >
         {ALL_CARS.map((entry, index) => {
@@ -241,7 +283,7 @@ const CarSelection = forwardRef<
         </p>
         <button
           ref={start}
-          className="car-race-button"
+          className="game-menu-button car-race-button"
           type="button"
           disabled={!unlocked}
           onClick={race}
@@ -252,4 +294,4 @@ const CarSelection = forwardRef<
     </div>
   );
 });
-export default CarSelection;
+export default memo(CarSelection);

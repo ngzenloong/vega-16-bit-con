@@ -280,9 +280,6 @@ html:has(.conversation-dialog[open]) {
       var(--screen-edge-right) - max(12px, env(safe-area-inset-right)) + 8px
     );
   }
-  .game-dialog.is-touch[data-mode="garage"] .game-screen {
-    margin-inline: 0;
-  }
 }
 @media (max-width: 700px) {
   .event-board .pixel-button {

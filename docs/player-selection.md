@@ -4,7 +4,7 @@ PLAYER SELECT is a full-screen game menu for choosing a character, entering loca
 
 ## Visual reuse
 
-[Shared tokens](../app/tokens.css) remain the source of truth. [Sam Circuit](../components/CarSelection.tsx) and its [venue styles](../app/venue.css) establish the menu treatment; [player-select.css](../app/player-select.css) supplies the scoped layout. The surface reuses the existing primary race button, accessory thumbnails, `Sprite`, and `Companion`.
+[Shared tokens](../app/tokens.css) remain the source of truth. [Sam Circuit](../components/CarSelection.tsx) and its [venue styles](../app/venue.css) establish the menu treatment; [player-select.css](../app/player-select.css) supplies the scoped layout. The surface reuses the shared game-menu button family, accessory thumbnails, `Sprite`, and `Companion`.
 
 | Token | Role in this surface |
 | --- | --- |
@@ -16,7 +16,10 @@ PLAYER SELECT is a full-screen game menu for choosing a character, entering loca
 | `--platform-face`, `--color-grey-dark` | Unselected tiles and the platform; dark grey also marks disabled actions |
 | `--cinema-keyline`, `--color-orange` | Secondary outlines and scrollbars; the shared primary button's pressed depth |
 | `--font-game`, `--font-body` | PP Mondwest for game headings, captions, and actions; Geist for labels, inputs, and status text |
+| `--game-action-type`, `--game-action-height`, `--game-action-padding` | Shared game action metrics for Back, Confirm, Save, game menus and the desktop race action |
 | `--space-*`, `--control-hit`, `--duration-fast` | Shared spacing, 44 px control targets, and the option background transition |
+
+Back and Confirm use the same font, line height, padding and control height. Two-action footers give them equal columns; primary and secondary variants differ in color and outline treatment.
 
 Selection has a yellow fill, inset ink border, and small triangle marker. Keyboard focus adds a separate paper outline. The platform uses the garage's clipped trapezoid and yellow lower edge. The success check has a short stepped entrance, disabled by reduced-motion preferences.
 

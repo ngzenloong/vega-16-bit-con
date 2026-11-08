@@ -224,6 +224,10 @@ export default function GameHost({
       setRound((n) => n + 1);
     }
   }, [id, clearInput, changeMode]);
+  const retry = useCallback(() => {
+    replay.current = false;
+    setRound((n) => n + 1);
+  }, []);
   const selectCar = useCallback((selected: string) => {
     const next = normalizeProgress({ ...progressRef.current, selected });
     if (next.selected !== selected) return;
@@ -549,7 +553,11 @@ export default function GameHost({
       if (current !== "playing") {
         if (!down) return;
         if (button === "secondary") {
-          exit();
+          if (current === "garage") {
+            audio.effect("click");
+            clearInput();
+            changeMode("intro");
+          } else exit();
           return;
         }
         if (current === "garage") {
@@ -558,7 +566,39 @@ export default function GameHost({
         }
         if (button === "action") {
           if (current === "intro" || current === "paused") void start();
-          else if (current === "result" || current === "error") restart();
+          else if (current === "result") restart();
+          else if (current === "error") retry();
+        } else if (button === "up" || button === "down") {
+          const content = dialog.current?.querySelector<HTMLElement>(
+            ".game-message-content",
+          );
+          content?.scrollBy({
+            top:
+              (button === "up" ? -1 : 1) *
+              Math.max(44, content.clientHeight * 0.4),
+            behavior: settings.current.reducedMotion ? "instant" : "smooth",
+          });
+          audio.effect("click");
+        } else if (
+          id === "beat" &&
+          (current === "intro" || current === "paused") &&
+          (button === "left" || button === "right")
+        ) {
+          const timing =
+            dialog.current?.querySelector<HTMLDetailsElement>(
+              ".timing-settings",
+            );
+          if (timing) {
+            timing.open = true;
+            setTimingOffset((value) =>
+              Math.max(
+                -150,
+                Math.min(150, value + (button === "left" ? -10 : 10)),
+              ),
+            );
+            timing.scrollIntoView({ block: "nearest" });
+            audio.effect("click");
+          }
         }
         return;
       }
@@ -603,7 +643,7 @@ export default function GameHost({
         controller.current?.press(button, readTime(stamp));
       }
     },
-    [id, pause, exit, start, restart, readTime],
+    [id, pause, exit, start, restart, retry, readTime, clearInput, changeMode],
   );
   useEffect(() => {
     const d = dialog.current!;
@@ -678,6 +718,11 @@ export default function GameHost({
       if (
         ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)
       ) {
+        if (settings.current.touch) {
+          e.preventDefault();
+          control(keyMap[e.code], true, e.code, e.timeStamp);
+          return;
+        }
         if (
           target?.closest(".game-message-content") &&
           [
@@ -712,7 +757,7 @@ export default function GameHost({
         if (e.repeat) return;
         if (current === "intro" || current === "paused") void start();
         else if (current === "result") restart();
-        else if (current === "error") setRound((n) => n + 1);
+        else if (current === "error") retry();
       }
     };
     const up = (e: KeyboardEvent) => {
@@ -756,7 +801,17 @@ export default function GameHost({
       window.removeEventListener("focus", resumeMenu);
       window.screen.orientation?.removeEventListener("change", pause);
     };
-  }, [id, control, exit, toggleSound, pause, restart, start, clearInput]);
+  }, [
+    id,
+    control,
+    exit,
+    toggleSound,
+    pause,
+    restart,
+    retry,
+    start,
+    clearInput,
+  ]);
 
   const isTouch = touch && !keyboardHelp;
   const menuHint =
@@ -768,15 +823,29 @@ export default function GameHost({
           ? "Enter Retry"
           : "Enter Start";
   const action =
+    mode === "loading" || mode === "starting"
+      ? "WAIT"
+      : mode === "garage"
+        ? "RACE"
+        : mode === "playing"
+          ? info.action
+          : mode === "paused"
+            ? "RESUME"
+            : mode === "result"
+              ? id === "kart"
+                ? "CARS"
+                : "REPLAY"
+              : mode === "error"
+                ? "RETRY"
+                : "START";
+  const secondary =
+    mode === "playing" ? info.secondary : mode === "garage" ? "BACK" : "HALL";
+  const menuStatus =
     mode === "garage"
-      ? "RACE"
-      : mode === "playing"
-        ? info.action
-        : mode === "paused"
-          ? "RESUME"
-          : mode === "result" || mode === "error"
-            ? "RETRY"
-            : "START";
+      ? "D-pad: choose · A Race · B Back"
+      : mode === "loading" || mode === "starting"
+        ? "Please wait · X returns to the hall"
+        : `A ${action.toLowerCase()} · B Hall · ↑ ↓ Read`;
   const lifeLabel =
     hud.lives === undefined
       ? hud.message
@@ -840,8 +909,12 @@ export default function GameHost({
                 : `${info.name}. ${info.controls}. Enter or P pauses. R restarts. Escape returns to the hall.`
             }
           />
-          {mode === "garage" && (
-            <div className="game-overlay car-selection-overlay">
+          {id === "kart" && (
+            <div
+              className="game-overlay car-selection-overlay"
+              hidden={mode !== "garage"}
+              inert={mode !== "garage"}
+            >
               <CarSelection
                 ref={garage}
                 progress={progress}
@@ -920,7 +993,9 @@ export default function GameHost({
                   )}
                   {id === "beat" && (mode === "intro" || mode === "paused") && (
                     <details className="timing-settings">
-                      <summary>Timing adjustment</summary>
+                      <summary>
+                        Timing adjustment{isTouch ? " · ← →" : ""}
+                      </summary>
                       <label>
                         Tap offset: {timingOffset} ms
                         <input
@@ -944,14 +1019,14 @@ export default function GameHost({
                 </div>
                 <div className="menu-actions button-row">
                   <button
-                    className={`pixel-button ${mode === "loading" || mode === "starting" ? "" : "primary"}`}
+                    className={`game-menu-button ${mode === "loading" || mode === "starting" ? "secondary" : ""}`}
                     onClick={
                       mode === "intro" || mode === "paused"
                         ? () => void start()
                         : mode === "result"
                           ? restart
                           : mode === "error"
-                            ? () => setRound((n) => n + 1)
+                            ? retry
                             : exit
                     }
                   >
@@ -971,7 +1046,10 @@ export default function GameHost({
                     )}
                   </button>
                   {["paused", "result", "error"].includes(mode) && (
-                    <button className="pixel-button" onClick={exit}>
+                    <button
+                      className="game-menu-button secondary"
+                      onClick={exit}
+                    >
                       Back to the hall
                     </button>
                   )}
@@ -985,36 +1063,38 @@ export default function GameHost({
             </div>
           )}
         </div>
-        {audioError && (
-          <div className="game-audio-status" role="status">
-            <span>{audioError}</span>
-            <button className="text-link" onClick={() => void toggleSound()}>
-              {sound ? "Mute sound" : "Retry sound"}
-            </button>
-          </div>
-        )}
         <footer className="game-hud" aria-live="off">
-          <span>
-            {mode === "garage"
-              ? "SAM CIRCUIT"
-              : `${hud.score.toLocaleString()} PTS`}
-          </span>
-          <span>{mode === "garage" ? `${progress.wins} WINS` : lifeLabel}</span>
-          <span>
-            {mode === "garage"
-              ? isTouch
-                ? "× Hall"
-                : "Esc Hall"
-              : `${hud.time}s`}
-          </span>
+          {audioError ? (
+            <div className="game-audio-status" role="status">
+              <span>{audioError}</span>
+              <button className="text-link" onClick={() => void toggleSound()}>
+                {sound ? "Mute sound" : "Retry sound"}
+              </button>
+            </div>
+          ) : touch && mode !== "playing" ? (
+            <span className="game-menu-status">{menuStatus}</span>
+          ) : (
+            <>
+              <span>
+                {mode === "garage"
+                  ? "SAM CIRCUIT"
+                  : `${hud.score.toLocaleString()} PTS`}
+              </span>
+              <span>
+                {mode === "garage" ? `${progress.wins} WINS` : lifeLabel}
+              </span>
+              <span>
+                {mode === "garage"
+                  ? isTouch
+                    ? "× Hall"
+                    : "Esc Hall"
+                  : `${hud.time}s`}
+              </span>
+            </>
+          )}
         </footer>
         <div className="game-mobile-controls">
-          <Controls
-            onPress={control}
-            action={action}
-            secondary={mode === "playing" ? info.secondary : "BACK"}
-            disabled={mode === "loading" || mode === "starting"}
-          />
+          <Controls onPress={control} action={action} secondary={secondary} />
         </div>
         <div className="desktop-game-help">
           <span className="input-feedback" aria-hidden="true">
