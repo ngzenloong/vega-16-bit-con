@@ -411,6 +411,28 @@ export function createWorld(
     // An old lift/machine trigger would pan back to that off-center target.
     floors[floor].focus({ preventScroll: true });
   }
+  function followReadingScroll() {
+    release();
+    const visible = visibleFloor();
+    if (visible < 0 || visible === floor) return;
+    const previous = current(),
+      screenX = previous.x - previous.camera,
+      velocity = previous.vx,
+      held = previous.held;
+    activate(visible);
+    const v = current(),
+      margin = Math.min(96, v.width / 4);
+    // Keep Sam visible and walking continuously as reading scroll changes floors.
+    v.camera = clamp(
+      v.x - clamp(screenX, margin, v.width - margin),
+      0,
+      Math.max(0, WORLD_WIDTH - v.width),
+    );
+    v.tracking = v.x - v.camera;
+    v.vx = velocity;
+    v.held = held;
+    render(0);
+  }
   function travelState(active: boolean, lift = false) {
     root.dataset.travelling = String(active && lift);
     root.dataset.navigating = String(active);
@@ -1183,7 +1205,7 @@ export function createWorld(
         const framing = frameScrollTarget !== null;
         if (framing && Math.abs(scrollY - frameScrollTarget!) < 1)
           frameScrollTarget = null;
-        if (!framing) release();
+        if (!framing) followReadingScroll();
         const visible = visibleFloor();
         reportViewedFloor(visible);
       }
@@ -1202,7 +1224,7 @@ export function createWorld(
         !paused.size &&
         !root.classList.contains("is-handheld")
       )
-        release();
+        followReadingScroll();
     },
     { signal },
   );

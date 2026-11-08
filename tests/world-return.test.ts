@@ -508,20 +508,29 @@ test("handheld reentry stops the pending page return before measuring its new fr
   assert.equal(scene.position(0).x, before);
 });
 
-test("reading another floor changes ambience but never transfers Sam", (t) => {
+test("reading scroll transfers the same Sam and the return continues on the newly visible floor", (t) => {
   const scene = fixture(t);
   scene.engine.goTo(0, 520, false);
-  scene.engine.goTo(1, 3100, false);
   scene.restorePage();
   scene.step(50);
-  const first = [scene.position(0).x, scene.position(1).x];
-  scene.scroll(0);
-  assert.equal(scene.engine.position().floor, 1);
-  assert.equal(scene.viewedFloors.at(-1), 0);
-  scene.step(50);
-  assert.equal(scene.position(0).x, first[0]);
-  assert.ok(scene.position(1).x < first[1]);
+  const first = scene.engine.position().x;
   scene.scroll(1000);
+  assert.equal(scene.engine.position().floor, 1);
+  assert.equal(scene.engine.position().x, first);
+  assert.equal(scene.viewedFloors.at(-1), 1);
+  assert.ok(
+    scene.position(1).x - scene.position(1).camera >= 60,
+    "Sam remains visible after the floor switch",
+  );
+  scene.step(50);
+  assert.equal(scene.position(0).x, Math.round(first));
+  assert.ok(scene.position(1).x > first);
+  const beforeSwitches = scene.engine.position().x;
+  for (const next of [0, 1, 0, 1, 0]) {
+    scene.scroll(next * 1000);
+    assert.equal(scene.engine.position().floor, next);
+    assert.equal(scene.engine.position().x, beforeSwitches);
+  }
   scene.step(480);
   scene.assertHome();
 });
@@ -682,9 +691,14 @@ test("a scrollbar interrupting automatic framing releases after the gesture ends
   const scene = fixture(t);
   scene.engine.goTo(0, 520, false);
   scene.engine.control(0);
-  scene.scroll(150);
+  scene.scroll(1000);
   scene.event("scrollend");
   assert.equal(scene.root.dataset.control, "ambient");
+  assert.equal(
+    scene.engine.position().floor,
+    1,
+    "reading scroll can take over from interrupted framing",
+  );
   scene.step(480);
   scene.assertHome();
 });
@@ -813,7 +827,6 @@ test("exiting at the lift holds its door while Sam starts the same-floor walk ho
 test("a page lift link to Sam's existing floor only brings that floor into view", (t) => {
   const scene = fixture(t);
   scene.engine.goTo(1, 2100, false);
-  scene.scroll(0);
   scene.engine.travel(1);
   assert.equal(scene.root.dataset.travelling, "false");
   scene.step(60);
@@ -832,4 +845,28 @@ test("a viewport-only resize updates the viewed floor without moving Sam or page
   assert.equal(scene.viewedFloors.at(-1), 0);
   assert.deepEqual(scene.engine.position(), before);
   assert.equal(scene.currentScroll(), 800);
+});
+
+test("engine-owned framing does not switch Sam floors, but subsequent reading scroll does", (t) => {
+  const scene = fixture(t);
+  scene.engine.goTo(1, 520, false);
+  scene.engine.control(1);
+  scene.scroll(300);
+  assert.equal(
+    scene.engine.position().floor,
+    1,
+    "intermediate framing remains owned by Sam's destination",
+  );
+  scene.scroll(1276);
+  scene.event("scrollend");
+  assert.equal(scene.engine.position().floor, 1);
+  scene.scroll(0);
+  assert.equal(
+    scene.engine.position().floor,
+    0,
+    "new user scroll resumes automatic floor following",
+  );
+  assert.equal(scene.engine.position().x, 520);
+  scene.step(480);
+  scene.assertHome();
 });
