@@ -329,6 +329,10 @@ test("keyboard activation and an already-open pointer menu focus the intended it
   const menu = header(t);
   menu.clickTrigger(0);
   assert.equal(menu.page.activeElement, menu.items[0]);
+  menu.clickTrigger(0);
+  assert.equal(menu.open(), false);
+  assert.equal(menu.page.activeElement, menu.trigger);
+  menu.clickTrigger(0);
   assert.equal(menu.escape(), true);
   assert.equal(menu.page.activeElement, menu.trigger);
   menu.clickTrigger();

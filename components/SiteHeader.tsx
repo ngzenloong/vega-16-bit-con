@@ -143,8 +143,7 @@ export default function SiteHeader({
           aria-controls="convention-menu"
           onClick={(event) => {
             initialItem.current = event.detail === 0 ? 0 : null;
-            if (event.detail !== 0)
-              trigger.current?.focus({ preventScroll: true });
+            trigger.current?.focus({ preventScroll: true });
             setOpen((value) => !value);
           }}
           onKeyDown={(event) => {
