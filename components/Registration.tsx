@@ -498,7 +498,7 @@ export default function Registration({
           {step === "details" ? (
             <button
               type="button"
-              className="pixel-button"
+              className="game-menu-button secondary"
               disabled={saving}
               onClick={() => changeStep("look")}
             >
@@ -507,7 +507,7 @@ export default function Registration({
           ) : step === "look" && registered ? (
             <button
               type="button"
-              className="text-link"
+              className="game-menu-button secondary"
               onClick={() => changeStep("details")}
             >
               Edit details
@@ -529,7 +529,7 @@ export default function Registration({
             </span>
           )}
           <button
-            className="car-race-button register-submit"
+            className="game-menu-button register-submit"
             disabled={pending || saving}
             aria-busy={step === "confirmed" && saving}
             type="submit"
@@ -547,8 +547,8 @@ export default function Registration({
                       ? "Save look"
                       : "Continue"
                     : registered
-                      ? "Save player"
-                      : "Confirm my player"}
+                      ? "Save"
+                      : "Confirm"}
             </span>
           </button>
         </footer>

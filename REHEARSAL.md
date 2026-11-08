@@ -46,3 +46,15 @@ The latest player-selection follow-up adds eight arrival lifecycle tests. Escape
 Chromium touch emulation does not prove that the native iOS magnifier is suppressed on a physical phone. The WebKit-specific gesture guard is implemented and scoped to the game pad; actual Safari/software-keyboard, hardware multitouch and complete VoiceOver checks remain unverified. No formal GPU/heap benchmark or acoustic latency measurement was performed. Sound remained muted during this round's visual tests.
 
 Stageshow's Stage/Act film gate does not run this live application. Its framing and motion criteria were reviewed against actual UI captures; no film-gate pass is claimed. Earlier targeted contrast checks are preserved, but this is not a complete WCAG certification. Local demo profiles remain specific to each site origin.
+
+## Handheld controller follow-up
+
+The follow-up after PR 2 retains 86 passing tests and adds source-harness and Ego interaction evidence in `audit-2026-11-06/handheld-round-6`. The location sign and beam share a center anchor; seven measured page/form sizes have zero center delta and identical Back/Confirm font, padding, height and width.
+
+Mobile game menus hide duplicated screen CTAs and retain the controller. The 393×660 racing frame stays 369×375 through intro, garage, play, pause and resume. Native touch checks cover breaker, runner and rhythm start/pause/resume/return; rhythm timing changes by 10 ms through the D-pad, and a connected keyboard scrolls the touch menu. Garage B/A retains selection and the same component; rotation and compact-mode return reveal the selected car.
+
+A blocked music request and successful retry during racing leave the landscape frame at 240×220. The notice and recovery action stay between the side controls. Network blocking was removed and sound returned to muted. A high-level browser selector operation briefly hid the page during an early test, correctly triggering auto-pause; native browser touch events were used for the final gameplay transitions, and application visibility safeguards remain intact.
+
+The shared menu-action family also serves desktop game actions and the player editor. The new responsive check covers eight handheld sizes plus a separate desktop garage, and the independent visual review closes the tablet spacing and landscape-label findings. Physical iOS and other limits above still apply.
+
+Focus recovery now skips hidden, inert, disabled and non-rendered controls, including the retained garage and the hidden mobile Hall button. Regression assertions cover the first lost-focus Tab, reverse Tab and remembered inactive-menu focus. The suite remains at 86 tests.

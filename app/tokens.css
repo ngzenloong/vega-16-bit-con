@@ -72,6 +72,9 @@
   --space-12: 48px;
   --control-hit: 44px;
   --control-hit-desktop: 40px;
+  --game-action-height: 48px;
+  --game-action-type: 20px;
+  --game-action-padding: 8px 16px;
   --duration-fast: 120ms;
   --duration-panel: 200ms;
   --duration-camera: 600ms;

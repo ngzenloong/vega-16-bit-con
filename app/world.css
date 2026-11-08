@@ -1,6 +1,8 @@
 /* Scene geometry uses one 2x pixel scale. Buildings are opaque depth layers. */
 .world-stage {
   position: relative;
+  --roof-top: 18px;
+  --roof-height: 52px;
   --camera-x: max(0px, calc(var(--world-center, 1800px) - 50vw));
   --floor-height: clamp(760px, calc(100svh - 76px), 920px);
 }
@@ -129,8 +131,8 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 18px;
-  height: 52px;
+  top: var(--roof-top);
+  height: var(--roof-height);
   border-block: 4px solid var(--roof-edge);
   background-color: var(--roof-face);
   background-image:
@@ -151,8 +153,8 @@
 .venue-sign {
   position: absolute;
   left: var(--world-center, 1800px);
-  top: 30px;
-  transform: translateX(-50%);
+  top: calc(var(--roof-top) + var(--roof-height) / 2);
+  transform: translate(-50%, -50%);
   z-index: 2;
   padding: 5px var(--space-4);
   background: var(--paper);
@@ -854,18 +856,17 @@
 }
 @media (max-width: 700px) {
   .world-stage {
+    --roof-top: 14px;
+    --roof-height: 44px;
     --floor-height: clamp(710px, calc(100svh - 68px), 800px);
   }
   .steel-roof {
-    top: 14px;
-    height: 44px;
     background-size: 160px 36px;
   }
   .glass-wall {
     top: 56px;
   }
   .venue-sign {
-    top: 23px;
     font-size: 10px;
     padding: 6px 10px;
   }

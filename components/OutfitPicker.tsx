@@ -4,6 +4,7 @@ import type { Appearance, OutfitPart } from "@/lib/types";
 import { OUTFIT_LABELS, OUTFIT_OPTIONS } from "@/lib/appearance";
 import { outfitThumbnail } from "@/lib/outfit-thumbnail";
 import { audio } from "@/lib/audio";
+import { updateHorizontalOverflow as updateOverflow } from "@/lib/overflow";
 
 const rows: OutfitPart[] = [
   "shirt",
@@ -15,15 +16,6 @@ const rows: OutfitPart[] = [
   "item",
   "companion",
 ];
-function updateOverflow(strip: HTMLDivElement) {
-  const style = getComputedStyle(strip);
-  const startInset = parseFloat(style.paddingLeft) || 0;
-  const endInset = parseFloat(style.paddingRight) || 0;
-  strip.dataset.overflowStart = String(strip.scrollLeft > startInset + 2);
-  strip.dataset.overflowEnd = String(
-    strip.scrollWidth - strip.clientWidth - strip.scrollLeft > endInset + 2,
-  );
-}
 export default function OutfitPicker({
   value,
   onChange,

@@ -160,11 +160,8 @@ p {
 .is-handheld .hall-controls {
   display: none;
 }
-.is-handheld .venue-sign {
-  top: 14px;
-}
-.is-handheld .steel-roof {
-  top: 0;
+.is-handheld .main-hall {
+  --roof-top: 0px;
 }
 .is-handheld .service-wall {
   top: 20px;
@@ -735,4 +732,47 @@ p {
 }
 .game-dialog.is-touch .game-message .game-menu-hint {
   font: 12px/1.6 var(--font-mono);
+}
+
+/* One game-menu action family; color is the only primary/secondary distinction. */
+.game-menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: var(--game-action-height);
+  padding: var(--game-action-padding);
+  border: 1px solid transparent;
+  background: var(--yellow);
+  color: var(--ink);
+  box-shadow: 0 4px 0 var(--color-orange);
+  font: var(--game-action-type) / 1.15 var(--font-game);
+  cursor: pointer;
+}
+.game-menu-button kbd {
+  font: inherit;
+}
+.game-menu-button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--color-orange);
+}
+.game-menu-button:disabled {
+  background: var(--color-grey-dark);
+  color: var(--color-grey);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.game-menu-button:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 4px;
+}
+.game-menu-button {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.game-menu-button.secondary {
+  color: var(--paper);
+  background: var(--color-grey-dark);
+  border-color: var(--cinema-keyline);
+  box-shadow: 0 4px 0 var(--color-outline);
 }
