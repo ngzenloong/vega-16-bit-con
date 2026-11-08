@@ -453,8 +453,12 @@
   background-position: 0 0;
   transition: background-position 0.32s steps(7);
 }
-.world-lift.is-near:not([data-arrived="true"]) .sprite {
-  background-position: -1274px 0;
+.world-lift.is-near .sprite,
+.world-lift[data-arrived="true"] .sprite {
+  background-position: var(--sprite-end) 0;
+}
+.world-lift[data-arrived="true"] .sprite {
+  transition: none;
 }
 .npc {
   position: absolute;

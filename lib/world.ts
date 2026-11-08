@@ -29,6 +29,7 @@ export type WorldController = {
   travel: (floor: number) => void;
   cancelTravel: () => void;
   release: () => void;
+  restorePage: () => void;
   focus: () => void;
   refresh: () => void;
   destroy: () => void;
@@ -106,7 +107,7 @@ export function createWorld(
   onTarget: (target: WorldTarget) => void,
   announce: (text: string) => void,
   onSceneTap: (floor: number) => void = () => {},
-  onFloorChange: (floor: number) => void = () => {},
+  onViewFloorChange: (floor: number) => void = () => {},
 ): WorldController {
   const floors = [...root.querySelectorAll<HTMLElement>("[data-floor]")];
   const inners = floors.map(
@@ -115,6 +116,7 @@ export function createWorld(
   const players = floors.map(
     (f) => f.querySelector<HTMLElement>("[data-player]")!,
   );
+  const lifts = floors.map((f) => f.querySelector<HTMLElement>(".world-lift")!);
   const dust = inners.map((inner) =>
     createFootDust(inner.querySelector<HTMLElement>("[data-dust-layer]")!),
   );
@@ -237,14 +239,17 @@ export function createWorld(
     },
   );
   let floor = 0,
+    viewedFloor = 0,
     manual = false,
+    returningToPage = false,
     raf = 0,
     last = 0,
     accumulator = 0,
-    near = "",
     dropUntil = 0,
     coyote = 0,
     jumpBuffer = 0;
+  let frameScrollTarget: number | null = null,
+    near: string | null = null;
   let ambientPaused = reduced.matches,
     destroyed = false,
     pointerFocusUntil = 0,
@@ -255,6 +260,11 @@ export function createWorld(
     oldScrollBehavior = "";
   let navigationStep: ((now: number) => void) | null = null;
   const current = () => views[floor];
+  function reportViewedFloor(index: number) {
+    if (index < 0 || index === viewedFloor) return;
+    viewedFloor = index;
+    onViewFloorChange(index);
+  }
   const setStyle = (el: HTMLElement, key: string, value: string) => {
     if (el.style.getPropertyValue(key) !== value)
       el.style.setProperty(key, value);
@@ -306,15 +316,22 @@ export function createWorld(
     if (force || actor.top < 8 || actor.bottom > innerHeight - 64) {
       const floorBottom =
         scrollY + floors[floor].getBoundingClientRect().bottom;
-      window.scrollTo({
-        top: floorFrameScroll(
-          floorBottom,
-          innerHeight,
-          document.documentElement.scrollHeight - innerHeight,
-        ),
-        behavior: reduced.matches ? "instant" : "smooth",
-      });
+      const top = floorFrameScroll(
+        floorBottom,
+        innerHeight,
+        document.documentElement.scrollHeight - innerHeight,
+      );
+      if (Math.abs(top - scrollY) < 1) return;
+      scrollFrame(top, reduced.matches ? "instant" : "smooth");
     }
+  }
+  function scrollFrame(top: number, behavior: ScrollBehavior) {
+    const before = scrollY;
+    if (behavior === "smooth") frameScrollTarget = top;
+    window.scrollTo({ top, behavior });
+    // Instant navigation can end with subpixel updates, each emitting scroll.
+    if (behavior !== "smooth" && scrollY !== before)
+      frameScrollTarget = scrollY;
   }
   function clearHeld() {
     input.clear();
@@ -326,11 +343,95 @@ export function createWorld(
     jumpBuffer = 0;
   }
   function release() {
+    frameScrollTarget = null;
+    const returnHome = !root.classList.contains("is-handheld");
     finishSnack(false);
-    clearHeld();
+    if (returnHome) cancelTravel();
+    // Repeated wheel events must not restart a walk that is already returning.
+    if (returningToPage) input.clear();
+    else clearHeld();
+    coyote = 0;
+    jumpBuffer = 0;
+    dropUntil = 0;
     manual = false;
     root.dataset.control = "ambient";
+    if (returnHome) startPageReturn();
     schedule();
+  }
+  function stopPageReturn() {
+    if (!returningToPage) return;
+    returningToPage = false;
+    for (const v of views) {
+      v.vx = 0;
+      v.held = 0;
+      v.tracking = v.x - v.camera;
+    }
+  }
+  function startPageReturn() {
+    if (returningToPage) return;
+    suppressHover();
+    accumulator = 0;
+    last = 0;
+    returningToPage = true;
+    for (const v of views) {
+      v.vx = 0;
+      v.held = 0;
+      v.lookahead = 0;
+    }
+    if (reduced.matches) settlePageReturn();
+    render(0);
+    schedule();
+  }
+  function settlePageReturn() {
+    const v = current();
+    v.x = SCENE.booth;
+    v.y = geometry[floor].ground;
+    v.vx = 0;
+    v.vy = 0;
+    v.grounded = true;
+    v.support = null;
+    views.forEach((view, i) => {
+      view.camera = pageCamera(i);
+    });
+    stopPageReturn();
+  }
+  function pageCamera(index: number) {
+    return clamp(
+      SCENE.booth - views[index].width / 2,
+      0,
+      Math.max(0, WORLD_WIDTH - views[index].width),
+    );
+  }
+  function restorePage() {
+    release();
+    measure();
+    // The player owns the exit floor; the page must follow it, not the entry scroll.
+    scrollFrame(destinationScroll(floor, true), "instant");
+    reportViewedFloor(floor);
+    // An old lift/machine trigger would pan back to that off-center target.
+    floors[floor].focus({ preventScroll: true });
+  }
+  function followReadingScroll() {
+    release();
+    const visible = visibleFloor();
+    if (visible < 0 || visible === floor) return;
+    const previous = current(),
+      screenX = previous.x - previous.camera,
+      velocity = previous.vx,
+      held = previous.held;
+    activate(visible);
+    const v = current(),
+      margin = Math.min(96, v.width / 4);
+    // Keep Sam visible and walking continuously as reading scroll changes floors.
+    v.camera = clamp(
+      v.x - clamp(screenX, margin, v.width - margin),
+      0,
+      Math.max(0, WORLD_WIDTH - v.width),
+    );
+    v.tracking = v.x - v.camera;
+    v.vx = velocity;
+    v.held = held;
+    render(0);
   }
   function travelState(active: boolean, lift = false) {
     root.dataset.travelling = String(active && lift);
@@ -342,6 +443,7 @@ export function createWorld(
   }
   function cancelTravel() {
     if (!flight) return;
+    frameScrollTarget = null;
     flight = null;
     navId++;
     cancelAnimationFrame(navFrame);
@@ -350,7 +452,7 @@ export function createWorld(
     paused.delete("navigation");
     document.documentElement.style.scrollBehavior = oldScrollBehavior;
     travelState(false);
-    if (!destroyed) onFloorChange(floor);
+    if (!destroyed) reportViewedFloor(floor);
     current().tracking = current().x - current().camera;
     last = 0;
     schedule();
@@ -376,6 +478,7 @@ export function createWorld(
   }
   let measuredViewportHeight = innerHeight;
   function measure() {
+    if (root.classList.contains("is-handheld")) stopPageReturn();
     const viewportHeightChanged = measuredViewportHeight !== innerHeight;
     measuredViewportHeight = innerHeight;
     // Keep the stacked agenda clear of the ground-level furnishings as its text reflows.
@@ -487,29 +590,37 @@ export function createWorld(
       root.dataset.conversation !== "true"
     )
       framePlayer(true);
+    if (!root.classList.contains("is-handheld") && !flight)
+      reportViewedFloor(visibleFloor());
     schedule();
   }
   function activate(index: number, px?: number, notify = true) {
-    clearHeld();
+    const previous = current(),
+      previousFloor = floor;
+    if (returningToPage) input.clear();
+    else clearHeld();
     floor = clamp(index, 0, floors.length - 1);
-    if (notify) onFloorChange(floor);
+    if (notify) reportViewedFloor(floor);
     const v = current();
+    const placePlayer = px !== undefined || floor !== previousFloor;
     floors.forEach((el, i) => (el.dataset.current = String(i === floor)));
-    if (px !== undefined) {
-      v.x = clamp(px, 40, WORLD_WIDTH - 40);
+    if (placePlayer) {
+      // Each floor has a render surface, but there is only one travelling Sam.
+      v.x = clamp(px ?? previous.x, 40, WORLD_WIDTH - 40);
+      v.facing = previous.facing;
       v.support = null;
       v.grounded = true;
       v.vx = 0;
       v.vy = 0;
     }
     measure();
-    if (px !== undefined) v.y = geometry[floor].ground;
-    if (px !== undefined) {
+    if (placePlayer) v.y = geometry[floor].ground;
+    if (placePlayer) {
       v.petX = v.x - v.facing * 82;
       v.petY = v.y;
     }
     v.tracking = v.x - v.camera;
-    near = "";
+    near = null;
     render(0);
   }
   function destinationScroll(index: number, lift = false) {
@@ -536,6 +647,8 @@ export function createWorld(
     onArrive?: () => void,
   ) {
     finishSnack(false);
+    stopPageReturn();
+    frameScrollTarget = null;
     suppressHover();
     if (lift && flight) return players[floor];
     const previousFloor = floor;
@@ -548,9 +661,7 @@ export function createWorld(
       !lift;
     cancelTravel();
     activate(index, movePlayer ? px : undefined, false);
-    if (lift)
-      floors[floor].querySelector<HTMLElement>(".world-lift")!.dataset.arrived =
-        "true";
+    if (lift) lifts[floor].dataset.arrived = "true";
     const v = current(),
       toCamera = clamp(
         px - floors[floor].clientWidth / 2,
@@ -565,15 +676,12 @@ export function createWorld(
       if (scrollPage) {
         const before = document.documentElement.style.scrollBehavior;
         document.documentElement.style.scrollBehavior = "auto";
-        window.scrollTo({
-          top: destinationScroll(floor, frameActor),
-          behavior: "auto",
-        });
+        scrollFrame(destinationScroll(floor, frameActor), "auto");
         document.documentElement.style.scrollBehavior = before;
       }
       render(0);
       focus();
-      onFloorChange(floor);
+      reportViewedFloor(floor);
       onArrive?.();
       return players[floor];
     }
@@ -627,12 +735,12 @@ export function createWorld(
         view.x = active.fromX + (active.toX - active.fromX) * progress;
         view.facing = active.toX >= active.fromX ? 1 : -1;
       }
-      if (active.scroll)
-        window.scrollTo({
-          top:
-            active.fromScroll + (active.toScroll - active.fromScroll) * amount,
-          behavior: "auto",
-        });
+      if (active.scroll) {
+        scrollFrame(
+          active.fromScroll + (active.toScroll - active.fromScroll) * amount,
+          "auto",
+        );
+      }
       render(Math.min(0.05, (now - previousFrame) / 1000));
       previousFrame = now;
       if (progress < 1) navFrame = requestAnimationFrame(advance);
@@ -646,7 +754,7 @@ export function createWorld(
         last = 0;
         focus();
         schedule();
-        onFloorChange(active.floor);
+        reportViewedFloor(active.floor);
         active.onArrive?.();
       }
     };
@@ -689,20 +797,22 @@ export function createWorld(
   }
   function interact(target: WorldTarget) {
     if (paused.size || flight) return;
+    stopPageReturn();
     if (snack.active) {
       if (target.kind === "food") return;
       finishSnack(false);
-    }
-    if (target.kind !== "npc" && target.kind !== "food") {
-      onTarget(target);
-      return;
     }
     const index = Number(
       target.element.closest<HTMLElement>("[data-floor]")?.dataset.floor || 0,
     );
     const x = targetX(target.element);
+    if (target.kind !== "npc" && target.kind !== "food") {
+      if (index !== floor) activate(index, x);
+      onTarget(target);
+      return;
+    }
     const distance = target.kind === "food" ? 100 : 72;
-    const side = target.kind === "food" ? 1 : views[index].x < x ? -1 : 1;
+    const side = target.kind === "food" ? 1 : current().x < x ? -1 : 1;
     if (index === floor && Math.abs(current().x - x) <= distance + 20) {
       clearHeld();
       onTarget(target);
@@ -749,6 +859,10 @@ export function createWorld(
   }
   function travel(index: number) {
     if (flight || paused.size) return;
+    if (index === floor) {
+      navigate(index, current().x, true, false, false);
+      return;
+    }
     audio.effect("start");
     navigate(index, SCENE.lift, true, true);
   }
@@ -762,6 +876,7 @@ export function createWorld(
     }
   }
   function begin() {
+    stopPageReturn();
     if (!manual) {
       manual = true;
       const screenX = current().x - current().camera;
@@ -1005,6 +1120,7 @@ export function createWorld(
       if (!inner) return;
       const index = inners.indexOf(inner),
         r = el.getBoundingClientRect();
+      stopPageReturn();
       if (
         index >= 0 &&
         (index !== floor ||
@@ -1017,9 +1133,9 @@ export function createWorld(
           px = el.dataset.x
             ? Number(el.dataset.x)
             : r.left - base.left + r.width / 2;
-        // Keyboard focus is a deliberate target, unlike ordinary reading scroll.
-        activate(index);
-        const v = current();
+        // Inspecting a control changes the view, not Sam's physical floor.
+        reportViewedFloor(index);
+        const v = views[index];
         v.camera = clamp(
           px - floors[index].clientWidth / 2,
           0,
@@ -1027,7 +1143,9 @@ export function createWorld(
         );
         v.tracking = v.x - v.camera;
         render(0);
+        const beforeScroll = scrollY;
         el.scrollIntoView({ behavior: "instant", block: "nearest" });
+        if (scrollY !== beforeScroll) frameScrollTarget = scrollY;
       }
     },
     { signal },
@@ -1076,8 +1194,7 @@ export function createWorld(
     "wheel",
     () => {
       if (root.classList.contains("is-handheld")) return;
-      cancelTravel();
-      if (!paused.size) release();
+      if (!paused.size || paused.has("navigation")) release();
     },
     { signal, passive: true },
   );
@@ -1085,24 +1202,51 @@ export function createWorld(
     "scroll",
     () => {
       if (!paused.size && !flight && !root.classList.contains("is-handheld")) {
+        const framing = frameScrollTarget !== null;
+        if (framing && Math.abs(scrollY - frameScrollTarget!) < 1)
+          frameScrollTarget = null;
+        if (!framing) followReadingScroll();
         const visible = visibleFloor();
-        if (visible >= 0 && visible !== floor) {
-          release();
-          activate(visible);
-        }
+        reportViewedFloor(visible);
       }
       schedule();
     },
     { signal, passive: true },
   );
   window.addEventListener(
+    "scrollend",
+    () => {
+      if (frameScrollTarget === null) return;
+      const interrupted = Math.abs(scrollY - frameScrollTarget) >= 1;
+      frameScrollTarget = null;
+      if (
+        interrupted &&
+        !paused.size &&
+        !root.classList.contains("is-handheld")
+      )
+        followReadingScroll();
+    },
+    { signal },
+  );
+  window.addEventListener(
     "touchmove",
     () => {
-      if (!paused.size && !root.classList.contains("is-handheld")) release();
+      if (
+        !root.classList.contains("is-handheld") &&
+        (!paused.size || paused.has("navigation"))
+      )
+        release();
     },
     { signal, passive: true },
   );
   const resize = new ResizeObserver(measure);
+  window.addEventListener(
+    "resize",
+    () => {
+      if (measuredViewportHeight !== innerHeight) measure();
+    },
+    { signal },
+  );
   floors.forEach((f) => resize.observe(f));
   const agenda = root.querySelector<HTMLElement>(".schedule-board");
   if (agenda) resize.observe(agenda);
@@ -1120,16 +1264,28 @@ export function createWorld(
   floors.forEach((f) => intersection.observe(f));
   function physics(dt: number, now: number) {
     const v = current();
-    const direction = manual ? input.horizontal() : 0,
-      speed = SCENE.walkSpeed;
+    const controlled = manual && !returningToPage;
+    const direction = returningToPage
+        ? Math.sign(SCENE.booth - v.x)
+        : controlled
+          ? input.horizontal()
+          : 0,
+      speed = SCENE.walkSpeed * (returningToPage ? 0.7 : 1);
     const motion = advanceWalk(v.vx, v.held, direction, dt, speed);
     v.vx = motion.velocity;
     v.held = motion.held;
     if (direction) v.facing = direction;
-    v.x = clamp(v.x + v.vx * dt, 35, WORLD_WIDTH - 35);
-    coyote = v.grounded ? 0.1 : Math.max(0, coyote - dt);
-    jumpBuffer = Math.max(0, jumpBuffer - dt);
-    if (jumpBuffer > 0 && coyote > 0) {
+    const step = v.vx * dt;
+    if (returningToPage && Math.abs(step) >= Math.abs(SCENE.booth - v.x)) {
+      v.x = SCENE.booth;
+      v.vx = 0;
+      v.held = 0;
+    } else v.x = clamp(v.x + step, 35, WORLD_WIDTH - 35);
+    if (controlled) {
+      coyote = v.grounded ? 0.1 : Math.max(0, coyote - dt);
+      jumpBuffer = Math.max(0, jumpBuffer - dt);
+    }
+    if (controlled && jumpBuffer > 0 && coyote > 0) {
       const headroom = Math.max(
         24,
         Math.min(200, v.y - geometry[floor].ceiling),
@@ -1145,7 +1301,7 @@ export function createWorld(
     v.vy += 3000 * dt;
     v.y += v.vy * dt;
     const surfaces =
-      now < dropUntil
+      returningToPage || (controlled && now < dropUntil)
         ? geometry[floor].surfaces.filter((s) => s.node === null)
         : geometry[floor].surfaces;
     const surface =
@@ -1217,7 +1373,7 @@ export function createWorld(
           sprite.player &&
           (sprite.pose === "run" ||
             (sprite.companion && sprite.owner?.dataset.pose === "run")) &&
-          ((manual && !paused.size && i === floor) ||
+          (((manual || returningToPage) && !paused.size && i === floor) ||
             (flight?.walk && flight.floor === i));
         if (reduced.matches) sprite.clock.reset();
         const frame = sprite.clock.advance(
@@ -1263,7 +1419,26 @@ export function createWorld(
   function render(dt: number) {
     const v = current(),
       width = floors[floor].clientWidth || innerWidth;
-    if (manual && !flight) {
+    if (returningToPage && !root.classList.contains("is-handheld")) {
+      for (let i = 0; i < views.length; i++) {
+        const view = views[i],
+          target = pageCamera(i);
+        const next =
+          view.camera + (target - view.camera) * (1 - Math.exp(-5 * dt));
+        const margin = Math.min(96, view.width / 4);
+        // Return the information into view without leaving the walking actor behind.
+        view.camera =
+          i !== floor
+            ? next
+            : target > view.camera
+              ? Math.min(next, Math.max(view.camera, view.x - margin))
+              : Math.max(
+                  next,
+                  Math.min(view.camera, view.x - view.width + margin),
+                );
+        if (Math.abs(target - view.camera) < 0.5) view.camera = target;
+      }
+    } else if (manual && !flight) {
       const ahead =
         Math.abs(v.vx) > 60 ? Math.sign(v.vx) * Math.min(80, width * 0.12) : 0;
       v.lookahead += (ahead - v.lookahead) * (1 - Math.exp(-5 * dt));
@@ -1388,13 +1563,21 @@ export function createWorld(
       if (i !== floor) prompts[i].hidden = true;
     }
     renderSpriteFrames();
-    const lift = targets[floor].find((node) => node.dataset.kind === "lift");
-    if (lift?.dataset.arrived && Math.abs(v.x - Number(lift.dataset.x)) > 190)
-      delete lift.dataset.arrived;
+    lifts.forEach((lift, i) => {
+      if (
+        lift.dataset.arrived &&
+        (i !== floor || Math.abs(v.x - SCENE.lift) > 190)
+      )
+        delete lift.dataset.arrived;
+    });
     const target = nearest(),
       prompt = prompts[floor],
       id = target?.id || "";
-    prompt.hidden = (!manual && target?.kind !== "lift") || !target || !!flight;
+    prompt.hidden =
+      returningToPage ||
+      (!manual && target?.kind !== "lift") ||
+      !target ||
+      !!flight;
     prompt.dataset.kind = target?.kind || "";
     if (target) {
       const head =
@@ -1454,6 +1637,8 @@ export function createWorld(
   }
   function tick(now: number) {
     raf = 0;
+    if (root.classList.contains("is-handheld")) stopPageReturn();
+    if (returningToPage && reduced.matches) settlePageReturn();
     const elapsed = last ? Math.min((now - last) / 1000, 0.15) : 0;
     last = now;
     const visible = visibleFloor(),
@@ -1470,7 +1655,9 @@ export function createWorld(
           audio.effect("bite");
         if (completed) finishSnack(true);
       }
-      if (visible === floor) {
+      const pageReturn =
+        returningToPage && !root.classList.contains("is-handheld");
+      if (visible === floor || pageReturn) {
         accumulator = Math.min(accumulator + elapsed, 0.15);
         while (accumulator >= 1 / 60) {
           physics(1 / 60, now);
@@ -1479,8 +1666,17 @@ export function createWorld(
       } else accumulator = 0;
       updateWalkers(elapsed);
       render(elapsed);
+      if (
+        returningToPage &&
+        v.x === SCENE.booth &&
+        v.grounded &&
+        v.support === null &&
+        views.every((view, i) => view.camera === pageCamera(i))
+      )
+        stopPageReturn();
     } else {
       accumulator = 0;
+      last = 0;
       floors.forEach((el) => (el.dataset.live = "false"));
       renderSpriteFrames();
     }
@@ -1488,7 +1684,9 @@ export function createWorld(
       !document.hidden &&
       !paused.size &&
       visible >= 0 &&
-      (snack.active ||
+      (returningToPage ||
+        jumpBuffer > 0 ||
+        snack.active ||
         dust[floor].active ||
         (manual &&
           !reduced.matches &&
@@ -1533,9 +1731,9 @@ export function createWorld(
     goTo: (index, px, scroll) => navigate(index, px, scroll),
     interact,
     eat,
-    reveal: (index, px) => navigate(index, px ?? views[index].x, true),
+    reveal: (index, px) => navigate(index, px ?? current().x, true),
     reframe: (index, px) =>
-      navigate(index, px ?? views[index].x, true, false, false),
+      navigate(index, px ?? current().x, true, false, false),
     control: (index) => {
       if (paused.size) return;
       if (floor !== index) activate(index);
@@ -1548,6 +1746,7 @@ export function createWorld(
     travel,
     cancelTravel,
     release,
+    restorePage,
     focus,
     refresh: measure,
     position: () => ({ floor, x: current().x }),

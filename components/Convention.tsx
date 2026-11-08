@@ -1,5 +1,11 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import type { GameId, GameResult, Player, Scores } from "@/lib/types";
 import { DEFAULT_APPEARANCE, SESSIONS } from "@/lib/types";
 import type { WorldController, WorldTarget } from "@/lib/world";
@@ -54,7 +60,7 @@ export default function Convention() {
     [footerVisible, setFooterVisible] = useState(false),
     [hintObscured, setHintObscured] = useState(false);
   const handheldEntry = useRef<AbortController | null>(null),
-    handheldTrigger = useRef<HTMLElement | null>(null),
+    handheldExit = useRef(false),
     entryHint = useRef<HTMLButtonElement>(null);
   const [announcement, setAnnouncement] = useState({ text: "", id: 0 });
   const world = useRef<WorldController>(null),
@@ -70,15 +76,14 @@ export default function Convention() {
   ambienceRef.current = ambientPaused;
   const desiredSound = useRef(false),
     soundIntent = useRef(0),
-    handheldScroll = useRef(0),
     handoff = useRef(0),
     frames = useRef<number[]>([]),
     entrance = useRef<AbortController | null>(null);
-  const [activeFloor, setActiveFloor] = useState(0);
-  const floorRef = useRef(0);
-  const floorChanged = useCallback((floor: number) => {
-    floorRef.current = floor;
-    setActiveFloor(floor);
+  const [viewedFloor, setViewedFloor] = useState(0);
+  const viewedFloorRef = useRef(0);
+  const floorViewed = useCallback((floor: number) => {
+    viewedFloorRef.current = floor;
+    setViewedFloor(floor);
   }, []);
   const previousScores = useRef<Scores>({});
   const announce = useCallback(
@@ -152,23 +157,21 @@ export default function Convention() {
   );
   const exitHandheld = useCallback(() => {
     cancelHandheldEntry();
+    // Stop travel and held controls before switching back to page geometry.
+    world.current?.cancelTravel();
+    world.current?.release();
+    handheldExit.current = handheldRef.current;
     handheldRef.current = false;
     setHandheld(false);
-    afterLayout(() => {
-      world.current?.release();
-      const source = handheldTrigger.current;
-      if (source?.isConnected && source !== document.body)
-        source.focus({ preventScroll: true });
-      else entryHint.current?.focus({ preventScroll: true });
-    });
-  }, [afterLayout, cancelHandheldEntry]);
+  }, [cancelHandheldEntry]);
   const startHandheld = useCallback(
     async (floor: number) => {
       if (handheldRef.current) return true;
       if (handheldEntry.current) return false;
       const entry = new AbortController();
       handheldEntry.current = entry;
-      handheldTrigger.current = document.activeElement as HTMLElement | null;
+      handoff.current++;
+      frames.current.forEach(cancelAnimationFrame);
       setHandheldPending(true);
       setHandheldError(false);
       try {
@@ -197,7 +200,6 @@ export default function Convention() {
             Math.min(innerHeight, rect.bottom) - Math.max(0, rect.top),
           ),
         );
-        handheldScroll.current = scrollY;
         handheldRef.current = true;
         setHandheld(true);
         await new Promise<void>((resolve) =>
@@ -345,7 +347,7 @@ export default function Convention() {
         await audio.prepare(
           active?.kind === "game"
             ? active.id
-            : floorRef.current === 1
+            : viewedFloorRef.current === 1
               ? "office"
               : "hall",
         );
@@ -361,7 +363,7 @@ export default function Convention() {
           gameOpen: panelRef.current?.kind === "game",
         })
       )
-        await audio.play(floorRef.current === 1 ? "office" : "hall");
+        await audio.play(viewedFloorRef.current === 1 ? "office" : "hall");
       if (token !== soundIntent.current) return;
       setSoundStatus(next ? "ready" : "off");
       if (next) audio.effect("click");
@@ -420,7 +422,7 @@ export default function Convention() {
       }
       if (desiredSound.current)
         void audio
-          .play(floorRef.current === 1 ? "office" : "hall")
+          .play(viewedFloorRef.current === 1 ? "office" : "hall")
           .catch(() => {
             if (
               !active ||
@@ -446,20 +448,22 @@ export default function Convention() {
       window.removeEventListener("blur", suspend);
       window.removeEventListener("focus", reconcile);
     };
-  }, [panel, sound, ambientPaused, activeFloor]);
-  useEffect(() => {
-    if (!handheld) return;
+  }, [panel, sound, ambientPaused, viewedFloor]);
+  useLayoutEffect(() => {
+    if (!handheld) {
+      if (handheldExit.current) {
+        handheldExit.current = false;
+        world.current?.restorePage();
+      }
+      return;
+    }
+    handheldExit.current = false;
     const unlockPage = lockPageScroll();
     const old = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       unlockPage();
       document.body.style.overflow = old;
-      const html = document.documentElement,
-        before = html.style.scrollBehavior;
-      html.style.scrollBehavior = "auto";
-      window.scrollTo({ top: handheldScroll.current, behavior: "auto" });
-      html.style.scrollBehavior = before;
     };
   }, [handheld]);
   useEffect(() => {
@@ -668,7 +672,7 @@ export default function Convention() {
           aria-busy={handheldPending}
           disabled={handheldPending}
           hidden={hintObscured}
-          onClick={() => enterScene(floorRef.current)}
+          onClick={() => enterScene(viewedFloorRef.current)}
         >
           {handheldPending
             ? "Preparing the hall…"
@@ -708,7 +712,7 @@ export default function Convention() {
         onAnnounce={announce}
         onHandheld={explore}
         onEnterScene={enterScene}
-        onFloorChange={floorChanged}
+        onViewFloorChange={floorViewed}
         onExitHandheld={exitHandheld}
         onToggleMotion={() => {
           const next = !ambienceRef.current;
