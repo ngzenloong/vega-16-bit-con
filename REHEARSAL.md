@@ -56,3 +56,5 @@ Mobile game menus hide duplicated screen CTAs and retain the controller. The 393
 A blocked music request and successful retry during racing leave the landscape frame at 240×220. The notice and recovery action stay between the side controls. Network blocking was removed and sound returned to muted. A high-level browser selector operation briefly hid the page during an early test, correctly triggering auto-pause; native browser touch events were used for the final gameplay transitions, and application visibility safeguards remain intact.
 
 The shared menu-action family also serves desktop game actions and the player editor. The new responsive check covers eight handheld sizes plus a separate desktop garage, and the independent visual review closes the tablet spacing and landscape-label findings. Physical iOS and other limits above still apply.
+
+Focus recovery now skips hidden, inert, disabled and non-rendered controls, including the retained garage and the hidden mobile Hall button. Regression assertions cover the first lost-focus Tab, reverse Tab and remembered inactive-menu focus. The suite remains at 86 tests.

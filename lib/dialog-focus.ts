@@ -6,15 +6,18 @@ export function retainDialogFocus(dialog: HTMLDialogElement) {
     const open = document.querySelectorAll<HTMLDialogElement>("dialog[open]");
     return dialog.open && open[open.length - 1] === dialog;
   };
+  const available = (element: HTMLElement) =>
+    element === dialog ||
+    (element.isConnected &&
+      dialog.contains(element) &&
+      !element.hasAttribute("disabled") &&
+      !element.closest("[hidden],[inert]") &&
+      element.getClientRects().length > 0 &&
+      getComputedStyle(element).visibility === "visible");
   const restore = () => {
     if (!ownsFocus() || document.hidden || !document.hasFocus()) return;
     if (dialog.contains(document.activeElement)) return;
-    const target =
-      previous.isConnected &&
-      dialog.contains(previous) &&
-      !previous.hasAttribute("disabled")
-        ? previous
-        : dialog;
+    const target = available(previous) ? previous : dialog;
     target.focus({ preventScroll: true });
   };
   const wake = () => {
@@ -52,9 +55,11 @@ export function retainDialogFocus(dialog: HTMLDialogElement) {
     if (event.code === "Escape")
       dialog.dispatchEvent(new Event("cancel", { cancelable: true }));
     else if (event.code === "Tab") {
-      const controls = dialog.querySelectorAll<HTMLElement>(
-        'button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex="0"]',
-      );
+      const controls = [
+        ...dialog.querySelectorAll<HTMLElement>(
+          'button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex="0"]',
+        ),
+      ].filter(available);
       const target = event.shiftKey
         ? controls[controls.length - 1]
         : controls[0];
