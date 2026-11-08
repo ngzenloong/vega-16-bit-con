@@ -253,6 +253,14 @@ export default function Dialogue({
         event.preventDefault();
       return;
     }
+    const target = event.target instanceof Element ? event.target : null;
+    // Toolbar controls keep their native actions; focused dialogue buttons click normally.
+    if (target?.closest(".cinematic-top")) return;
+    if (
+      ["Enter", " "].includes(event.key) &&
+      target?.closest("button,a,summary,input,select,textarea")
+    )
+      return;
     if (
       last &&
       complete &&
@@ -271,11 +279,6 @@ export default function Dialogue({
       return;
     }
     if (["Enter", " ", "ArrowDown"].includes(event.key)) {
-      if (
-        event.target instanceof HTMLButtonElement &&
-        event.target.dataset.nativeAction === "true"
-      )
-        return;
       event.preventDefault();
       advance();
     }
