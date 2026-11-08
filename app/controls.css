@@ -381,9 +381,6 @@ p {
     align-items: center;
     white-space: nowrap;
   }
-  .registration-preview .player-pass {
-    margin: auto;
-  }
   .dialogue-interaction {
     flex-direction: column;
     align-items: stretch;

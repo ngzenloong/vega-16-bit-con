@@ -66,23 +66,6 @@
 .sound-toggle {
   flex: none;
 }
-.registration-dialog .window-title {
-  background: var(--paper);
-  color: var(--ink);
-}
-.registration-dialog .window-title .sound-toggle,
-.cinematic-top .sound-toggle {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-}
-.registration-dialog .window-title .sound-toggle:hover {
-  background: var(--pressed-tint);
-}
-.registration-dialog .window-title .icon-button:not(.sound-toggle) {
-  background: var(--paper);
-  border: 1px solid var(--ink);
-}
 .registration-dialog,
 .registration-content,
 .wardrobe-rows,

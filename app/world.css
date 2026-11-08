@@ -805,11 +805,6 @@
 .companion[data-floating="true"] > .sprite {
   translate: 0 -16px;
 }
-.pass-companion {
-  position: absolute;
-  right: -20px;
-  bottom: calc(-1 * var(--pet-baseline, 0px));
-}
 .world-stage:not(.is-handheld) .world-floor {
   cursor: pointer;
 }

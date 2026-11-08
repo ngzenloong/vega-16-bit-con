@@ -8,6 +8,7 @@ import "./registration.css";
 import "./venue.css";
 import "./navigation.css";
 import "./mobile.css";
+import "./player-select.css";
 export const viewport: Viewport = { viewportFit: "cover" };
 export const metadata: Metadata = {
   title: "16-Bit Con — Never stopped playing",

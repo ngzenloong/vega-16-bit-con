@@ -1,188 +1,122 @@
-export async function enterFromPass({
-  card,
+/** Registration saves first; arrival only stages the already prepared world actor. */
+export async function dropIntoHall({
   prepare,
   reduced,
   onDone,
   signal: ownerSignal,
 }: {
-  card: HTMLElement;
   prepare: () => Promise<{ player: HTMLElement; world: HTMLElement }>;
   reduced: boolean;
   onDone: () => void;
   signal?: AbortSignal;
 }) {
-  const source = card.getBoundingClientRect(),
-    clone = card.cloneNode(true) as HTMLElement,
-    abort = new AbortController();
-  const signal = abort.signal;
+  const abort = new AbortController(),
+    signal = abort.signal;
   const cancelOwner = () => abort.abort();
   if (ownerSignal?.aborted) abort.abort();
   ownerSignal?.addEventListener("abort", cancelOwner, { once: true });
-  let ghost: HTMLElement | null = null,
-    target: HTMLElement | null = null;
-  const stop = (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
+  let target: HTMLElement | null = null;
+  const animations = new Set<Animation>();
+  const stop = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
       abort.abort();
-      e.preventDefault();
     }
   };
-  document.addEventListener("keydown", stop, true);
   const hidden = () => {
     if (document.hidden) abort.abort();
   };
+  const cancelAnimations = () =>
+    animations.forEach((animation) => animation.cancel());
+  signal.addEventListener("abort", cancelAnimations, { once: true });
+  document.addEventListener("keydown", stop, true);
   document.addEventListener("visibilitychange", hidden);
   window.addEventListener("blur", cancelOwner);
-  const animate = async (el: Element, frames: Keyframe[], duration: number) => {
+  const animate = async (
+    element: Element,
+    frames: Keyframe[],
+    duration: number,
+    easing: string,
+  ) => {
     if (signal.aborted) throw new DOMException("Interrupted", "AbortError");
-    const a = el.animate(frames, {
+    const animation = element.animate(frames, {
       duration,
-      easing: "cubic-bezier(.22,1,.36,1)",
-      fill: "forwards",
+      easing,
+      fill: "both",
     });
-    const cancel = () => a.cancel();
-    signal.addEventListener("abort", cancel, { once: true });
-    try {
-      await a.finished;
-    } finally {
-      signal.removeEventListener("abort", cancel);
-    }
+    animations.add(animation);
+    await animation.finished;
   };
-  const next = () =>
-    new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
   try {
-    if (signal.aborted) throw new DOMException("Interrupted", "AbortError");
+    if (signal.aborted) return;
     const destination = await prepare();
     target = destination.player;
     target.dataset.arriving = "true";
     target.style.opacity = "0";
-    const framePlayer = (behavior: ScrollBehavior) => {
-      if (destination.world.closest(".is-handheld")) return;
-      const rect = target!.getBoundingClientRect();
+    const room = destination.world;
+    if (!room.closest(".is-handheld")) {
+      // Use the bottom of the floor as the framing anchor, not the moving sprite.
       window.scrollTo({
         top: Math.max(
           0,
-          scrollY + rect.top - Math.max(24, (innerHeight - rect.height) * 0.62),
+          scrollY + room.getBoundingClientRect().bottom - innerHeight + 24,
         ),
-        behavior,
+        behavior: reduced ? "instant" : "smooth",
       });
-    };
-    if (reduced) {
-      framePlayer("instant");
-      return;
     }
-    const w = Math.min(220, innerWidth - 48),
-      h = 300,
-      left = (innerWidth - w) / 2,
-      top = Math.max(24, (innerHeight - h) / 2);
-    clone.classList.add("arrival-pass");
-    clone.setAttribute("aria-hidden", "true");
-    Object.assign(clone.style, {
-      position: "fixed",
-      left: `${left}px`,
-      top: `${top}px`,
-      width: `${w}px`,
-      height: `${h}px`,
-    });
-    document.body.append(clone);
-    document.documentElement.dataset.arrival = "card";
-    const visible = source.bottom > 0 && source.top < innerHeight;
-    await animate(
-      clone,
-      [
-        {
-          transform: visible
-            ? `translate(${source.left - left}px,${source.top - top}px) scale(${source.width / w},${source.height / h})`
-            : "translateY(30px)",
-          opacity: 0.6,
-        },
-        { transform: "translate(0,0) scale(1)", opacity: 1 },
-      ],
-      340,
-    );
-    document.documentElement.dataset.arrival = "flip";
-    await animate(
-      clone.querySelector(".pass-inner")!,
-      [{ transform: "rotateY(0)" }, { transform: "rotateY(180deg)" }],
-      480,
-    );
-    framePlayer("smooth");
+    if (reduced || signal.aborted) return;
     document.documentElement.dataset.arrival = "navigation";
     let old = Infinity,
       steady = 0;
     const began = performance.now();
     while (performance.now() - began < 1400) {
-      await next();
-      if (signal.aborted) throw new DOMException("Interrupted", "AbortError");
-      const y = destination.world.getBoundingClientRect().top;
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => resolve()),
+      );
+      if (signal.aborted) return;
+      const y = room.getBoundingClientRect().top;
       steady = Math.abs(y - old) < 0.5 ? steady + 1 : 0;
       old = y;
       if (steady > 4 && performance.now() - began > 160) break;
     }
-    const to = target.getBoundingClientRect(),
-      from = clone
-        .querySelector(".pass-back .pass-character")!
-        .getBoundingClientRect();
-    ghost = clone
-      .querySelector(".pass-back .pass-character")!
-      .cloneNode(true) as HTMLElement;
-    ghost.classList.add("arrival-ghost");
-    Object.assign(ghost.style, {
-      position: "fixed",
-      left: `${from.left}px`,
-      top: `${from.top}px`,
-      margin: "0",
-    });
-    document.body.append(ghost);
-    document.documentElement.dataset.arrival = "morph";
-    await Promise.all([
-      animate(
-        clone,
-        [
-          { transform: "scale(1)", opacity: 1 },
-          { transform: "scale(.4)", opacity: 0 },
-        ],
-        360,
+    const rect = target.getBoundingClientRect();
+    const distance = Math.max(
+      96,
+      Math.min(
+        420,
+        rect.top - Math.max(0, room.getBoundingClientRect().top) + rect.height,
       ),
-      animate(
-        ghost,
-        [
-          { transform: "translate(0,0)", opacity: 0.3 },
-          {
-            transform: `translate(${to.left - from.left}px,${to.top - from.top - 90}px)`,
-            opacity: 1,
-          },
-        ],
-        440,
-      ),
-    ]);
-    clone.remove();
-    ghost.remove();
-    target.style.opacity = "1";
+    );
+    const look = target.querySelector<HTMLElement>(".player-facing")!;
     document.documentElement.dataset.arrival = "drop";
-    const look = target.querySelector(".player-facing")!;
+    const fall = animate(
+      look,
+      [{ translate: `0 -${distance}px` }, { translate: "0 0" }],
+      520,
+      "cubic-bezier(.45,0,.9,.65)",
+    );
+    target.style.opacity = "1";
+    await fall;
+    document.documentElement.dataset.arrival = "land";
     await animate(
       look,
       [
-        { translate: "0 -90px", offset: 0 },
-        { translate: "0 0", offset: 0.7 },
-        { translate: "0 -10px", offset: 0.85 },
-        { translate: "0 0", offset: 1 },
+        { translate: "0 0" },
+        { translate: "0 -8px", offset: 0.45 },
+        { translate: "0 0" },
       ],
-      500,
+      180,
+      "ease-out",
     );
   } catch {
-    /* Keep the player update if the entrance animation is interrupted. */
+    // Skipping or losing focus finishes at the saved ground position.
   } finally {
-    clone.remove();
-    ghost?.remove();
+    cancelAnimations();
     if (target) {
       target.style.opacity = "";
       delete target.dataset.arriving;
-      target
-        .querySelector(".player-facing")
-        ?.getAnimations()
-        .forEach((a) => a.cancel());
     }
+    signal.removeEventListener("abort", cancelAnimations);
     ownerSignal?.removeEventListener("abort", cancelOwner);
     document.removeEventListener("keydown", stop, true);
     document.removeEventListener("visibilitychange", hidden);

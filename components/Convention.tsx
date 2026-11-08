@@ -8,7 +8,7 @@ import { MACHINES, SCENE } from "@/lib/scene";
 import { lockPageScroll } from "@/lib/dialog-focus";
 import { safePlayer } from "@/lib/math";
 import { audio } from "@/lib/audio";
-import { enterFromPass } from "@/lib/arrival";
+import { dropIntoHall } from "@/lib/arrival";
 import World from "./World";
 import Registration from "./Registration";
 import Dialogue from "./Dialogue";
@@ -549,7 +549,7 @@ export default function Convention() {
     [player, open, announce],
   );
   const submit = useCallback(
-    async (next: Player, card: HTMLElement, updating = player !== null) => {
+    async (next: Player, updating = player !== null) => {
       if (arrivalRef.current) return;
       const location = world.current?.position() || {
         floor: 0,
@@ -568,8 +568,7 @@ export default function Convention() {
             ? "Entering the hall."
             : "Entering the hall. Press Escape to skip the animation.",
       );
-      await enterFromPass({
-        card,
+      await dropIntoHall({
         reduced,
         signal: owner.signal,
         prepare: async () => {
@@ -582,9 +581,12 @@ export default function Convention() {
           );
           if (updating) world.current?.refresh();
           const floor = updating ? location.floor : 0;
-          const actor = updating
-            ? world.current!.reframe(floor, location.x)
-            : world.current!.goTo(0, SCENE.booth, false);
+          // Arrival owns page framing; don't launch a competing world scroll flight.
+          const actor = world.current!.goTo(
+            floor,
+            updating ? location.x : SCENE.booth,
+            false,
+          );
           return {
             player: actor,
             world: document.querySelector<HTMLElement>(

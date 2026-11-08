@@ -34,7 +34,9 @@ The header keeps its full links at 560 px and wider, uses Menu beside the regist
 
 Four games are open to guests: Daisy Breaker, Cartridge Run, Sam Circuit, and Sam's Beat. Sam Circuit opens a separate car-selection screen after Play game. Start with the PostSIEM.com Fiat; first-place wins unlock cars in four groups, saved locally. Every race includes all twelve distinct models: the selected player car plus eleven rivals. The Fiat has 55 seconds; slower unlocked cars get a proportional time budget. Corners, traffic, collision penalties and boosts affect the result. S-Cargo is the strongest rival. Every car has its own speed, launch, cornering and braking profile; garage meters use that same data. Collisions apply a strong slowdown, a small decaying impulse and sparks. The rhythm game has 24 spaced notes and a 60% clear threshold.
 
-Player creation offers eight rows of visual accessories and five optional companions. The ID card sits at the top left, with sound and close controls at the top right. Accessory rows use edge fades instead of horizontal scrollbars. Desktop and phone share image-only strips with mouse dragging, touch scrolling, and arrow-key selection. Continue opens a separate details step; Down moves from name to email to confirmation, Up returns, and Enter activates the focused action. Older three-part player profiles still load.
+Player creation opens a full-screen 16-bit selection menu with the character and companion on a pixel platform. Eight image-only accessory rows support mouse dragging, touch scrolling, and arrow-key selection; edge fades indicate more options. The yellow header keeps sound and close available, and the primary action stays below the scrollable content. Desktop places the preview beside the inventory; portrait stacks a compact preview above it. Continue opens native name and email fields. Down moves from name to email to confirmation, Up returns, and Enter activates the focused action. Five companions are optional, and older three-part player profiles still load.
+
+Confirmation saves the player before a two-second visible success hold, which pauses while the window is inactive. The character then drops directly into the hall. Returning players can save a new look or edit their details and return to their current floor and position. Reduced motion skips the drop; handheld entry preserves the surrounding page scroll.
 
 ## Implementation
 
@@ -60,10 +62,9 @@ Audio starts muted. The upper hall shares Sam’s Beat’s score; the lower offi
 - [Raw explorations and approved choices](https://www.figma.com/design/ntMv2Sr2WTPuAtRljGxoOa/?node-id=9543-4)
 - [Vega careers game](https://vega.io/careers)
 - [Asset and audio sources](ASSET_SOURCES.md)
+- [Player selection layout and behavior](docs/player-selection.md)
 - [Verification and remaining limits](REHEARSAL.md)
 
-The Figma palette and fonts govern the page. Existing Vega pixel assets, character animation, window behavior, and controls provide continuity. The new venue, console stations, player pass, conversations, and four game rules are the assignment's additions. The later direction uses a dusk skyline, a cable-hung billboard, unframed floor controls and a footer on the fading foreground floor. All four games include architectural Vega advertisements and daisy marks. Buildings, cars and attached adverts in the race share one depth order.
+The Figma palette and fonts govern the page. Existing Vega pixel assets, character animation, window behavior, and controls provide continuity. The new venue, console stations, player customization, conversations, and four game rules are the assignment's additions. The venue uses a dusk skyline, a cable-hung billboard, unframed floor controls and a footer on the fading foreground floor. All four games include architectural Vega advertisements and daisy marks. Buildings, cars and attached adverts in the race share one depth order.
 
 Rivals have model-specific acceleration, pace, cornering and driver confidence. They commit to passing lines, reconsider blocked overtakes and exchange places. Near cars remain in the draw list until they move below the camera, with depth-correct occlusion and held steering poses. These are arcade parameters informed by vehicle character, not a road-speed simulator.
-
-Player creation saves the local pass before a two-second visible confirmation. The hold pauses when the window is inactive, followed by the card flip, camera framing and character drop. Returning players can save a new look or edit remembered details.
