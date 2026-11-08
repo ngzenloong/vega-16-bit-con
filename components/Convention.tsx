@@ -54,7 +54,6 @@ export default function Convention() {
     [footerVisible, setFooterVisible] = useState(false),
     [hintObscured, setHintObscured] = useState(false);
   const handheldEntry = useRef<AbortController | null>(null),
-    handheldTrigger = useRef<HTMLElement | null>(null),
     entryHint = useRef<HTMLButtonElement>(null);
   const [announcement, setAnnouncement] = useState({ text: "", id: 0 });
   const world = useRef<WorldController>(null),
@@ -152,14 +151,13 @@ export default function Convention() {
   );
   const exitHandheld = useCallback(() => {
     cancelHandheldEntry();
+    // Stop travel and held controls before switching back to page geometry.
+    world.current?.cancelTravel();
+    world.current?.release();
     handheldRef.current = false;
     setHandheld(false);
     afterLayout(() => {
-      world.current?.release();
-      const source = handheldTrigger.current;
-      if (source?.isConnected && source !== document.body)
-        source.focus({ preventScroll: true });
-      else entryHint.current?.focus({ preventScroll: true });
+      if (!handheldRef.current) world.current?.restorePage();
     });
   }, [afterLayout, cancelHandheldEntry]);
   const startHandheld = useCallback(
@@ -168,7 +166,8 @@ export default function Convention() {
       if (handheldEntry.current) return false;
       const entry = new AbortController();
       handheldEntry.current = entry;
-      handheldTrigger.current = document.activeElement as HTMLElement | null;
+      handoff.current++;
+      frames.current.forEach(cancelAnimationFrame);
       setHandheldPending(true);
       setHandheldError(false);
       try {

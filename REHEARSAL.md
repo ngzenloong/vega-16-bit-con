@@ -4,7 +4,7 @@ Reviewed November 8, 2026. This record covers the mobile interface changes and d
 
 ## Automated checks
 
-- `npm test`: 93 passed, 0 failed. Coverage includes game outcomes, race balance, collisions, pointer/keyboard ownership, audio cancellation, modal focus, scroll locks, progress migration, sprite geometry, snack interruption and bounded asset loading.
+- `npm test`: 112 passed, 0 failed. Coverage includes game outcomes, race balance, collisions, pointer/keyboard ownership, audio cancellation, modal focus, scroll locks, progress migration, sprite geometry, snack interruption, bounded asset loading and page-mode return.
 - `tsc --noEmit --incremental false`: passed.
 - `npm run build`: passed, with the landing page prerendered.
 - `git diff --check`: passed.
@@ -68,3 +68,15 @@ Conversation toolbar buttons keep their own native Enter/Space action; the sound
 Seven actual-component/handler regressions extend the suite to 93 tests. Ego checks at 320 and 393 px cover repeated pointer and native touch toggles, a controlled null-blur handoff, item activation, return focus, Escape, outside click, scroll, and the 352/560 px breakpoints. Native timing details alternate open/closed through pointer and keyboard activation; both venue ambience controls alternate together. Sound Enter enables and Space mutes without changing the current dialogue line; Continue still advances.
 
 These results are in `audit-2026-11-06/navigation-round-7`. Ordinary Chromium clicks alternated normally in the initial pass; the original menu failure was established by the actual 713bd67 handler sequence with a null blur before click, not by claiming a physical Safari reproduction. Native-device limits above remain unchanged.
+
+## Returning from exploration to the page
+
+Handheld exit now cancels lift travel and held input before changing layout. Once page geometry and saved scroll are restored, the engine reconciles the visible floor, returns focus to the floor itself, and walks Sam toward the center of both rooms. The camera eases toward the hero and schedule while keeping the walking actor inside the frame. Desktop wheel, touch scrolling, scrollbar scrolling and released controls use the same return. New movement, reentry, navigation or deliberate target focus interrupts it at the current position.
+
+The engine distinguishes its own floor framing, focus and navigation scrolls from reading scroll, including the final event after a navigation ends. Blur, hidden tabs and overlays suspend movement; they do not exit the handheld session. Reduced motion settles the centered composition immediately. A buffered jump also keeps the frame loop awake when background motion is paused.
+
+Nineteen real-engine regression cases use controlled DOM geometry and a frame clock. They cover both floors, repeated release, mid-lift exit, an unchanged restored scroll offset, compact/hidden handheld geometry, reacquisition, focus, blur/visibility/overlay suspension, airborne release, resize, live reduced-motion changes, offscreen suspension, scrollbar interruption and navigation scroll ownership. The camera containment check samples every return frame at 240, 393, 760 and 1280 px widths. These are simulated geometry checks, not browser rendering evidence.
+
+The existing Figma instruction, copy and brand snapshots were checked again: the repair restores access to the required hero, schedule and registration information. Event facts, typography, palette and the continuous-venue design are unchanged. Source and interaction reviewers found and repaired an initial camera-outruns-player case and a same-floor scrollbar gap before this record was written.
+
+**Browser acceptance remains pending for this follow-up.** Ego's earlier task workspace disappeared; recovery authorization is pending. No replacement was created and no user-owned workspace was claimed. Earlier responsive captures remain evidence for their recorded versions, not proof of this new exit transition. A new Ego pass must exercise both floors, rapid reentry, the final navigation scroll event and normal/reduced motion before this follow-up is described as visually verified. See `audit-2026-11-06/exit-round-8` for the source reviews, logs and remaining checks.

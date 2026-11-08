@@ -222,6 +222,7 @@ const World = forwardRef<WorldController, Props>(function World(
       reframe: (f, x) => engine.current!.reframe(f, x),
       control: (f) => engine.current?.control(f),
       release: () => engine.current?.release(),
+      restorePage: () => engine.current?.restorePage(),
       focus: () => engine.current?.focus(),
       refresh: () => engine.current?.refresh(),
       destroy: () => engine.current?.destroy(),

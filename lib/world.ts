@@ -29,6 +29,7 @@ export type WorldController = {
   travel: (floor: number) => void;
   cancelTravel: () => void;
   release: () => void;
+  restorePage: () => void;
   focus: () => void;
   refresh: () => void;
   destroy: () => void;
@@ -238,6 +239,7 @@ export function createWorld(
   );
   let floor = 0,
     manual = false,
+    returningToPage = false,
     raf = 0,
     last = 0,
     accumulator = 0,
@@ -245,6 +247,7 @@ export function createWorld(
     dropUntil = 0,
     coyote = 0,
     jumpBuffer = 0;
+  let frameScrollTarget: number | null = null;
   let ambientPaused = reduced.matches,
     destroyed = false,
     pointerFocusUntil = 0,
@@ -306,15 +309,22 @@ export function createWorld(
     if (force || actor.top < 8 || actor.bottom > innerHeight - 64) {
       const floorBottom =
         scrollY + floors[floor].getBoundingClientRect().bottom;
-      window.scrollTo({
-        top: floorFrameScroll(
-          floorBottom,
-          innerHeight,
-          document.documentElement.scrollHeight - innerHeight,
-        ),
-        behavior: reduced.matches ? "instant" : "smooth",
-      });
+      const top = floorFrameScroll(
+        floorBottom,
+        innerHeight,
+        document.documentElement.scrollHeight - innerHeight,
+      );
+      if (Math.abs(top - scrollY) < 1) return;
+      scrollFrame(top, reduced.matches ? "instant" : "smooth");
     }
+  }
+  function scrollFrame(top: number, behavior: ScrollBehavior) {
+    const before = scrollY;
+    if (behavior === "smooth") frameScrollTarget = top;
+    window.scrollTo({ top, behavior });
+    // Instant navigation can end with subpixel updates, each emitting scroll.
+    if (behavior !== "smooth" && scrollY !== before)
+      frameScrollTarget = scrollY;
   }
   function clearHeld() {
     input.clear();
@@ -326,11 +336,73 @@ export function createWorld(
     jumpBuffer = 0;
   }
   function release() {
+    frameScrollTarget = null;
+    const returnHome = !root.classList.contains("is-handheld");
     finishSnack(false);
-    clearHeld();
+    if (returnHome) cancelTravel();
+    // Repeated wheel events must not restart a walk that is already returning.
+    if (returningToPage) input.clear();
+    else clearHeld();
+    coyote = 0;
+    jumpBuffer = 0;
+    dropUntil = 0;
     manual = false;
     root.dataset.control = "ambient";
+    if (returnHome) startPageReturn();
     schedule();
+  }
+  function stopPageReturn() {
+    if (!returningToPage) return;
+    returningToPage = false;
+    for (const v of views) {
+      v.vx = 0;
+      v.held = 0;
+      v.tracking = v.x - v.camera;
+    }
+  }
+  function startPageReturn() {
+    if (returningToPage) return;
+    suppressHover();
+    accumulator = 0;
+    last = 0;
+    returningToPage = true;
+    for (const v of views) {
+      v.vx = 0;
+      v.held = 0;
+      v.lookahead = 0;
+    }
+    if (reduced.matches) settlePageReturn();
+    render(0);
+    schedule();
+  }
+  function settlePageReturn() {
+    for (let i = 0; i < views.length; i++) {
+      const v = views[i];
+      v.x = SCENE.booth;
+      v.y = geometry[i].ground;
+      v.vx = 0;
+      v.vy = 0;
+      v.grounded = true;
+      v.support = null;
+      v.camera = pageCamera(i);
+    }
+    stopPageReturn();
+  }
+  function pageCamera(index: number) {
+    return clamp(
+      SCENE.booth - views[index].width / 2,
+      0,
+      Math.max(0, WORLD_WIDTH - views[index].width),
+    );
+  }
+  function restorePage() {
+    release();
+    measure();
+    // Restored scrollY may be unchanged, so a scroll event cannot own this sync.
+    const visible = visibleFloor();
+    if (visible >= 0 && visible !== floor) activate(visible);
+    // An old lift/machine trigger would pan back to that off-center target.
+    floors[floor].focus({ preventScroll: true });
   }
   function travelState(active: boolean, lift = false) {
     root.dataset.travelling = String(active && lift);
@@ -342,6 +414,7 @@ export function createWorld(
   }
   function cancelTravel() {
     if (!flight) return;
+    frameScrollTarget = null;
     flight = null;
     navId++;
     cancelAnimationFrame(navFrame);
@@ -376,6 +449,7 @@ export function createWorld(
   }
   let measuredViewportHeight = innerHeight;
   function measure() {
+    if (root.classList.contains("is-handheld")) stopPageReturn();
     const viewportHeightChanged = measuredViewportHeight !== innerHeight;
     measuredViewportHeight = innerHeight;
     // Keep the stacked agenda clear of the ground-level furnishings as its text reflows.
@@ -490,7 +564,8 @@ export function createWorld(
     schedule();
   }
   function activate(index: number, px?: number, notify = true) {
-    clearHeld();
+    if (returningToPage) input.clear();
+    else clearHeld();
     floor = clamp(index, 0, floors.length - 1);
     if (notify) onFloorChange(floor);
     const v = current();
@@ -536,6 +611,8 @@ export function createWorld(
     onArrive?: () => void,
   ) {
     finishSnack(false);
+    stopPageReturn();
+    frameScrollTarget = null;
     suppressHover();
     if (lift && flight) return players[floor];
     const previousFloor = floor;
@@ -565,10 +642,7 @@ export function createWorld(
       if (scrollPage) {
         const before = document.documentElement.style.scrollBehavior;
         document.documentElement.style.scrollBehavior = "auto";
-        window.scrollTo({
-          top: destinationScroll(floor, frameActor),
-          behavior: "auto",
-        });
+        scrollFrame(destinationScroll(floor, frameActor), "auto");
         document.documentElement.style.scrollBehavior = before;
       }
       render(0);
@@ -627,12 +701,12 @@ export function createWorld(
         view.x = active.fromX + (active.toX - active.fromX) * progress;
         view.facing = active.toX >= active.fromX ? 1 : -1;
       }
-      if (active.scroll)
-        window.scrollTo({
-          top:
-            active.fromScroll + (active.toScroll - active.fromScroll) * amount,
-          behavior: "auto",
-        });
+      if (active.scroll) {
+        scrollFrame(
+          active.fromScroll + (active.toScroll - active.fromScroll) * amount,
+          "auto",
+        );
+      }
       render(Math.min(0.05, (now - previousFrame) / 1000));
       previousFrame = now;
       if (progress < 1) navFrame = requestAnimationFrame(advance);
@@ -689,6 +763,7 @@ export function createWorld(
   }
   function interact(target: WorldTarget) {
     if (paused.size || flight) return;
+    stopPageReturn();
     if (snack.active) {
       if (target.kind === "food") return;
       finishSnack(false);
@@ -762,6 +837,7 @@ export function createWorld(
     }
   }
   function begin() {
+    stopPageReturn();
     if (!manual) {
       manual = true;
       const screenX = current().x - current().camera;
@@ -1005,6 +1081,7 @@ export function createWorld(
       if (!inner) return;
       const index = inners.indexOf(inner),
         r = el.getBoundingClientRect();
+      stopPageReturn();
       if (
         index >= 0 &&
         (index !== floor ||
@@ -1027,7 +1104,9 @@ export function createWorld(
         );
         v.tracking = v.x - v.camera;
         render(0);
+        const beforeScroll = scrollY;
         el.scrollIntoView({ behavior: "instant", block: "nearest" });
+        if (scrollY !== beforeScroll) frameScrollTarget = scrollY;
       }
     },
     { signal },
@@ -1076,8 +1155,7 @@ export function createWorld(
     "wheel",
     () => {
       if (root.classList.contains("is-handheld")) return;
-      cancelTravel();
-      if (!paused.size) release();
+      if (!paused.size || paused.has("navigation")) release();
     },
     { signal, passive: true },
   );
@@ -1085,9 +1163,12 @@ export function createWorld(
     "scroll",
     () => {
       if (!paused.size && !flight && !root.classList.contains("is-handheld")) {
+        const framing = frameScrollTarget !== null;
+        if (framing && Math.abs(scrollY - frameScrollTarget!) < 1)
+          frameScrollTarget = null;
+        if (!framing) release();
         const visible = visibleFloor();
         if (visible >= 0 && visible !== floor) {
-          release();
           activate(visible);
         }
       }
@@ -1096,9 +1177,28 @@ export function createWorld(
     { signal, passive: true },
   );
   window.addEventListener(
+    "scrollend",
+    () => {
+      if (frameScrollTarget === null) return;
+      const interrupted = Math.abs(scrollY - frameScrollTarget) >= 1;
+      frameScrollTarget = null;
+      if (
+        interrupted &&
+        !paused.size &&
+        !root.classList.contains("is-handheld")
+      )
+        release();
+    },
+    { signal },
+  );
+  window.addEventListener(
     "touchmove",
     () => {
-      if (!paused.size && !root.classList.contains("is-handheld")) release();
+      if (
+        !root.classList.contains("is-handheld") &&
+        (!paused.size || paused.has("navigation"))
+      )
+        release();
     },
     { signal, passive: true },
   );
@@ -1118,21 +1218,33 @@ export function createWorld(
     { threshold: [0, 0.35] },
   );
   floors.forEach((f) => intersection.observe(f));
-  function physics(dt: number, now: number) {
-    const v = current();
-    const direction = manual ? input.horizontal() : 0,
-      speed = SCENE.walkSpeed;
+  function physics(dt: number, now: number, index = floor) {
+    const v = views[index];
+    const controlled = manual && index === floor && !returningToPage;
+    const direction = returningToPage
+        ? Math.sign(SCENE.booth - v.x)
+        : controlled
+          ? input.horizontal()
+          : 0,
+      speed = SCENE.walkSpeed * (returningToPage ? 0.7 : 1);
     const motion = advanceWalk(v.vx, v.held, direction, dt, speed);
     v.vx = motion.velocity;
     v.held = motion.held;
     if (direction) v.facing = direction;
-    v.x = clamp(v.x + v.vx * dt, 35, WORLD_WIDTH - 35);
-    coyote = v.grounded ? 0.1 : Math.max(0, coyote - dt);
-    jumpBuffer = Math.max(0, jumpBuffer - dt);
-    if (jumpBuffer > 0 && coyote > 0) {
+    const step = v.vx * dt;
+    if (returningToPage && Math.abs(step) >= Math.abs(SCENE.booth - v.x)) {
+      v.x = SCENE.booth;
+      v.vx = 0;
+      v.held = 0;
+    } else v.x = clamp(v.x + step, 35, WORLD_WIDTH - 35);
+    if (controlled) {
+      coyote = v.grounded ? 0.1 : Math.max(0, coyote - dt);
+      jumpBuffer = Math.max(0, jumpBuffer - dt);
+    }
+    if (controlled && jumpBuffer > 0 && coyote > 0) {
       const headroom = Math.max(
         24,
-        Math.min(200, v.y - geometry[floor].ceiling),
+        Math.min(200, v.y - geometry[index].ceiling),
       );
       v.vy = -Math.sqrt(2 * 3000 * headroom);
       v.grounded = false;
@@ -1145,16 +1257,16 @@ export function createWorld(
     v.vy += 3000 * dt;
     v.y += v.vy * dt;
     const surfaces =
-      now < dropUntil
-        ? geometry[floor].surfaces.filter((s) => s.node === null)
-        : geometry[floor].surfaces;
+      returningToPage || (controlled && now < dropUntil)
+        ? geometry[index].surfaces.filter((s) => s.node === null)
+        : geometry[index].surfaces;
     const surface =
       v.vy >= 0
         ? (landingSurface(previous, v.y, v.x, 16, surfaces) as Surface | null)
         : null;
     if (surface) {
       if (!v.grounded && surface.node === null && !reduced.matches)
-        dust[floor].burst(v.x, surface.y, v.facing, 5);
+        dust[index].burst(v.x, surface.y, v.facing, 5);
       v.y = surface.y;
       v.vy = 0;
       v.grounded = true;
@@ -1163,8 +1275,8 @@ export function createWorld(
       v.grounded = false;
       v.support = null;
     }
-    if (v.y > geometry[floor].ground + 100) {
-      v.y = geometry[floor].ground;
+    if (v.y > geometry[index].ground + 100) {
+      v.y = geometry[index].ground;
       v.vy = 0;
       v.grounded = true;
       v.support = null;
@@ -1217,7 +1329,7 @@ export function createWorld(
           sprite.player &&
           (sprite.pose === "run" ||
             (sprite.companion && sprite.owner?.dataset.pose === "run")) &&
-          ((manual && !paused.size && i === floor) ||
+          (((manual || returningToPage) && !paused.size && i === floor) ||
             (flight?.walk && flight.floor === i));
         if (reduced.matches) sprite.clock.reset();
         const frame = sprite.clock.advance(
@@ -1263,7 +1375,24 @@ export function createWorld(
   function render(dt: number) {
     const v = current(),
       width = floors[floor].clientWidth || innerWidth;
-    if (manual && !flight) {
+    if (returningToPage && !root.classList.contains("is-handheld")) {
+      for (let i = 0; i < views.length; i++) {
+        const view = views[i],
+          target = pageCamera(i);
+        const next =
+          view.camera + (target - view.camera) * (1 - Math.exp(-5 * dt));
+        const margin = Math.min(96, view.width / 4);
+        // Return the information into view without leaving the walking actor behind.
+        view.camera =
+          target > view.camera
+            ? Math.min(next, Math.max(view.camera, view.x - margin))
+            : Math.max(
+                next,
+                Math.min(view.camera, view.x - view.width + margin),
+              );
+        if (Math.abs(target - view.camera) < 0.5) view.camera = target;
+      }
+    } else if (manual && !flight) {
       const ahead =
         Math.abs(v.vx) > 60 ? Math.sign(v.vx) * Math.min(80, width * 0.12) : 0;
       v.lookahead += (ahead - v.lookahead) * (1 - Math.exp(-5 * dt));
@@ -1394,7 +1523,11 @@ export function createWorld(
     const target = nearest(),
       prompt = prompts[floor],
       id = target?.id || "";
-    prompt.hidden = (!manual && target?.kind !== "lift") || !target || !!flight;
+    prompt.hidden =
+      returningToPage ||
+      (!manual && target?.kind !== "lift") ||
+      !target ||
+      !!flight;
     prompt.dataset.kind = target?.kind || "";
     if (target) {
       const head =
@@ -1454,6 +1587,8 @@ export function createWorld(
   }
   function tick(now: number) {
     raf = 0;
+    if (root.classList.contains("is-handheld")) stopPageReturn();
+    if (returningToPage && reduced.matches) settlePageReturn();
     const elapsed = last ? Math.min((now - last) / 1000, 0.15) : 0;
     last = now;
     const visible = visibleFloor(),
@@ -1470,17 +1605,32 @@ export function createWorld(
           audio.effect("bite");
         if (completed) finishSnack(true);
       }
-      if (visible === floor) {
+      const pageReturn =
+        returningToPage && !root.classList.contains("is-handheld");
+      if (visible === floor || pageReturn) {
         accumulator = Math.min(accumulator + elapsed, 0.15);
         while (accumulator >= 1 / 60) {
-          physics(1 / 60, now);
+          if (pageReturn) views.forEach((_, i) => physics(1 / 60, now, i));
+          else physics(1 / 60, now);
           accumulator -= 1 / 60;
         }
       } else accumulator = 0;
       updateWalkers(elapsed);
       render(elapsed);
+      if (
+        returningToPage &&
+        views.every(
+          (view, i) =>
+            view.x === SCENE.booth &&
+            view.grounded &&
+            view.support === null &&
+            view.camera === pageCamera(i),
+        )
+      )
+        stopPageReturn();
     } else {
       accumulator = 0;
+      last = 0;
       floors.forEach((el) => (el.dataset.live = "false"));
       renderSpriteFrames();
     }
@@ -1488,7 +1638,9 @@ export function createWorld(
       !document.hidden &&
       !paused.size &&
       visible >= 0 &&
-      (snack.active ||
+      (returningToPage ||
+        jumpBuffer > 0 ||
+        snack.active ||
         dust[floor].active ||
         (manual &&
           !reduced.matches &&
@@ -1548,6 +1700,7 @@ export function createWorld(
     travel,
     cancelTravel,
     release,
+    restorePage,
     focus,
     refresh: measure,
     position: () => ({ floor, x: current().x }),
