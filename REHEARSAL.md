@@ -134,3 +134,7 @@ Independent component review exercised six guest/registered/selected cases acros
 The native signup/list flow also passed: selecting the Panel signup action opened player creation; completion retained that session as On my list while the other two became Add to my list. Adding and removing another session worked. Header width changed naturally from78.609px (Sign up) to94.203px (My player), retaining the same padding. The temporary local QA profile was restored afterward.147 tests, typecheck and production build passed.
 
 The wardrobe keyboard focus ring is inset6px, preserving a distinct double outline without extending4px past the row’s shared left edge.
+
+## Hero cursor completion
+
+Hero cursors blink during the sequential entrance and become transparent once their text block completes. Their existing layout boxes remain in place. A browser trace recorded a constant316px hero height, an active blink during typing, and six completed cursors at opacity0 with their original dimensions intact. The production build and diff checks passed; no animation-state logic changed.

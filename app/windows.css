@@ -166,6 +166,11 @@
   .terminal-cursor {
   animation: terminal-blink 800ms steps(1, end) infinite;
 }
+/* Keep the reserved cursor space; only its paint disappears after hero entry. */
+.event-board .typed-copy[data-type-state="complete"] .typed-live .terminal-cursor {
+  animation: none;
+  opacity: 0;
+}
 @keyframes terminal-blink {
   50% {
     opacity: 0;
