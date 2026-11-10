@@ -51,6 +51,7 @@ export default function Convention() {
   const [handheld, setHandheld] = useState(false),
     [touch, setTouch] = useState(false),
     [coarseInput, setCoarseInput] = useState(false),
+    [hintInput, setHintInput] = useState<"keyboard" | "touch" | null>(null),
     [reduced, setReduced] = useState(false),
     [ambientPaused, setAmbientPaused] = useState(false),
     [arrival, setArrival] = useState(false),
@@ -302,12 +303,16 @@ export default function Convention() {
     update();
     motion.addEventListener("change", update);
     narrow.addEventListener("change", update);
-    coarse.addEventListener("change", update);
+    const pointerChanged = () => {
+      setHintInput(null);
+      update();
+    };
+    coarse.addEventListener("change", pointerChanged);
     setReady(true);
     return () => {
       motion.removeEventListener("change", update);
       narrow.removeEventListener("change", update);
-      coarse.removeEventListener("change", update);
+      coarse.removeEventListener("change", pointerChanged);
       handoff.current++;
       frames.current.forEach(cancelAnimationFrame);
       const activeEntrance = entrance.current;
@@ -335,6 +340,40 @@ export default function Convention() {
       setSaveStatus("session");
     }
   }, [player, scores, ready]);
+  useEffect(() => {
+    const keyboard = (event: KeyboardEvent) => {
+      if (event.ctrlKey || event.metaKey || event.altKey || event.isComposing)
+        return;
+      if (
+        !/^(Arrow(Left|Right|Up|Down)|Space|Enter|Escape|Tab|Key[WASDM])$/.test(
+          event.code,
+        )
+      )
+        return;
+      if (
+        event.target instanceof Element &&
+        event.target.closest("input,textarea,select,[contenteditable]")
+      )
+        return;
+      setHintInput("keyboard");
+    };
+    const pointer = (event: PointerEvent) => {
+      if (event.pointerType === "touch" || event.pointerType === "pen")
+        setHintInput("touch");
+    };
+    document.addEventListener("keydown", keyboard, true);
+    document.addEventListener("pointerdown", pointer, {
+      capture: true,
+      passive: true,
+    });
+    return () => {
+      document.removeEventListener("keydown", keyboard, true);
+      document.removeEventListener("pointerdown", pointer, true);
+    };
+  }, []);
+  const touchInteraction = touch || hintInput === "touch";
+  const keyboardHints =
+    ready && (hintInput ? hintInput === "keyboard" : !coarseInput);
   const requestSound = useCallback(async (next: boolean) => {
     if (next === desiredSound.current && next === audio.enabled) return;
     const token = ++soundIntent.current;
@@ -497,11 +536,11 @@ export default function Convention() {
     (floor: number) => {
       if (arrivalRef.current || panelRef.current) return;
       audio.effect("click");
-      if (touch && !handheldRef.current) {
+      if (touchInteraction && !handheldRef.current) {
         void startHandheld(floor);
       } else world.current?.control(floor);
     },
-    [touch, startHandheld],
+    [touchInteraction, startHandheld],
   );
   const openTarget = useCallback(
     (target: WorldTarget) => {
@@ -516,7 +555,7 @@ export default function Convention() {
         else if (target.kind === "npc")
           open({ kind: "npc", id: target.id }, target.element);
       };
-      if (touch && !handheldRef.current) {
+      if (touchInteraction && !handheldRef.current) {
         const floor = Number(
           target.element.closest<HTMLElement>("[data-floor]")?.dataset.floor ||
             0,
@@ -526,7 +565,7 @@ export default function Convention() {
         });
       } else show();
     },
-    [open, touch, startHandheld],
+    [open, touchInteraction, startHandheld],
   );
   const onResult = useCallback(
     (result: GameResult) =>
@@ -675,24 +714,28 @@ export default function Convention() {
         onSchedule={() => navigate(1, SCENE.booth)}
         onRegister={register}
       />
-      {ready && touch && !handheld && !panel && !arrival && !footerVisible && (
-        <button
-          ref={entryHint}
-          className="scene-entry-hint"
-          aria-busy={handheldPending}
-          disabled={handheldPending}
-          hidden={hintObscured}
-          onClick={() => enterScene(viewedFloorRef.current)}
-        >
-          {handheldPending
-            ? "Preparing the hall…"
-            : handheldError
-              ? "Tap to try exploring again"
-              : coarseInput
-                ? "Tap the scene to explore"
-                : "Click the scene to explore"}
-        </button>
-      )}
+      {ready &&
+        !keyboardHints &&
+        touchInteraction &&
+        !handheld &&
+        !panel &&
+        !arrival &&
+        !footerVisible && (
+          <button
+            ref={entryHint}
+            className="scene-entry-hint"
+            aria-busy={handheldPending}
+            disabled={handheldPending}
+            hidden={hintObscured}
+            onClick={() => enterScene(viewedFloorRef.current)}
+          >
+            {handheldPending
+              ? "Preparing the hall…"
+              : handheldError
+                ? "Tap to try exploring again"
+                : "Tap the scene to explore"}
+          </button>
+        )}
       <div className="global-notices">
         {soundError && (
           <p className="global-notice" role="status">
@@ -707,6 +750,7 @@ export default function Convention() {
         )}
       </div>
       <World
+        keyboardHints={keyboardHints}
         ref={world}
         player={scenePlayer}
         paused={!!panel || arrival}

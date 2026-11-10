@@ -595,9 +595,6 @@
   font: 11px var(--font-mono);
   z-index: 15;
 }
-.hall-hint {
-  display: none;
-}
 .mobile-explore {
   display: none;
 }
@@ -770,9 +767,6 @@
     min-height: 44px;
     font-size: 10px;
     bottom: 0;
-  }
-  .desktop-controls {
-    display: none;
   }
   .mobile-explore {
     display: inline-flex;

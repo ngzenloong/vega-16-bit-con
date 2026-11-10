@@ -198,13 +198,6 @@
     gap: 8px;
     padding-inline: 12px;
   }
-  .hall-hint {
-    display: block;
-    font-size: 11px;
-  }
-  .social-floor .hall-controls > span {
-    display: none;
-  }
   .dialogue-interaction {
     display: grid;
     grid-template-rows: minmax(0, 1fr) auto;
@@ -398,7 +391,7 @@ html {
   border: 0;
   box-shadow: none;
 }
-.main-hall > .hall-controls :is(.desktop-controls, .hall-hint) {
+.main-hall > .hall-controls .desktop-controls {
   text-shadow:
     1px 0 var(--paper),
     -1px 0 var(--paper),
@@ -467,11 +460,6 @@ html {
 }
 .social-floor .world-floor-art {
   mask-image: linear-gradient(#000 0 65%, transparent 76%);
-}
-@media (max-width: 700px) {
-  .social-floor .hall-controls > .hall-hint {
-    display: block;
-  }
 }
 .foot-dust {
   position: absolute;

@@ -215,14 +215,6 @@ html {
 .convention[data-handheld-entry="true"] .is-handheld .handheld-controls {
   pointer-events: none;
 }
-@media (max-width: 700px), (pointer: coarse) {
-  .world-stage:not(.is-handheld) .hall-hint {
-    display: none;
-  }
-  .world-stage:not(.is-handheld) .hall-controls {
-    justify-content: flex-end;
-  }
-}
 html:has(.conversation-dialog[open]) {
   scrollbar-gutter: auto;
 }
@@ -403,15 +395,6 @@ html:has(.conversation-dialog[open]) {
 }
 .convention:has(.world-stage[data-control="manual"]) .scene-entry-hint {
   visibility: hidden;
-}
-@media (pointer: fine) and (max-width: 700px) {
-  .world-stage:not(.is-handheld) .hall-controls .desktop-controls {
-    display: block;
-    font-size: 11px;
-  }
-  .world-stage:not(.is-handheld) .hall-controls {
-    justify-content: space-between;
-  }
 }
 .world-stage:not(.is-handheld):not([data-conversation="true"]) .social-floor {
   min-height: var(--content-floor-height, 0px);

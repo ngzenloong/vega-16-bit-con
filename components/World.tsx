@@ -40,6 +40,7 @@ const defaultSheets = {
   jump: "/assets/vega/sam-jump.png",
 };
 type Props = {
+  keyboardHints: boolean;
   soundControl: ReactNode;
   player: Player | null;
   paused: boolean;
@@ -62,6 +63,7 @@ type Props = {
 const World = forwardRef<WorldController, Props>(function World(
   {
     player,
+    keyboardHints,
     paused,
     arriving = false,
     entering = false,
@@ -704,10 +706,11 @@ const World = forwardRef<WorldController, Props>(function World(
         {prompt}
         <div className="hall-controls">
           {sceneTools}
-          <span className="desktop-controls">
-            ← → Move Sam · Space Jump · Enter Interact · Esc Release · M Sound
-          </span>
-          <span className="hall-hint">Tap the hall to explore.</span>
+          {keyboardHints && (
+            <span className="desktop-controls">
+              ← → Move Sam · Space Jump · Enter Interact · Esc Release · M Sound
+            </span>
+          )}
         </div>
       </section>
       <section
@@ -774,10 +777,11 @@ const World = forwardRef<WorldController, Props>(function World(
         {prompt}
         <div className="hall-controls">
           {sceneTools}
-          <span className="desktop-controls">
-            ← → Move Sam · Space Jump · Enter Interact · Esc Release · M Sound
-          </span>
-          <span className="hall-hint">Tap the hall to explore.</span>
+          {keyboardHints && (
+            <span className="desktop-controls">
+              ← → Move Sam · Space Jump · Enter Interact · Esc Release · M Sound
+            </span>
+          )}
         </div>
       </section>
       {handheld && (

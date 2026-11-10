@@ -138,3 +138,10 @@ The wardrobe keyboard focus ring is inset6px, preserving a distinct double outli
 ## Hero cursor completion
 
 Hero cursors blink during the sequential entrance and become transparent once their text block completes. Their existing layout boxes remain in place. A browser trace recorded a constant316px hero height, an active blink during typing, and six completed cursors at opacity0 with their original dimensions intact. The production build and diff checks passed; no animation-state logic changed.
+
+
+## Input hint exclusivity
+
+The page now owns one hint preference, initialized from pointer capability and updated by actual game/navigation keys or touch/pen input. No operating-system/user-agent inference is used. Keyboard typing in editable fields, composition and modified shortcuts do not change the hint. A pointer-capability change resets the default. Both floors render the key legend only when selected; the sticky touch prompt uses the opposite condition. Redundant inline touch copy and the coarse-pointer right-alignment rule were removed. Settings retain their right edge and keyboard instructions stay at the left edge of the shared header-width frame.
+
+Ego Chromium checks:768×1024 touch mode had no keyboard legends and one tap prompt; Tab switched to keyboard text atx16 with no tap prompt; a native touch switched back. Desktop1440px placed the key text and row atx72. A240px keyboard viewport had no horizontal overflow or overlap with the event window. These are emulated capability/native-event checks, not physical iPad verification. The existing tests, typecheck and production build passed.
