@@ -2,7 +2,12 @@ import test, { type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { revealWindowText } from "../lib/typewriter.ts";
 
-function fixture(t: TestContext, text: string) {
+function fixture(
+  t: TestContext,
+  text: string,
+  options: Parameters<typeof revealWindowText>[4] = {},
+  layout = { rendered: true, bottom: 100, scrollTop: null as number | null },
+) {
   let now = 0,
     next = 0,
     focused = true,
@@ -16,9 +21,21 @@ function fixture(t: TestContext, text: string) {
     hasFocus: () => focused,
   });
   const win = new EventTarget(),
-    root = { dataset: {} as Record<string, string> },
+    root = {
+      dataset: {} as Record<string, string>,
+      getClientRects: () => (layout.rendered ? [{}] : []),
+      getBoundingClientRect: () => ({ bottom: layout.bottom }),
+      parentElement:
+        layout.scrollTop === null
+          ? null
+          : {
+              parentElement: null,
+              getBoundingClientRect: () => ({ top: layout.scrollTop }),
+            },
+    },
     output = { textContent: "" };
   const globals = {
+    getComputedStyle: () => ({ overflowY: "auto" }),
     document: page,
     window: win,
     requestAnimationFrame: (callback: FrameRequestCallback) => {
@@ -49,6 +66,7 @@ function fixture(t: TestContext, text: string) {
     () => {
       done++;
     },
+    options,
   );
   t.after(() => {
     cleanup();
@@ -59,6 +77,9 @@ function fixture(t: TestContext, text: string) {
   });
   return {
     root,
+    layout,
+    scroll: () => page.dispatchEvent(new Event("scroll")),
+    resize: () => win.dispatchEvent(new Event("resize")),
     output,
     frames,
     cleanup,
@@ -146,5 +167,60 @@ test("cleanup rejects queued visibility callbacks and releases all frame work", 
   scene.step(100);
   assert.equal(scene.output.textContent, before);
   assert.equal(scene.frames.size, 0);
+  assert.equal(scene.done(), 0);
+});
+
+test("sequence handoff holds before typing the next block", (t) => {
+  const scene = fixture(t, "NEXT", { delay: 0.1 });
+  scene.view(1);
+  scene.step(5);
+  assert.equal(scene.output.textContent, "");
+  scene.step(12);
+  assert.equal(scene.output.textContent, "NEXT");
+  assert.equal(scene.done(), 1);
+});
+
+test("a fast scroll past a waiting block advances without an intersection notification", (t) => {
+  const scene = fixture(t, "FIRST", { skipPast: true });
+  scene.layout.bottom = 2000;
+  scene.view(0);
+  scene.layout.bottom = -20;
+  scene.scroll();
+  assert.equal(scene.output.textContent, "FIRST");
+  assert.equal(scene.done(), 1);
+  scene.scroll();
+  scene.view(1);
+  assert.equal(scene.done(), 1);
+});
+
+test("past-block detection uses the inner scrollport top", (t) => {
+  const scene = fixture(
+    t,
+    "FIRST",
+    { skipPast: true },
+    { rendered: true, bottom: 200, scrollTop: 90 },
+  );
+  scene.view(0);
+  scene.layout.bottom = 90;
+  scene.scroll();
+  assert.equal(scene.done(), 1);
+});
+
+test("a responsive hidden label does not block the next visible field", (t) => {
+  const scene = fixture(t, "Date", { skipHidden: true });
+  scene.view(0);
+  scene.layout.rendered = false;
+  scene.resize();
+  assert.equal(scene.done(), 1);
+  assert.equal(scene.output.textContent, "Date");
+});
+
+test("scroll and resize callbacks cannot advance a destroyed sequence step", (t) => {
+  const scene = fixture(t, "Date", { skipHidden: true, skipPast: true });
+  scene.cleanup();
+  scene.layout.rendered = false;
+  scene.layout.bottom = -20;
+  scene.scroll();
+  scene.resize();
   assert.equal(scene.done(), 0);
 });

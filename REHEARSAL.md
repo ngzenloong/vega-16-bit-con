@@ -111,3 +111,11 @@ Dialogue scene setup/cleanup now runs before paint. It restores floor layout bef
 Both floors now continuously use the former1F acoustic score. Regression checks cover identical track selection on both floors and reuse of the running audio source. The footer follows the actual Vega footer: original53×48 flower, framed white surface, monospace event columns, two columns on narrow screens, and original brick artwork. Desktop1440px and mobile393px rendered without horizontal overflow. No corporate product catalog or registration backend was added.
 
 142 tests, typecheck and production build passed for this follow-up. Physical-device limitations remain as above.
+
+## Sequential window text follow-up
+
+The hero now has a 520px maximum width and left-aligned contents. Its metadata labels and values share adjacent columns rather than opposite edges. One completion-driven sequence types the H1, Date label/value, Location label/value and description in order. Narrow layouts skip the hidden labels. The session sequence types each card's time and body before starting the next card, matching left-to-right desktop and top-to-bottom mobile reading order.
+
+A browser mutation trace showed at most one typing step across the three session cards and a constant 372px schedule-board height. The hero trace showed all six ordered handoffs, including its formerly static title and labels. Phone checks completed with hidden labels, direct scrolling to the third card, and reduced motion. The queue advances past items clipped above a scrollport, including when a fast scroll produces no IntersectionObserver threshold event; resize also releases a newly hidden label. All text remains available semantically, and no-script rendering exposes the reserved copy. An initial waiting state prevents already-complete text flashing before hydration.
+
+147 tests, typecheck, production build and diff checking passed. Independent source review closed the fast-scroll, inner-scrollport and exact-boundary queue cases. Evidence is in `audit-2026-11-10-daylight/sequence-desktop-trace.json` and the appended code review. Earlier simultaneous-typewriter and static-title descriptions are superseded by this sequence.

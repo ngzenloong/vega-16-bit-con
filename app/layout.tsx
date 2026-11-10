@@ -27,6 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <noscript>
+          <style>{`.typed-copy[data-type-state="waiting"] .typed-reserve { visibility: inherit; }`}</style>
+        </noscript>
         <link
           rel="preload"
           href="/fonts/mondwest.woff2"

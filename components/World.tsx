@@ -30,7 +30,7 @@ import Companion from "./Companion";
 import VenueLife from "./VenueLife";
 import SessionTickets from "./SessionTickets";
 import InfoWindow from "./InfoWindow";
-import TypewriterText from "./TypewriterText";
+import TypewriterText, { TypewriterSequence } from "./TypewriterText";
 import { snackSheet } from "@/lib/snack-art";
 import { SCENE, MACHINES } from "@/lib/scene";
 
@@ -491,58 +491,94 @@ const World = forwardRef<WorldController, Props>(function World(
           <div className="venue-sign" aria-hidden="true">
             JAVITS CENTER
           </div>
-          <InfoWindow
-            className="event-board"
-            title="16-Bit Con"
-            labelledBy="event-title"
-            platform
-          >
-            <div className="event-intro">
-              <h1 id="event-title">16-Bit Con</h1>
-              <dl className="event-details">
-                <div>
-                  <dt>Date</dt>
-                  <dd>
-                    <time className="sr-only" dateTime="2026-10-03">
-                      October 3–5, 2026
-                    </time>
-                    <TypewriterText
-                      text="October 3–5, 2026"
-                      cursor={false}
-                      paused={ambientPaused}
-                      reduced={reduced}
-                    />
-                  </dd>
+          <TypewriterSequence>
+            <InfoWindow
+              className="event-board"
+              title="16-Bit Con"
+              labelledBy="event-title"
+              platform
+            >
+              <div className="event-intro">
+                <h1>
+                  <span id="event-title" className="sr-only">
+                    16-Bit Con
+                  </span>
+                  <TypewriterText
+                    text="16-Bit Con"
+                    step={0}
+                    cursor={false}
+                    paused={ambientPaused}
+                    reduced={reduced}
+                  />
+                </h1>
+                <dl className="event-details">
+                  <div>
+                    <dt>
+                      <span className="sr-only">Date</span>
+                      <TypewriterText
+                        text="Date"
+                        step={1}
+                        skipHidden
+                        cursor={false}
+                        paused={ambientPaused}
+                        reduced={reduced}
+                      />
+                    </dt>
+                    <dd>
+                      <time className="sr-only" dateTime="2026-10-03">
+                        October 3–5, 2026
+                      </time>
+                      <TypewriterText
+                        text="October 3–5, 2026"
+                        step={2}
+                        cursor={false}
+                        paused={ambientPaused}
+                        reduced={reduced}
+                      />
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>
+                      <span className="sr-only">Location</span>
+                      <TypewriterText
+                        text="Location"
+                        step={3}
+                        skipHidden
+                        cursor={false}
+                        paused={ambientPaused}
+                        reduced={reduced}
+                      />
+                    </dt>
+                    <dd>
+                      <span className="sr-only">Javits Center, New York</span>
+                      <TypewriterText
+                        text="Javits Center, New York"
+                        step={4}
+                        cursor={false}
+                        paused={ambientPaused}
+                        reduced={reduced}
+                      />
+                    </dd>
+                  </div>
+                </dl>
+                <div className="event-description">
+                  <p className="sr-only">
+                    The retro gaming convention for people who never stopped
+                    playing.
+                  </p>
+                  <TypewriterText
+                    text="The retro gaming convention for people who never stopped playing."
+                    step={5}
+                    paused={ambientPaused}
+                    reduced={reduced}
+                  />
                 </div>
-                <div>
-                  <dt>Location</dt>
-                  <dd>
-                    <span className="sr-only">Javits Center, New York</span>
-                    <TypewriterText
-                      text="Javits Center, New York"
-                      cursor={false}
-                      paused={ambientPaused}
-                      reduced={reduced}
-                    />
-                  </dd>
-                </div>
-              </dl>
-              <div className="event-description">
-                <p className="sr-only">
-                  The retro gaming convention for people who never stopped
-                  playing.
-                </p>
-                <TypewriterText
-                  text="The retro gaming convention for people who never stopped playing."
-                  paused={ambientPaused}
-                  reduced={reduced}
-                />
+                <button className="pixel-button primary" onClick={onRegister}>
+                  {player ? "My player" : "Sign up"}
+                </button>
               </div>
-              <button className="pixel-button primary" onClick={onRegister}>
-                {player ? "My player" : "Sign up"}
-              </button>
-            </div>
-          </InfoWindow>
+            </InfoWindow>
+          </TypewriterSequence>
           {prop("plant-flowers", 1050)}
           {prop("plant-flowers", 2550)}
           {prop("plant-2", 3470)}
