@@ -699,6 +699,19 @@ export const SPRITES: Record<string, SpriteAsset> = {
 /** Public sprite URLs and source records for copied local brand assets. */
 export const SOURCES = [
   {
+    name: "nav-logo",
+    src: "/assets/vega/nav-logo.svg",
+    source: "https://vega.io/assets/images/shared/logo.svg",
+    metadataSource: "Live Vega header, November 10, 2026",
+  },
+  {
+    name: "window-mark",
+    src: "/assets/vega/window-mark.svg",
+    source: "https://vega.io/assets/icons/sprites.svg#checkbox",
+    metadataSource:
+      "Standalone copy of the original checkbox symbol used by window-frame",
+  },
+  {
     name: "a-button",
     src: "/assets/vega/a-button.png",
     source: "https://vega.io/assets/sprites/careers/pocket/a-button.png",

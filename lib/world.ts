@@ -108,6 +108,7 @@ export function createWorld(
   announce: (text: string) => void,
   onSceneTap: (floor: number) => void = () => {},
   onViewFloorChange: (floor: number) => void = () => {},
+  onMovementIntent: () => void = () => {},
 ): WorldController {
   const floors = [...root.querySelectorAll<HTMLElement>("[data-floor]")];
   const inners = floors.map(
@@ -911,7 +912,10 @@ export function createWorld(
       finishSnack(false);
     }
     if (!input.down(source, button)) return;
-    if (button === "left" || button === "right") audio.effect("step");
+    if (button === "left" || button === "right") {
+      onMovementIntent();
+      audio.effect("step");
+    }
     begin();
     if (button === "action") {
       engage();

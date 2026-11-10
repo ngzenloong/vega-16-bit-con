@@ -1,4 +1,4 @@
-/* Player selection extends Sam Circuit's 16-bit menu: dark stage, yellow actions, native controls. */
+/* Player selection keeps its native controls and layout on Vega's white UI surface. */
 html:has(.player-select-dialog[open]) {
   scrollbar-gutter: auto;
 }
@@ -14,10 +14,10 @@ html:has(.player-select-dialog[open]) {
   border: 0;
   box-shadow: none;
   padding: 0;
-  color: var(--paper);
-  background: var(--color-outline);
-  --scroll-thumb: var(--cinema-keyline);
-  --scroll-track: var(--color-outline);
+  color: var(--ui-ink);
+  background: var(--ui-surface);
+  --scroll-thumb: var(--ui-muted);
+  --scroll-track: var(--ui-surface);
 }
 .player-select-actions:has(.game-menu-button.secondary) {
   display: grid;
@@ -26,6 +26,26 @@ html:has(.player-select-dialog[open]) {
 }
 .player-select-actions .game-menu-button {
   text-transform: uppercase;
+  color: var(--ui-ink);
+  background: var(--ui-primary);
+  border-color: var(--ui-ink);
+  box-shadow: 0 4px 0 var(--ui-ink);
+}
+.player-select-actions .game-menu-button.secondary {
+  color: var(--ui-ink);
+  background: var(--ui-surface);
+  border-color: var(--ui-ink);
+  box-shadow: 0 4px 0 var(--ui-ink);
+}
+.player-select-actions .game-menu-button:active {
+  box-shadow: 0 2px 0 var(--ui-ink);
+}
+.player-select-actions .game-menu-button:disabled {
+  color: var(--ui-muted);
+  background: var(--ui-surface);
+  border-color: var(--ui-line);
+  box-shadow: none;
+  opacity: 1;
 }
 .player-select-actions:has(.secondary) .game-menu-button {
   width: 100%;
@@ -58,7 +78,7 @@ html:has(.player-select-dialog[open]) {
     var(--space-3)
     max(var(--space-6), calc((100vw - 1280px) / 2), env(safe-area-inset-left));
   color: var(--ink);
-  background: var(--yellow);
+  background: var(--ui-surface);
 }
 .player-select-top h2 {
   margin: 0;
@@ -79,6 +99,15 @@ html:has(.player-select-dialog[open]) {
 }
 .player-select-top .sound-toggle {
   border-color: transparent;
+}
+.player-select-top .icon-button:is(:enabled:hover, [aria-pressed="true"], [aria-busy="true"]) {
+  color: var(--ui-surface);
+  background: var(--ui-ink);
+  border-color: var(--ui-ink);
+}
+.player-select-top .sound-error-mark {
+  color: var(--ui-surface);
+  background: var(--ui-ink);
 }
 .player-select-content {
   flex: 1;
@@ -151,14 +180,14 @@ html:has(.player-select-dialog[open]) {
 }
 .player-preview-detail {
   min-height: 24px;
-  color: var(--game-muted);
+  color: var(--ui-muted);
   font: 18px/1.3 var(--font-game);
   text-wrap: balance;
 }
 .player-select-dialog .look-status {
   min-height: 20px;
   margin: var(--space-3) 0 0;
-  color: var(--game-muted);
+  color: var(--ui-muted);
 }
 .player-select-dialog .wardrobe-rows {
   width: 100%;
@@ -167,7 +196,7 @@ html:has(.player-select-dialog[open]) {
   margin: 0;
   padding: var(--space-2);
   align-self: center;
-  scrollbar-color: var(--cinema-keyline) var(--color-outline);
+  scrollbar-color: var(--ui-muted) var(--ui-surface);
 }
 .player-select-dialog .accessory-strip {
   gap: var(--space-2);
@@ -180,14 +209,14 @@ html:has(.player-select-dialog[open]) {
   width: 60px;
   height: 60px;
   padding: 6px;
-  border: 2px solid transparent;
-  background: var(--platform-face);
+  border: 2px solid var(--ui-line);
+  background: var(--ui-surface);
   color: var(--ink);
   transition: background-color var(--duration-fast);
 }
 .player-select-dialog .accessory-option[aria-checked="true"] {
-  border-color: var(--yellow);
-  background: var(--yellow);
+  border-color: var(--ui-ink);
+  background: var(--ui-surface);
   box-shadow: inset 0 0 0 2px var(--ink);
 }
 .player-select-dialog .accessory-option[aria-checked="true"]::after {
@@ -197,25 +226,25 @@ html:has(.player-select-dialog[open]) {
   left: calc(50% - 4px);
   width: 8px;
   height: 8px;
-  background: var(--yellow);
+  background: var(--ui-ink);
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
 }
 .player-select-dialog .accessory-option:active {
   translate: 0 2px;
 }
 .player-select-dialog .accessory-option:focus-visible {
-  outline: 2px solid var(--paper);
+  outline: 2px solid var(--ui-ink);
   outline-offset: 2px;
 }
 .player-select-dialog .accessory-placeholder {
   border-color: var(--ink);
 }
 .player-select-dialog .outfit-error {
-  color: var(--paper);
+  color: var(--ui-ink);
 }
 .player-select-dialog .text-link {
   min-height: var(--control-hit);
-  color: var(--paper);
+  color: var(--ui-ink);
   font: 20px/1.2 var(--font-game);
 }
 .player-select-dialog .registration-actions {
@@ -226,7 +255,7 @@ html:has(.player-select-dialog[open]) {
   padding: var(--space-4) var(--space-6)
     max(var(--space-4), env(safe-area-inset-bottom));
   border: 0;
-  background: var(--color-outline);
+  background: var(--ui-surface);
 }
 .player-select-dialog .player-details-content {
   width: min(1000px, 100%);
@@ -250,24 +279,24 @@ html:has(.player-select-dialog[open]) {
   gap: var(--space-5);
 }
 .player-select-dialog .form-note {
-  color: var(--game-muted);
+  color: var(--ui-muted);
 }
 .registration-error {
   margin: 0;
-  color: var(--yellow);
+  color: var(--ui-ink);
   font: var(--text-body) / 1.5 var(--font-body);
 }
 .details-intro {
   margin: 0;
   font: 24px/1.3 var(--font-game);
-  color: var(--yellow);
+  color: var(--ui-ink);
 }
 .player-select-dialog .registration-details input:focus-visible {
-  outline-color: var(--yellow);
+  outline-color: var(--ui-ink);
 }
 .player-select-dialog .pass-step {
   max-width: none;
-  color: var(--game-muted);
+  color: var(--ui-muted);
   font: 18px/1.3 var(--font-game);
 }
 .player-select-dialog .register-submit {
@@ -277,7 +306,7 @@ html:has(.player-select-dialog[open]) {
   text-transform: uppercase;
 }
 .player-select-dialog :focus-visible {
-  outline: 2px solid var(--paper);
+  outline: 2px solid var(--ui-ink);
   outline-offset: 3px;
 }
 .player-select-top :focus-visible {
@@ -296,7 +325,7 @@ html:has(.player-select-dialog[open]) {
 }
 @media (hover: hover) {
   .player-select-dialog .accessory-option:hover {
-    border-color: var(--paper);
+    border-color: var(--ui-ink);
   }
 }
 .player-ready-content {
@@ -319,12 +348,12 @@ html:has(.player-select-dialog[open]) {
 }
 .player-ready-content .registration-confirmation h3 {
   margin: 0 0 var(--space-2);
-  color: var(--yellow);
+  color: var(--ui-ink);
   font: 26px/1.2 var(--font-game);
 }
 .player-ready-content .registration-confirmation p {
   margin: 0;
-  color: var(--game-muted);
+  color: var(--ui-muted);
   font: 13px/1.5 var(--font-body);
 }
 .player-ready-check {
@@ -336,8 +365,8 @@ html:has(.player-select-dialog[open]) {
   place-items: center;
   width: 48px;
   height: 48px;
-  color: var(--ink);
-  background: var(--yellow);
+  color: var(--ui-surface);
+  background: var(--ui-ink);
   clip-path: polygon(
     8px 0,
     calc(100% - 8px) 0,

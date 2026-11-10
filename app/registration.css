@@ -1,5 +1,9 @@
 /* Compact accessory rows share a stable player preview. */
 .registration-dialog {
+  color: var(--ui-ink);
+  background: var(--ui-surface);
+  --scroll-thumb: var(--ui-muted);
+  --scroll-track: var(--ui-surface);
   position: fixed;
   padding: 0;
   overflow: hidden;
@@ -34,6 +38,7 @@
   min-height: 44px;
 }
 .look-status {
+  color: var(--ui-muted);
   font: 12px/1.4 var(--font-body);
   min-height: 20px;
   margin-top: 12px;
@@ -56,9 +61,16 @@
   min-height: 48px;
   padding: 12px;
   font: 16px var(--font-body);
-  color: var(--ink);
-  border: 1px solid var(--ink);
-  background: var(--white);
+  color: var(--ui-ink);
+  border: 1px solid var(--ui-ink);
+  background: var(--ui-surface);
+}
+.registration-details input::placeholder {
+  color: var(--ui-muted);
+  opacity: 1;
+}
+.registration-dialog :focus-visible {
+  outline-color: var(--ui-ink);
 }
 .registration-actions {
   display: flex;
@@ -78,7 +90,7 @@
 .pass-step,
 .form-note {
   font: 12px/1.5 var(--font-body);
-  color: var(--color-muted);
+  color: var(--ui-muted);
 }
 .registration-confirmation {
   align-self: center;
@@ -87,7 +99,7 @@
 .registration-confirmation > svg {
   width: 40px;
   height: 40px;
-  color: var(--leaf);
+  color: var(--ui-ink);
   margin-bottom: 16px;
 }
 .registration-confirmation h3 {
@@ -133,18 +145,18 @@
   height: 50px;
   min-height: 44px;
   padding: 2px;
-  border: 1px solid var(--line);
-  background: var(--paper);
+  border: 1px solid var(--ui-line);
+  background: var(--ui-surface);
   scroll-snap-align: start;
   cursor: inherit;
 }
 .accessory-option[aria-checked="true"] {
-  background: var(--yellow);
-  border: 2px solid var(--ink);
+  background: var(--ui-surface);
+  border: 2px solid var(--ui-ink);
   padding: 1px;
 }
 .accessory-option:hover {
-  border-color: var(--ink);
+  border-color: var(--ui-ink);
 }
 .accessory-option img,
 .accessory-placeholder {
@@ -155,9 +167,10 @@
   pointer-events: none;
 }
 .accessory-placeholder {
-  border: 1px dotted var(--line);
+  border: 1px dotted var(--ui-line);
 }
 .outfit-error {
+  color: var(--ui-ink);
   font: 12px/1.5 var(--font-body);
 }
 .outfit-error .text-link {

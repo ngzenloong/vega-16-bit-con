@@ -122,9 +122,6 @@ p {
   height: 100%;
   image-rendering: pixelated;
 }
-.hero-explore {
-  display: none;
-}
 .handheld-top {
   display: none;
 }
@@ -170,14 +167,6 @@ p {
   flex-shrink: 0;
   min-height: 185px;
   padding: 15px var(--space-2) var(--space-3);
-}
-.ticket-action {
-  min-height: var(--control-hit);
-  font-size: var(--text-sm);
-  line-height: 1.4;
-}
-.ticket-action[aria-pressed="true"] {
-  font-weight: 600;
 }
 .window-title .icon-button {
   width: var(--control-hit);
@@ -345,20 +334,8 @@ p {
   min-height: var(--control-hit);
 }
 @media (max-width: 700px) {
-  .hero-explore {
-    display: inline-flex;
-  }
-  .event-board .lineup-link {
-    display: none;
-  }
   .social-floor {
     height: 1120px;
-  }
-  .event-tickets {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .event-ticket {
-    min-height: 180px;
   }
   .schedule-board > p {
     font-size: 13px;
@@ -690,12 +667,6 @@ p {
         var(--viewport-width, 100vw) - 106px
     )
   );
-}
-
-.ticket-action.is-near {
-  background: var(--ink);
-  color: var(--paper);
-  padding-inline: 8px;
 }
 .game-kart .game-top :focus-visible,
 .game-breaker .game-top :focus-visible,

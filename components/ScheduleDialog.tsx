@@ -10,11 +10,15 @@ export default function ScheduleDialog({
   onSession,
   onClose,
   soundControl,
+  reduced = false,
+  motionPaused = false,
 }: {
   interests: number[];
   onSession: (index: number) => void;
   onClose: () => void;
   soundControl: ReactNode;
+  reduced?: boolean;
+  motionPaused?: boolean;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -98,7 +102,12 @@ export default function ScheduleDialog({
       </header>
       <div className="lineup-content">
         <p>Featured sessions from October 3–5, 2026.</p>
-        <SessionTickets interests={interests} onSession={onSession} />
+        <SessionTickets
+          interests={interests}
+          onSession={onSession}
+          paused={motionPaused}
+          reduced={reduced}
+        />
         <p className="lineup-note">
           New York time · A selection of event highlights.
         </p>

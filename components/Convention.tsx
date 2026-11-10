@@ -75,6 +75,7 @@ export default function Convention() {
   arrivalRef.current = arrival;
   ambienceRef.current = ambientPaused;
   const desiredSound = useRef(false),
+    explicitlyMuted = useRef(false),
     soundIntent = useRef(0),
     handoff = useRef(0),
     frames = useRef<number[]>([]),
@@ -333,25 +334,15 @@ export default function Convention() {
       setSaveStatus("session");
     }
   }, [player, scores, ready]);
-  const toggleSound = useCallback(async () => {
-    const next = !desiredSound.current,
-      token = ++soundIntent.current;
+  const requestSound = useCallback(async (next: boolean) => {
+    if (next === desiredSound.current && next === audio.enabled) return;
+    const token = ++soundIntent.current;
     desiredSound.current = next;
     setSound(next);
     setSoundError("");
     setSoundStatus(next ? "loading" : "off");
     try {
       await audio.setEnabled(next);
-      if (next && audio.enabled) {
-        const active = panelRef.current;
-        await audio.prepare(
-          active?.kind === "game"
-            ? active.id
-            : viewedFloorRef.current === 1
-              ? "office"
-              : "hall",
-        );
-      }
       if (token !== soundIntent.current) return;
       if (next && !audio.enabled) throw Error("Sound unavailable");
       if (
@@ -377,6 +368,26 @@ export default function Convention() {
       }
     }
   }, []);
+  const toggleSound = useCallback(() => {
+    const next = !desiredSound.current;
+    explicitlyMuted.current = !next;
+    return requestSound(next);
+  }, [requestSound]);
+  const enableSoundForGesture = useCallback(() => {
+    if (
+      explicitlyMuted.current ||
+      desiredSound.current ||
+      document.hidden ||
+      !document.hasFocus()
+    )
+      return;
+    // Call before yielding so AudioContext creation/resume belongs to this gesture.
+    void requestSound(true);
+  }, [requestSound]);
+  const movementIntent = useCallback(() => {
+    if (panelRef.current || arrivalRef.current || handheldEntry.current) return;
+    enableSoundForGesture();
+  }, [enableSoundForGesture]);
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       if (
@@ -710,7 +721,7 @@ export default function Convention() {
         onRegister={register}
         onSession={session}
         onAnnounce={announce}
-        onHandheld={explore}
+        onMovementIntent={movementIntent}
         onEnterScene={enterScene}
         onViewFloorChange={floorViewed}
         onExitHandheld={exitHandheld}
@@ -781,6 +792,8 @@ export default function Convention() {
           onSession={session}
           onClose={close}
           soundControl={soundControl}
+          reduced={reduced}
+          motionPaused={ambientPaused}
         />
       )}
       {panel?.kind === "npc" && (
@@ -799,6 +812,7 @@ export default function Convention() {
           appearance={player?.appearance || DEFAULT_APPEARANCE}
           sound={sound}
           onSound={toggleSound}
+          onPlayIntent={enableSoundForGesture}
           onClose={close}
           onResult={onResult}
           reducedMotion={reduced}

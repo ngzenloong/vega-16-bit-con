@@ -98,12 +98,16 @@ function Stall({
 }
 function CodeBench({ left, variant }: { left: number; variant: number }) {
   return (
-    <div className="venue-prop code-bench" style={{ left }} aria-hidden="true">
-      <Sprite name="computers-desk" />
+    <div
+      className={`venue-prop code-bench ${variant ? "bench-code" : "bench-daisy"}`}
+      style={{ left }}
+      aria-hidden="true"
+    >
+      <Sprite name={variant ? "computers-desk" : "desk-1"} />
       <Sprite
         name="mole-typing"
         className="bench-coder"
-        style={{ left: variant ? 150 : 240 }}
+        style={{ left: variant ? 150 : 90 }}
       />
     </div>
   );
@@ -133,20 +137,8 @@ export default function VenueLife({
     <>
       <CodeBench left={1230} variant={0} />
       <CodeBench left={2180} variant={1} />
-      <div
-        className="venue-prop"
-        style={{ left: 1680, bottom: 110 }}
-        aria-hidden="true"
-      >
+      <div className="venue-prop" style={{ left: 1680 }} aria-hidden="true">
         <Sprite name="moles-sofa" />
-      </div>
-      <div className="developer-wall" aria-hidden="true">
-        <span>QUERY NIGHT</span>
-        <pre>
-          {
-            "source → detect → investigate\nNYC ↔ TLV\nPOST-SIEM / OPEN SESSION"
-          }
-        </pre>
       </div>
     </>
   );

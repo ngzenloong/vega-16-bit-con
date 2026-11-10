@@ -22,14 +22,14 @@
   font-display: swap;
 }
 :root {
-  --ink: var(--color-ink);
+  --ink: var(--ui-ink);
   --leaf: var(--color-leaf);
   --paper: var(--color-paper);
-  --white: var(--color-white);
+  --white: var(--ui-surface);
   --yellow: var(--color-yellow);
   --lime: var(--color-lime);
   --sky: var(--color-sky);
-  --line: var(--color-line);
+  --line: var(--ui-line);
   --shadow: 4px 4px 0 var(--ink);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --camera-x: 0px;
@@ -44,8 +44,8 @@ html {
 body {
   margin: 0;
   color: var(--ink);
-  background: var(--paper);
-  font: 15px/1.5 var(--font-body);
+  background: var(--ui-surface);
+  font: var(--ui-type-body);
 }
 button,
 input {
@@ -75,16 +75,16 @@ p {
   margin: 0;
 }
 ::selection {
-  background: var(--yellow);
-  color: var(--ink);
+  background: var(--ui-ink);
+  color: var(--ui-surface);
 }
 :focus-visible {
-  outline: 3px solid var(--leaf);
+  outline: 3px solid var(--ui-ink);
   outline-offset: 5px;
 }
 input {
   border-radius: 0;
-  caret-color: var(--leaf);
+  caret-color: var(--ui-ink);
 }
 img {
   max-width: 100%;
@@ -105,7 +105,8 @@ img {
   left: 16px;
   top: -80px;
   z-index: 100;
-  background: var(--yellow);
+  background: var(--ui-surface);
+  color: var(--ui-ink);
   padding: var(--space-3);
 }
 .skip-link:focus {
@@ -137,7 +138,7 @@ img {
   box-shadow: none;
 }
 .pixel-button.primary {
-  background: var(--yellow);
+  background: var(--ui-primary);
 }
 .pixel-button.quiet {
   background: transparent;
@@ -162,6 +163,16 @@ img {
 }
 .icon-button:hover {
   background: var(--yellow);
+}
+.icon-button:not(.game-dialog *):enabled:hover {
+  background: var(--ui-ink);
+  color: var(--ui-surface);
+}
+:is(.pixel-button, .icon-button, [role="tab"]):not(.game-dialog *)[aria-pressed="true"],
+[role="tab"]:not(.game-dialog *)[aria-selected="true"] {
+  background: var(--ui-ink);
+  color: var(--ui-surface);
+  border-color: var(--ui-ink);
 }
 .text-link {
   border: 0;
@@ -224,13 +235,13 @@ dialog {
   color: var(--ink);
   border: 1px solid var(--ink);
   padding: 0;
-  background: var(--paper);
+  background: var(--ui-surface);
   max-width: calc(100vw - 30px);
   max-height: calc(100dvh - 32px);
   overscroll-behavior: contain;
 }
 dialog::backdrop {
-  background: var(--overlay-tint);
+  background: var(--ui-overlay);
 }
 .window-title {
   display: flex;
@@ -243,14 +254,14 @@ dialog::backdrop {
   position: sticky;
   top: 0;
   z-index: 4;
-  background: var(--paper);
+  background: var(--ui-surface);
 }
 .window-title .icon-button {
   min-width: 28px;
   min-height: 28px;
   width: 28px;
   height: 28px;
-  background: var(--yellow);
+  background: var(--ui-surface);
   font-size: 23px;
 }
 .registration-dialog {
@@ -270,9 +281,15 @@ dialog::backdrop {
 .form-note {
   font-size: 11px;
   line-height: 1.6;
-  color: var(--color-muted);
+  color: var(--ui-muted);
 }
 .game-dialog {
+  /* Keep the four games and their existing menu palette independent of page UI. */
+  --ink: var(--color-ink);
+  --line: var(--color-line);
+  --ui-ink: var(--color-ink);
+  --ui-primary: var(--color-yellow);
+  --ui-overlay: var(--overlay-tint);
   position: fixed;
   inset: 0;
   margin: 0;
@@ -284,6 +301,10 @@ dialog::backdrop {
   background: var(--ink);
   color: var(--paper);
   overflow: hidden;
+}
+.game-dialog ::selection {
+  background: var(--yellow);
+  color: var(--ink);
 }
 .game-shell {
   height: 100%;

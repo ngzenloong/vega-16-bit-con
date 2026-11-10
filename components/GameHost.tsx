@@ -67,6 +67,7 @@ export default function GameHost({
   appearance,
   sound,
   onSound,
+  onPlayIntent,
   onClose,
   onResult,
   reducedMotion = false,
@@ -77,6 +78,7 @@ export default function GameHost({
   appearance: Appearance;
   sound: boolean;
   onSound: () => Promise<void>;
+  onPlayIntent: () => void;
   onClose: () => void;
   onResult: (r: GameResult) => void;
   reducedMotion?: boolean;
@@ -174,15 +176,16 @@ export default function GameHost({
     onClose();
   }, [onClose]);
   const start = useCallback(
-    async (confirmedCar = false) => {
+    async (confirmedCar = false, userGesture = true) => {
       if (!["intro", "paused"].includes(modeRef.current)) return;
-      if (id === "kart" && modeRef.current === "intro" && !confirmedCar) {
-        changeMode("garage");
+      if (document.hidden || !document.hasFocus()) {
+        changeMode("paused");
         clearInput();
         return;
       }
-      if (document.hidden || !document.hasFocus()) {
-        changeMode("paused");
+      if (userGesture) onPlayIntent();
+      if (id === "kart" && modeRef.current === "intro" && !confirmedCar) {
+        changeMode("garage");
         clearInput();
         return;
       }
@@ -200,7 +203,12 @@ export default function GameHost({
           "Music is unavailable. You can keep playing with visual cues.",
         );
       }
-      if (ticket !== launch.current || !dialog.current?.open || document.hidden)
+      if (
+        ticket !== launch.current ||
+        !dialog.current?.open ||
+        document.hidden ||
+        !document.hasFocus()
+      )
         return;
       song.current = { offset, started: performance.now() };
       elapsed.current = offset;
@@ -208,9 +216,10 @@ export default function GameHost({
       audio.effect("start");
       changeMode("playing");
     },
-    [id, changeMode, clearInput],
+    [id, onPlayIntent, changeMode, clearInput],
   );
   const restart = useCallback(() => {
+    onPlayIntent();
     soundRequest.current++;
     launch.current++;
     audio.pause();
@@ -223,37 +232,44 @@ export default function GameHost({
       replay.current = true;
       setRound((n) => n + 1);
     }
-  }, [id, clearInput, changeMode]);
+  }, [id, onPlayIntent, clearInput, changeMode]);
   const retry = useCallback(() => {
     replay.current = false;
     setRound((n) => n + 1);
   }, []);
-  const selectCar = useCallback((selected: string) => {
-    const next = normalizeProgress({ ...progressRef.current, selected });
-    if (next.selected !== selected) return;
-    progressRef.current = next;
-    setProgress(next);
-    setSessionOnly(!saveRaceProgress(next));
-    setCarId(selected);
-    setResult(null);
-    setUnlocks([]);
-    replay.current = true;
-    setRound((n) => n + 1);
-  }, []);
+  const selectCar = useCallback(
+    (selected: string) => {
+      const next = normalizeProgress({ ...progressRef.current, selected });
+      if (next.selected !== selected) return;
+      onPlayIntent();
+      progressRef.current = next;
+      setProgress(next);
+      setSessionOnly(!saveRaceProgress(next));
+      setCarId(selected);
+      setResult(null);
+      setUnlocks([]);
+      replay.current = true;
+      setRound((n) => n + 1);
+    },
+    [onPlayIntent],
+  );
   const toggleSound = useCallback(async () => {
-    const request = ++soundRequest.current;
+    const request = ++soundRequest.current,
+      phase = launch.current,
+      mode = modeRef.current;
+    const current = () =>
+      request === soundRequest.current &&
+      phase === launch.current &&
+      mode === modeRef.current &&
+      !!dialog.current?.open &&
+      !document.hidden &&
+      document.hasFocus();
     const enabling = !audio.enabled;
     const before = readTime();
     song.current = { offset: before, started: performance.now() };
     elapsed.current = before;
     await onSound();
-    if (
-      request !== soundRequest.current ||
-      !dialog.current?.open ||
-      document.hidden ||
-      !document.hasFocus()
-    )
-      return;
+    if (!current()) return;
     if (enabling && !audio.enabled) {
       setAudioError(
         "Music is unavailable. You can keep playing with visual cues.",
@@ -262,35 +278,39 @@ export default function GameHost({
       return;
     }
     setAudioError("");
-    if (modeRef.current === "playing") {
-      const time = readTime();
-      song.current = { offset: time, started: performance.now() };
+    if (mode === "playing") {
+      const withSound = audio.enabled;
       try {
+        if (id === "beat" && withSound) {
+          await audio.prepare("beat");
+          if (!current() || !audio.enabled) return;
+        }
+        // The muted clock keeps advancing while an uncached score loads.
+        const time = readTime();
+        song.current = { offset: time, started: performance.now() };
         await audio.play(id, id === "beat" ? time : undefined);
+        if (!current() || (withSound && !audio.enabled)) return;
         setAudioError("");
       } catch {
+        if (!current() || (withSound && !audio.enabled)) return;
         setAudioError(
           audio.enabled
             ? "Music could not load. Turn sound off, then on to retry."
             : "Music could not load. Turn sound on to retry.",
         );
       }
-      if (
-        modeRef.current === "playing" &&
-        !document.hidden &&
-        document.hasFocus()
-      )
-        canvas.current?.focus({ preventScroll: true });
-    } else if (modeRef.current === "paused") audio.pause();
+      if (current()) canvas.current?.focus({ preventScroll: true });
+    } else if (mode === "paused") audio.pause();
     else if (audio.enabled)
       void audio
         .play(id)
-        .catch(() =>
+        .catch(() => {
+          if (!current() || !audio.enabled) return;
           setAudioError(
             "Music could not load. Turn sound off, then on to retry.",
-          ),
-        );
-    if (modeRef.current !== "playing")
+          );
+        });
+    if (mode !== "playing" && current())
       dialog.current?.focus({ preventScroll: true });
   }, [id, onSound, readTime]);
 
@@ -511,7 +531,7 @@ export default function GameHost({
         changeMode("intro");
         if (replay.current) {
           replay.current = false;
-          void start(true);
+          void start(true, false);
         }
       } catch {
         if (!disposed) changeMode("error");

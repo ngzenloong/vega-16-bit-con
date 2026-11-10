@@ -282,9 +282,6 @@ html:has(.conversation-dialog[open]) {
   }
 }
 @media (max-width: 700px) {
-  .event-board .pixel-button {
-    min-height: var(--control-hit);
-  }
   .venue-footer {
     padding-left: max(20px, env(safe-area-inset-left));
     padding-right: max(20px, env(safe-area-inset-right));
@@ -315,8 +312,8 @@ html:has(.conversation-dialog[open]) {
   min-width: 168px;
   min-height: 68px;
   padding: var(--space-2) var(--space-4);
-  border: 2px solid var(--ink);
-  background: var(--paper);
+  border: 1px solid var(--ui-ink);
+  background: var(--ui-surface);
   color: var(--ink);
   box-shadow: 4px 4px 0 var(--ink);
   cursor: pointer;
@@ -351,10 +348,12 @@ html:has(.conversation-dialog[open]) {
     100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom)
   );
   overflow: hidden;
-  border: 2px solid var(--ink);
-  background: var(--paper);
+  border: 1px solid var(--ui-ink);
+  background: var(--ui-surface);
   color: var(--ink);
   box-shadow: 4px 4px 0 var(--ink);
+  --scroll-thumb: var(--ui-muted);
+  --scroll-track: var(--ui-surface);
 }
 .lineup-dialog[open] {
   display: flex;
@@ -366,7 +365,7 @@ html:has(.conversation-dialog[open]) {
   flex: none;
 }
 .lineup-dialog h2 {
-  font: 26px/1.2 var(--font-game);
+  font: var(--ui-type-mono);
   margin: 0;
 }
 .lineup-content {
@@ -378,15 +377,11 @@ html:has(.conversation-dialog[open]) {
 }
 .lineup-content > p {
   margin: 0 0 var(--space-4);
-  font: var(--text-body) / 1.5 var(--font-body);
+  font: var(--ui-type-body);
 }
 .lineup-content .lineup-note {
   margin: var(--space-4) 0 0;
   font: var(--text-sm) / 1.5 var(--font-mono);
-}
-.lineup-dialog .event-ticket h3 {
-  min-height: 0;
-  font-size: 24px;
 }
 .lineup-dialog .ticket-action {
   min-height: var(--control-hit);
@@ -400,12 +395,6 @@ html:has(.conversation-dialog[open]) {
   outline-offset: -2px;
 }
 @media (max-width: 700px) {
-  .lineup-dialog .event-tickets {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-  }
-}
-@media (max-width: 700px) {
   .conversation-frame {
     align-items: start;
   }
@@ -415,7 +404,6 @@ html:has(.conversation-dialog[open]) {
 }
 
 .lineup-dialog .window-title .icon-button:not(.sound-toggle) {
-  background: var(--paper);
   border: 1px solid var(--ink);
 }
 

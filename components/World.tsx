@@ -29,6 +29,8 @@ import Icon from "./Icon";
 import Companion from "./Companion";
 import VenueLife from "./VenueLife";
 import SessionTickets from "./SessionTickets";
+import InfoWindow from "./InfoWindow";
+import TypewriterText from "./TypewriterText";
 import { snackSheet } from "@/lib/snack-art";
 import { SCENE, MACHINES } from "@/lib/scene";
 
@@ -51,7 +53,7 @@ type Props = {
   onRegister: () => void;
   onSession: (index: number) => void;
   onAnnounce: (text: string) => void;
-  onHandheld: () => void;
+  onMovementIntent: () => void;
   onEnterScene: (floor: number) => void;
   onViewFloorChange: (floor: number) => void;
   onExitHandheld: () => void;
@@ -71,7 +73,7 @@ const World = forwardRef<WorldController, Props>(function World(
     onRegister,
     onSession,
     onAnnounce,
-    onHandheld,
+    onMovementIntent,
     onEnterScene,
     onViewFloorChange,
     onExitHandheld,
@@ -85,6 +87,7 @@ const World = forwardRef<WorldController, Props>(function World(
     callbacks = useRef({
       onTarget,
       onAnnounce,
+      onMovementIntent,
       onSession,
       onEnterScene,
       onViewFloorChange,
@@ -92,6 +95,7 @@ const World = forwardRef<WorldController, Props>(function World(
   callbacks.current = {
     onTarget,
     onAnnounce,
+    onMovementIntent,
     onSession,
     onEnterScene,
     onViewFloorChange,
@@ -131,6 +135,7 @@ const World = forwardRef<WorldController, Props>(function World(
       (text) => callbacks.current.onAnnounce(text),
       (floor) => callbacks.current.onEnterScene(floor),
       (floor) => callbacks.current.onViewFloorChange(floor),
+      () => callbacks.current.onMovementIntent(),
     );
     engine.current = controller;
     return () => {
@@ -483,50 +488,61 @@ const World = forwardRef<WorldController, Props>(function World(
         <div className="world-inner" data-world-inner>
           <div className="glass-wall" aria-hidden="true" />
           <div className="steel-roof" aria-hidden="true" />
-          <div className="venue-sign">JAVITS CENTER · NEW YORK</div>
-          <div className="event-board" data-platform>
-            <div className="billboard-hardware" aria-hidden="true">
-              <span className="billboard-clamp clamp-left" />
-              <span className="billboard-clamp clamp-right" />
-              <span className="billboard-bolt bolt-left" />
-              <span className="billboard-bolt bolt-right" />
-              <span className="billboard-light light-left">
-                <i className="billboard-beam" />
-                <i className="lamp-head" />
-              </span>
-              <span className="billboard-light light-right">
-                <i className="billboard-beam" />
-                <i className="lamp-head" />
-              </span>
-            </div>
-            <h1>16-Bit Con</h1>
-            <p>
-              The retro gaming convention for people who never stopped playing.
-            </p>
-            <div className="event-date">October 3–5, 2026</div>
-            <div className="button-row">
-              <button className="pixel-button primary" onClick={onRegister}>
-                {player ? "Edit my player" : "Register now"}
-              </button>
-              <a
-                className="pixel-button lineup-link"
-                href="#social-floor"
-                onClick={(e) => {
-                  e.preventDefault();
-                  engine.current?.reveal(1, SCENE.booth);
-                }}
-              >
-                See the lineup ↓
-              </a>
-              <button
-                className="pixel-button hero-explore"
-                onClick={onHandheld}
-                aria-label="Explore the hall"
-              >
-                Explore
-              </button>
-            </div>
+          <div className="venue-sign" aria-hidden="true">
+            JAVITS CENTER
           </div>
+          <InfoWindow
+            className="event-board"
+            title="16-Bit Con"
+            labelledBy="event-title"
+            platform
+          >
+            <div className="event-intro">
+              <h1 id="event-title">16-Bit Con</h1>
+              <dl className="event-details">
+                <div>
+                  <dt>Date</dt>
+                  <dd>
+                    <time className="sr-only" dateTime="2026-10-03">
+                      October 3–5, 2026
+                    </time>
+                    <TypewriterText
+                      text="October 3–5, 2026"
+                      cursor={false}
+                      paused={ambientPaused}
+                      reduced={reduced}
+                    />
+                  </dd>
+                </div>
+                <div>
+                  <dt>Location</dt>
+                  <dd>
+                    <span className="sr-only">Javits Center, New York</span>
+                    <TypewriterText
+                      text="Javits Center, New York"
+                      cursor={false}
+                      paused={ambientPaused}
+                      reduced={reduced}
+                    />
+                  </dd>
+                </div>
+              </dl>
+              <div className="event-description">
+                <p className="sr-only">
+                  The retro gaming convention for people who never stopped
+                  playing.
+                </p>
+                <TypewriterText
+                  text="The retro gaming convention for people who never stopped playing."
+                  paused={ambientPaused}
+                  reduced={reduced}
+                />
+              </div>
+              <button className="pixel-button primary" onClick={onRegister}>
+                {player ? "My player" : "Sign up"}
+              </button>
+            </div>
+          </InfoWindow>
           {prop("plant-flowers", 1050)}
           {prop("plant-flowers", 2550)}
           {prop("plant-2", 3470)}
@@ -680,6 +696,8 @@ const World = forwardRef<WorldController, Props>(function World(
               interests={interests}
               onSession={onSession}
               inWorld
+              paused={ambientPaused}
+              reduced={reduced}
             />
             <small>Featured sessions · October 3–5 · New York time</small>
           </div>

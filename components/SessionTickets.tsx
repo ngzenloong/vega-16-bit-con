@@ -1,45 +1,65 @@
 import { SESSIONS } from "@/lib/types";
 import { SCENE } from "@/lib/scene";
+import InfoWindow from "./InfoWindow";
+import TypewriterText from "./TypewriterText";
 
 export default function SessionTickets({
   interests,
   onSession,
   inWorld = false,
+  paused = false,
+  reduced = false,
 }: {
   interests: number[];
   onSession: (index: number) => void;
   inWorld?: boolean;
+  paused?: boolean;
+  reduced?: boolean;
 }) {
   return (
     <div className="event-tickets">
       {SESSIONS.map((session, index) => {
         const selected = interests.includes(index);
         return (
-          <article className="event-ticket" key={session.time}>
-            <div className="ticket-top">
-              <time>{session.time}</time>
+          <InfoWindow
+            className="event-ticket"
+            key={session.time}
+            title={<time>{session.time}</time>}
+            labelledBy={`session-${inWorld ? "scene" : "dialog"}-${index}`}
+          >
+            <div className="session-copy">
+              <div className="sr-only">
+                <p>{session.kind}</p>
+                <h3 id={`session-${inWorld ? "scene" : "dialog"}-${index}`}>
+                  {session.title}
+                </h3>
+              </div>
+              <TypewriterText
+                text={`${session.kind}\n\n${session.title}`}
+                paused={paused}
+                reduced={reduced}
+              />
             </div>
-            <h3>{session.title}</h3>
-            <p>{session.kind}</p>
-            <button
-              className="ticket-action"
-              {...(inWorld
-                ? {
-                    "data-target": String(index),
-                    "data-kind": "session",
-                    "data-label": session.title,
-                    "data-x": SCENE.booth,
-                    "data-active-mode": "page",
-                  }
-                : {})}
-              onClick={() => onSession(index)}
-              aria-pressed={selected}
-              aria-label={`${selected ? "Remove" : "Add"} ${session.title} ${selected ? "from" : "to"} my list`}
-            >
-              {selected ? "On my list ✓" : "Add to my list"}
-            </button>
-            <div className="ticket-perforation" aria-hidden="true" />
-          </article>
+            <div className="session-actions">
+              <button
+                className="ticket-action pixel-button"
+                {...(inWorld
+                  ? {
+                      "data-target": String(index),
+                      "data-kind": "session",
+                      "data-label": session.title,
+                      "data-x": SCENE.booth,
+                      "data-active-mode": "page",
+                    }
+                  : {})}
+                onClick={() => onSession(index)}
+                aria-pressed={selected}
+                aria-label={`${selected ? "On my list" : "Add to my list"}: ${session.title}${selected ? ". Remove session" : ""}`}
+              >
+                {selected ? "On my list" : "Add to my list"}
+              </button>
+            </div>
+          </InfoWindow>
         );
       })}
     </div>
