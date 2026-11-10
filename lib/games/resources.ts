@@ -1,7 +1,7 @@
 import { characterSheets, loadImage } from "../character";
 import type { Appearance } from "../types";
 import { selectRivalCars, ALL_CARS, FIAT } from "./cars";
-import { duskBackdrop } from "./scenery";
+import { daylightBackdrop } from "./scenery";
 import { prepareGameFont } from "../game-font";
 export async function gameResources(
   appearance: Appearance,
@@ -28,7 +28,7 @@ export async function gameResources(
     characterSheets(appearance),
     loadImage("/assets/vega/logo.svg"),
     loadImage("/assets/vega/logo-light.svg"),
-    duskBackdrop(),
+    daylightBackdrop(),
     racing
       ? Promise.all(
           [playerAsset, ...rivalCars.map((car) => car.asset)].map((asset) =>
@@ -36,8 +36,8 @@ export async function gameResources(
           ),
         )
       : Promise.resolve([]),
-    duskBackdrop(true),
-    racing ? duskBackdrop("street-far") : Promise.resolve(undefined),
+    daylightBackdrop(true),
+    racing ? daylightBackdrop("street-far") : Promise.resolve(undefined),
     loadImage("/assets/vega/sam-portrait.png"),
     prepareGameFont(),
   ]);

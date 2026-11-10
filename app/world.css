@@ -29,7 +29,7 @@
   will-change: transform;
 }
 .main-hall {
-  background: var(--color-sky);
+  background: var(--sky-day);
 }
 .sky-stack {
   position: absolute;

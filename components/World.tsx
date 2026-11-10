@@ -440,33 +440,6 @@ const World = forwardRef<WorldController, Props>(function World(
       inert={arriving}
       className={`world-stage ${handheld ? "is-handheld" : ""} ${reduced ? "reduced-motion" : ""}`}
     >
-      <svg
-        className="scene-color-filters"
-        aria-hidden="true"
-        width="0"
-        height="0"
-      >
-        <defs>
-          <filter id="sunset-city" colorInterpolationFilters="sRGB">
-            <feColorMatrix
-              type="matrix"
-              values=".90 0 .30 0 0 .15 .70 0 0 0 .15 0 .80 0 0 0 0 0 1 0"
-            />
-          </filter>
-          <filter id="sunset-distance" colorInterpolationFilters="sRGB">
-            <feColorMatrix
-              type="matrix"
-              values=".68 0 .30 0 .13 .12 .64 0 0 .06 .12 0 .73 0 .05 0 0 0 1 0"
-            />
-          </filter>
-          <filter id="sunset-clouds" colorInterpolationFilters="sRGB">
-            <feColorMatrix
-              type="matrix"
-              values=".80 0 0 0 .20 0 .65 0 0 .20 0 0 .60 0 .15 0 0 0 1 0"
-            />
-          </filter>
-        </defs>
-      </svg>
       {handheld && (
         <div className="handheld-top">
           <span>16-Bit Con</span>

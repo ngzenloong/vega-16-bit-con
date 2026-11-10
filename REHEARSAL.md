@@ -33,7 +33,7 @@ The full reports and screenshots are in the sibling `audit-2026-11-06/mobile-rou
 
 ## Brand and brief
 
-The retained Figma instruction, brand and copy snapshots were compared again. Event name, tagline, October 3–5, 2026, Javits Center, Booth 630 and the three supplied session titles/times remain intact. The brief does not assign session days, so the schedule describes event highlights without inventing a daily agenda. Original logo/daisy, Mondwest game text, Geist body/command roles and existing palette remain the foundation. The dusk city, continuous venue, four era-specific games and local player follow the user's approved direction.
+The retained Figma instruction, brand and copy snapshots were compared again. Event name, tagline, October 3–5, 2026, Javits Center, Booth 630 and the three supplied session titles/times remain intact. The brief does not assign session days, so the schedule describes event highlights without inventing a daily agenda. Original logo/daisy, Mondwest game text, Geist body/command roles and existing palette remain the foundation. The continuous venue, four era-specific games and local player follow the user's approved direction; the November 10 color pass restores the original daylight city.
 
 Five review lenses were applied: make-interfaces-feel-better, vercel-react-best-practices, humanizer, hallmark and stageshow. Reports distinguish source checks, browser observations and independent artifact review. No animation framework or design-system package was introduced. A fresh independent finish reviewer approved the full-screen selector after reviewing the nine viewport pairs, customization, success, mid-drop and landed evidence.
 

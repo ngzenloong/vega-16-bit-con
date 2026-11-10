@@ -319,29 +319,6 @@ html {
   }
 }
 
-/* The scenery keeps the original pixel silhouettes and opaque depth layers. */
-.scene-color-filters {
-  position: absolute;
-  pointer-events: none;
-}
-.main-hall {
-  background: linear-gradient(
-    var(--sky-dusk-top) 0%,
-    var(--sky-dusk-pink) 28%,
-    var(--sky-dusk-gold) 58%,
-    var(--sky-dusk-horizon) 100%
-  );
-}
-.skyline-far {
-  filter: url(#sunset-distance);
-}
-.skyline-towers,
-.skyline-mid {
-  filter: url(#sunset-city);
-}
-.sky-cloud {
-  filter: url(#sunset-clouds);
-}
 .event-board {
   border: 4px solid var(--ink);
   box-shadow:
