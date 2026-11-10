@@ -37,7 +37,12 @@ export default function TypewriterText({
     });
   }, [text, paused, reduced]);
   return (
-    <div className={`typed-copy ${className}`} ref={root} aria-hidden="true">
+    <div
+      className={`typed-copy ${className}`}
+      ref={root}
+      data-static={paused || reduced}
+      aria-hidden="true"
+    >
       <div className="typed-reserve">
         {text}
         {cursor && <span className="terminal-cursor" />}

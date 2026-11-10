@@ -32,7 +32,7 @@ Original daytime skyline layers replace the sunset tint without changing silhoue
 
 ## Sound intent
 
-The first accepted left/right movement or deliberate game start enables audio synchronously in the user gesture. Explicit mute wins over subsequent movement, game entry and automatic navigation. Initial sound enable, loading, failure, cancellation and hidden-tab handling continue through the shared audio owner; each game retains its own score.
+The first accepted left/right movement or deliberate game start enables audio synchronously in the user gesture. Explicit mute wins over subsequent movement, game entry and automatic navigation. Initial sound enable, loading, failure, cancellation and hidden-tab handling continue through the shared audio owner; each game retains its own score. Both venue floors share the former 1F acoustic loop without a track switch.
 
 ## Evidence boundaries
 

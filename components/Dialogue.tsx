@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -101,7 +102,7 @@ export default function Dialogue({
       active = false;
     };
   }, [id]);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const d = ref.current!,
       previous = document.activeElement as HTMLElement | null,
       oldOverflow = document.body.style.overflow,
@@ -146,11 +147,8 @@ export default function Dialogue({
       cancelAnimationFrame(typing.current);
       if (exitTimer.current) clearTimeout(exitTimer.current);
       d.removeEventListener("cancel", cancel);
-      releaseFocus();
       window.removeEventListener("resize", frameScene);
-      d.close();
-      document.body.style.overflow = oldOverflow;
-      audio.duck(1);
+      // Restore page geometry before the modal releases focus and scrolling.
       floor?.classList.remove("is-conversation");
       if (world) {
         delete world.dataset.conversation;
@@ -159,15 +157,12 @@ export default function Dialogue({
         world.style.removeProperty("--conversation-anchor");
         world.style.removeProperty("--dialogue-bottom");
       }
+      d.close();
+      releaseFocus();
+      document.body.style.overflow = oldOverflow;
+      audio.duck(1);
       previous?.focus({ preventScroll: true });
-      const html = document.documentElement,
-        oldBehavior = html.style.scrollBehavior;
-      html.style.scrollBehavior = "auto";
-      window.scrollTo({ top: oldScroll, behavior: "auto" });
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: oldScroll, behavior: "auto" });
-        html.style.scrollBehavior = oldBehavior;
-      });
+      window.scrollTo({ top: oldScroll, behavior: "instant" });
     };
     // The scene is captured once; changing a dialogue line must not reframe it.
     // eslint-disable-next-line react-hooks/exhaustive-deps

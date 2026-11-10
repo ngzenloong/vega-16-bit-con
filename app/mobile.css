@@ -281,18 +281,6 @@ html:has(.conversation-dialog[open]) {
     );
   }
 }
-@media (max-width: 700px) {
-  .venue-footer {
-    padding-left: max(20px, env(safe-area-inset-left));
-    padding-right: max(20px, env(safe-area-inset-right));
-  }
-}
-@media (max-width: 340px) {
-  .venue-footer .footer-details > span {
-    white-space: normal;
-    text-wrap: balance;
-  }
-}
 
 /* Handheld rooms expose a sign; the same session component opens at a readable size. */
 .handheld-lineup {

@@ -168,7 +168,9 @@ img {
   background: var(--ui-ink);
   color: var(--ui-surface);
 }
-:is(.pixel-button, .icon-button, [role="tab"]):not(.game-dialog *)[aria-pressed="true"],
+:is(.pixel-button, .icon-button, [role="tab"]):not(
+    .game-dialog *
+  )[aria-pressed="true"],
 [role="tab"]:not(.game-dialog *)[aria-selected="true"] {
   background: var(--ui-ink);
   color: var(--ui-surface);
@@ -201,35 +203,6 @@ img {
 .sprite-animated {
   animation: sprite-strip var(--sprite-duration)
     steps(var(--sprite-steps), jump-none) infinite;
-}
-.site-footer {
-  background: var(--leaf);
-  color: var(--paper);
-  padding: 35px 5%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-}
-.site-footer > div {
-  display: flex;
-  gap: 28px;
-  align-items: center;
-}
-.site-footer img {
-  filter: brightness(0) invert(1);
-  width: 100px;
-  height: auto;
-}
-.site-footer p {
-  font-size: 15px;
-}
-.site-footer .pixel-button {
-  color: var(--ink);
-}
-.site-footer small {
-  font: 10px/1.7 var(--font-mono);
-  max-width: 270px;
 }
 dialog {
   color: var(--ink);
@@ -522,24 +495,6 @@ dialog::backdrop {
   }
 }
 @media (max-width: 700px) {
-  .site-footer {
-    padding: 30px 22px 75px;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 25px;
-  }
-  .site-footer > div {
-    gap: 22px;
-  }
-  .site-footer p {
-    font-size: 13px;
-  }
-  .site-footer .pixel-button {
-    justify-self: start;
-  }
-  .site-footer small {
-    font-size: 10px;
-  }
   .registration-dialog {
     width: calc(100vw - 24px);
     max-width: none;
@@ -750,4 +705,20 @@ dialog::backdrop {
   .pixel-button {
     transition: none;
   }
+}
+
+/* Original Vega lift-hit: retain the original hit area while a button lifts. */
+.pixel-button,
+.site-header .header-cta {
+  position: relative;
+}
+.pixel-button:hover::after,
+.site-header .header-cta:hover::after {
+  content: "";
+  position: absolute;
+  inset: 0 -3px -3px 0;
+}
+/* Secondary buttons also retain their 1px border in the stable hover area. */
+.pixel-button:hover::after {
+  inset: 0 -4px -4px 0;
 }

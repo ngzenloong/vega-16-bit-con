@@ -11,6 +11,7 @@ import "./mobile.css";
 import "./player-select.css";
 import "./handheld-menus.css";
 import "./windows.css";
+import "./footer.css";
 export const viewport: Viewport = { viewportFit: "cover" };
 export const metadata: Metadata = {
   title: "16-Bit Con — Never stopped playing",

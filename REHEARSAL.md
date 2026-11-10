@@ -100,3 +100,14 @@ The phone floor trace starts in the main hall, travels to the social floor, exit
 Verification: **137 automated tests passed**, TypeScript checking, production build and diff whitespace checks passed. Independent source review closed the offscreen-typewriter and cold-Beat-offset findings. Separate make-interfaces-feel-better, Hallmark, Humanizer and applicable StageShow reviews found no remaining actionable issue in their inspected source/capture scope. StageShow's faux-UI film gate was not used as a substitute for live interaction tests. The mechanical UI scan reported only the two mandated Geist font warnings; these are deliberate source-brand matches, not replacement-font recommendations.
 
 Evidence lives in the sibling `audit-2026-11-10-daylight` folder, including reference styles, final rendered-token measurements, responsive captures, floor traces and independent review reports. Local browser evidence is Chromium. Physical iOS audio unlocking/software keyboard behavior, VoiceOver output, exact-device touch feel and exhaustive low-speed motion inspection remain unverified. Deployment verification is separately recorded against the pushed commit.
+
+
+## Rendering regressions and footer follow-up
+
+The visible typewriter layer now inherits visibility from its scene, so hiding an information window also hides its text. Completed cursors blink, with static/reduced-motion states exempt. Whole-pixel board widths and grid columns avoid fractional transformed text; the scene no longer forces a persistent 3D text layer. The original lift-hit hover region is restored, including the secondary button border. A native edge-hover trace settled at the identical47,464 coordinates for the final10 sampled frames rather than repeatedly entering/leaving. The smaller lineup action uses the original secondary button sizing.
+
+Dialogue scene setup/cleanup now runs before paint. It restores floor layout before releasing modal scroll ownership and removes the delayed scroll write that could overwrite a subsequent navigation. Three regressions fail on the previous ordering and pass on the repair. Browser checking confirmed all three hero text layers hidden during dialogue, restoration to2048px combined floor height, and immediate navigation to the schedule remaining atscrollY1024.
+
+Both floors now continuously use the former1F acoustic score. Regression checks cover identical track selection on both floors and reuse of the running audio source. The footer follows the actual Vega footer: original53×48 flower, framed white surface, monospace event columns, two columns on narrow screens, and original brick artwork. Desktop1440px and mobile393px rendered without horizontal overflow. No corporate product catalog or registration backend was added.
+
+142 tests, typecheck and production build passed for this follow-up. Physical-device limitations remain as above.

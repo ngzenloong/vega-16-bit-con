@@ -460,7 +460,9 @@ function unmuteFixture(id = "beat", initiallyEnabled = false) {
     plays,
     starts,
     errors,
-    advance: (milliseconds: number) => { now += milliseconds; },
+    advance: (milliseconds: number) => {
+      now += milliseconds;
+    },
     focuses: () => focusCount,
   };
 }
@@ -470,7 +472,11 @@ test("cold rhythm unmute samples the current offset after decode without moving 
   const pending = round.toggleSound();
   await flush();
   assert.deepEqual(round.preparations, ["beat"]);
-  assert.equal(round.plays.length, 0, "do not capture a seek before the buffer is ready");
+  assert.equal(
+    round.plays.length,
+    0,
+    "do not capture a seek before the buffer is ready",
+  );
   round.advance(6000);
   const whileLoading = round.readTime();
   assert.equal(whileLoading, 10, "the muted fallback clock keeps advancing");
@@ -484,7 +490,16 @@ test("cold rhythm unmute samples the current offset after decode without moving 
 });
 
 test("obsolete rhythm preparations cannot play, publish errors or focus after a lifecycle change", async () => {
-  const cases = ["mute", "restart", "exit", "pause-resume", "result", "hidden", "blur", "disabled"] as const;
+  const cases = [
+    "mute",
+    "restart",
+    "exit",
+    "pause-resume",
+    "result",
+    "hidden",
+    "blur",
+    "disabled",
+  ] as const;
   for (const change of cases) {
     const round = unmuteFixture();
     const pending = round.toggleSound();
@@ -510,7 +525,8 @@ test("obsolete rhythm preparations cannot play, publish errors or focus after a 
     if (change === "hidden") round.page.hidden = true;
     if (change === "blur") round.page.focused = false;
     if (change === "disabled") round.audio.enabled = false;
-    const focuses = round.focuses(), errors = round.errors.length;
+    const focuses = round.focuses(),
+      errors = round.errors.length;
     round.bufferReady.resolve();
     await pending;
     assert.equal(round.starts.length, 0, change);
@@ -524,7 +540,8 @@ test("a superseded failing preparation stays quiet and a newer unmute owns the f
   const obsolete = failed.toggleSound();
   await flush();
   await failed.toggleSound();
-  const errors = failed.errors.length, focuses = failed.focuses();
+  const errors = failed.errors.length,
+    focuses = failed.focuses();
   failed.bufferReady.reject(Error("Old request failed"));
   await obsolete;
   assert.equal(failed.errors.length, errors);
@@ -562,4 +579,17 @@ test("muting and non-rhythm audio do not acquire the rhythm preparation barrier"
   runner.bufferReady.resolve();
   await pending;
   assert.equal(runner.starts.length, 1);
+});
+
+test("both venue floors enable the same continuous acoustic score", async () => {
+  for (const floor of [0, 1]) {
+    const scene = convention();
+    scene.viewedFloorRef.current = floor;
+    scene.movementIntent();
+    await flush();
+    assert.deepEqual(
+      scene.calls.filter((call) => call.startsWith("play:")),
+      ["play:office"],
+    );
+  }
 });

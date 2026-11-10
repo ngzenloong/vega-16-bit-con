@@ -28,6 +28,7 @@ import {
   awaitHandheldAssets,
   animateHandheldEntry,
 } from "@/lib/handheld-entry";
+import VenueFooter from "./VenueFooter";
 import { hallAudioShouldPlay } from "@/lib/ambience";
 
 const STORE = "vega-16-bit-con-v1";
@@ -354,7 +355,7 @@ export default function Convention() {
           gameOpen: panelRef.current?.kind === "game",
         })
       )
-        await audio.play(viewedFloorRef.current === 1 ? "office" : "hall");
+        await audio.play("office");
       if (token !== soundIntent.current) return;
       setSoundStatus(next ? "ready" : "off");
       if (next) audio.effect("click");
@@ -432,21 +433,19 @@ export default function Convention() {
         return;
       }
       if (desiredSound.current)
-        void audio
-          .play(viewedFloorRef.current === 1 ? "office" : "hall")
-          .catch(() => {
-            if (
-              !active ||
-              intent !== soundIntent.current ||
-              !desiredSound.current ||
-              panelRef.current?.kind === "game"
-            )
-              return;
-            setSoundStatus("error");
-            setSoundError(
-              "Music could not load. Turn sound off and on to retry.",
-            );
-          });
+        void audio.play("office").catch(() => {
+          if (
+            !active ||
+            intent !== soundIntent.current ||
+            !desiredSound.current ||
+            panelRef.current?.kind === "game"
+          )
+            return;
+          setSoundStatus("error");
+          setSoundError(
+            "Music could not load. Turn sound off and on to retry.",
+          );
+        });
     };
     reconcile();
     document.addEventListener("visibilitychange", reconcile);
@@ -459,7 +458,7 @@ export default function Convention() {
       window.removeEventListener("blur", suspend);
       window.removeEventListener("focus", reconcile);
     };
-  }, [panel, sound, ambientPaused, viewedFloor]);
+  }, [panel, sound, ambientPaused]);
   useLayoutEffect(() => {
     if (!handheld) {
       if (handheldExit.current) {
@@ -739,36 +738,13 @@ export default function Convention() {
         }}
         soundControl={soundControl}
       />
-      <footer className="site-footer venue-footer" inert={handheld || arrival}>
-        <div className="footer-identity">
-          <img src="/assets/vega/logo.svg" alt="Vega" width={110} height={36} />
-          <div>
-            <h2>Meet Vega at Booth 630.</h2>
-            <p className="footer-details">
-              <time dateTime="2026-10-03">October 3–5, 2026</time>
-              <span>Javits Center, New York</span>
-            </p>
-          </div>
-        </div>
-        <div className="footer-actions">
-          <button
-            className="pixel-button primary"
-            onClick={register}
-            disabled={arrival}
-          >
-            {player ? "Edit my player" : "Register now"} ↗
-          </button>
-          <button
-            className="text-link"
-            onClick={() => navigate(0, SCENE.booth)}
-          >
-            Back to Booth 630 ↑
-          </button>
-        </div>
-        <p className="footer-note">
-          16-Bit Con is a fictional event and interactive demo.
-        </p>
-      </footer>
+      <VenueFooter
+        registered={Boolean(player)}
+        inactive={handheld || arrival}
+        onRegister={register}
+        onExplore={() => navigate(0, SCENE.booth)}
+        onSchedule={() => navigate(1, SCENE.booth)}
+      />
       <div className="sr-only" role="status" aria-live="polite">
         <span key={announcement.id}>{announcement.text}</span>
       </div>
