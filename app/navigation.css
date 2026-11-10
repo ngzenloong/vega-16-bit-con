@@ -5,7 +5,7 @@
   left: 0;
   right: 0;
   margin-inline: auto;
-  width: min(1296px, calc(100% - 32px));
+  width: var(--ui-page-width);
   z-index: 25;
   display: flex;
   align-items: center;
@@ -156,7 +156,7 @@
 @media (max-width: 47.999rem) {
   .site-header {
     top: 8px;
-    width: calc(100% - 16px);
+
     min-height: 54px;
     gap: var(--space-3);
   }
@@ -182,8 +182,4 @@
   .site-header .menu-register {
     display: inline-flex;
   }
-}
-/* Keep the saved-player label from shifting neighboring links after hydration. */
-.header-nav > .header-cta {
-  min-width: 104px;
 }

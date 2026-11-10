@@ -494,7 +494,7 @@ const World = forwardRef<WorldController, Props>(function World(
           <TypewriterSequence>
             <InfoWindow
               className="event-board"
-              title="16-Bit Con"
+              title="Event Details"
               labelledBy="event-title"
               platform
             >
@@ -506,7 +506,6 @@ const World = forwardRef<WorldController, Props>(function World(
                   <TypewriterText
                     text="16-Bit Con"
                     step={0}
-                    cursor={false}
                     paused={ambientPaused}
                     reduced={reduced}
                   />
@@ -519,7 +518,6 @@ const World = forwardRef<WorldController, Props>(function World(
                         text="Date"
                         step={1}
                         skipHidden
-                        cursor={false}
                         paused={ambientPaused}
                         reduced={reduced}
                       />
@@ -531,7 +529,6 @@ const World = forwardRef<WorldController, Props>(function World(
                       <TypewriterText
                         text="October 3–5, 2026"
                         step={2}
-                        cursor={false}
                         paused={ambientPaused}
                         reduced={reduced}
                       />
@@ -544,7 +541,6 @@ const World = forwardRef<WorldController, Props>(function World(
                         text="Location"
                         step={3}
                         skipHidden
-                        cursor={false}
                         paused={ambientPaused}
                         reduced={reduced}
                       />
@@ -554,7 +550,6 @@ const World = forwardRef<WorldController, Props>(function World(
                       <TypewriterText
                         text="Javits Center, New York"
                         step={4}
-                        cursor={false}
                         paused={ambientPaused}
                         reduced={reduced}
                       />
@@ -729,6 +724,7 @@ const World = forwardRef<WorldController, Props>(function World(
             <h2>The lineup.</h2>
             <p>Three highlights from 16-Bit Con.</p>
             <SessionTickets
+              registered={Boolean(player)}
               interests={interests}
               onSession={onSession}
               inWorld

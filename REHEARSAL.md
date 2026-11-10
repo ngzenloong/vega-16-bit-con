@@ -119,3 +119,18 @@ The hero now has a 520px maximum width and left-aligned contents. Its metadata l
 A browser mutation trace showed at most one typing step across the three session cards and a constant 372px schedule-board height. The hero trace showed all six ordered handoffs, including its formerly static title and labels. Phone checks completed with hidden labels, direct scrolling to the third card, and reduced motion. The queue advances past items clipped above a scrollport, including when a fast scroll produces no IntersectionObserver threshold event; resize also releases a newly hidden label. All text remains available semantically, and no-script rendering exposes the reserved copy. An initial waiting state prevents already-complete text flashing before hydration.
 
 147 tests, typecheck, production build and diff checking passed. Independent source review closed the fast-scroll, inner-scrollport and exact-boundary queue cases. Evidence is in `audit-2026-11-10-daylight/sequence-desktop-trace.json` and the appended code review. Earlier simultaneous-typewriter and static-title descriptions are superseded by this sequence.
+
+
+## Action and alignment follow-up
+
+The Event Details window is centered with24px padding on all sides; desktop date/location labels and values occupy opposite edges. Its title and metadata now retain blinking cursor blocks. The header CTA's104px minimum is removed, so labels plus12px horizontal padding determine width. Both floor control rows share the header width token. Across ten viewport sizes from240 to1920px, measured header/control left and right edges matched exactly, the title text's center delta was0, and no page overflow was observed.
+
+Each lineup card has one full-width yellow action: Sign up for guests, Add to my list for registered players, and On my list for saved sessions. Guest actions have no toggle semantics; saved-session actions expose pressed state. The scene prompt follows the same action label. Footer DOM and focus order are Event, Vega, Explore, Your player. Footer text controls can wrap on extremely narrow screens.
+
+Wardrobe snap padding now matches its visual inset, eliminating the4px first-row scroll offset. Desktop measurement found all eight first tiles at the same582.078px coordinate; mobile found all eight at24px. Native touch swipe advanced165px and showed both overflow fades. End/Home checks removed/restored the correct fade and returned every first tile to the same origin. The fade widens from18 to36px with an8px transparent edge. Label-specific submission-button minimum widths were removed while paired Back/Confirm columns and touch targets remain.
+
+Independent component review exercised six guest/registered/selected cases across page and dialog variants. Physical iOS and VoiceOver limitations remain as previously recorded.
+
+The native signup/list flow also passed: selecting the Panel signup action opened player creation; completion retained that session as On my list while the other two became Add to my list. Adding and removing another session worked. Header width changed naturally from78.609px (Sign up) to94.203px (My player), retaining the same padding. The temporary local QA profile was restored afterward.147 tests, typecheck and production build passed.
+
+The wardrobe keyboard focus ring is inset6px, preserving a distinct double outline without extending4px past the row’s shared left edge.

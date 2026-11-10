@@ -62,8 +62,8 @@
   cursor: auto;
 }
 .event-intro {
-  padding: var(--ui-window-padding);
-  text-align: left;
+  padding: var(--space-6);
+  text-align: center;
 }
 .event-intro h1 {
   font: var(--ui-type-display);
@@ -78,7 +78,7 @@
 }
 .event-details > div {
   display: grid;
-  grid-template-columns: 8ch minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   gap: var(--space-2);
   text-align: left;
 }
@@ -87,12 +87,12 @@
 }
 .event-details dd {
   margin: 0;
-  text-align: left;
+  text-align: right;
   text-wrap: pretty;
 }
 .event-description {
   max-width: 448px;
-  margin: var(--space-6) 0;
+  margin: var(--space-6) auto;
   color: var(--ui-muted);
   font: var(--ui-type-body);
 }
@@ -176,8 +176,9 @@
   border-top: 1px solid var(--ui-ink);
 }
 .ticket-action {
-  justify-content: flex-start;
-  width: auto;
+  border: 0;
+  justify-content: center;
+  width: 100%;
   min-height: 32px;
   margin: 0;
   padding: var(--ui-button-padding);
@@ -246,7 +247,7 @@
     position: absolute;
   }
   .event-details dd {
-    text-align: left;
+    text-align: center;
   }
 }
 @media (max-width: 767px) {
@@ -285,4 +286,25 @@
 }
 .typed-copy[data-static="true"] .terminal-cursor {
   animation: none;
+}
+
+/* The reserved full line anchors centered/right-aligned text while it types. */
+.event-intro h1 .typed-copy,
+.event-details dd .typed-copy {
+  display: inline-block;
+  max-width: 100%;
+  text-align: left;
+  vertical-align: top;
+}
+.event-intro h1 .terminal-cursor {
+  width: 0.5em;
+  margin-inline-end: -0.5em;
+}
+.world-stage:not(.is-handheld) .world-floor > .hall-controls {
+  left: 0;
+  right: 0;
+  width: var(--ui-page-width);
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: 0;
 }

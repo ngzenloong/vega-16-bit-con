@@ -7,6 +7,7 @@ import SessionTickets from "./SessionTickets";
 
 export default function ScheduleDialog({
   interests,
+  registered,
   onSession,
   onClose,
   soundControl,
@@ -14,6 +15,7 @@ export default function ScheduleDialog({
   motionPaused = false,
 }: {
   interests: number[];
+  registered: boolean;
   onSession: (index: number) => void;
   onClose: () => void;
   soundControl: ReactNode;
@@ -103,6 +105,7 @@ export default function ScheduleDialog({
       <div className="lineup-content">
         <p>Featured sessions from October 3–5, 2026.</p>
         <SessionTickets
+          registered={registered}
           interests={interests}
           onSession={onSession}
           paused={motionPaused}

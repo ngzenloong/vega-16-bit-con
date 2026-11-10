@@ -92,7 +92,8 @@
   font: inherit;
   text-align: left;
   text-decoration: none;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
   cursor: pointer;
 }
 .event-footer

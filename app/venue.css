@@ -387,11 +387,6 @@ html {
 .world-stage:not(.is-handheld) .main-hall > .hall-controls {
   top: 160px;
   bottom: auto;
-  left: 3%;
-  right: 3%;
-  width: auto;
-  max-width: none;
-  margin: 0;
   min-height: 44px;
   padding: 0;
   background: transparent;
@@ -413,8 +408,6 @@ html {
 @media (max-width: 700px) {
   .world-stage:not(.is-handheld) .main-hall > .hall-controls {
     top: 154px;
-    left: 16px;
-    right: 16px;
   }
 }
 /* Each machine keeps one recognizable accent, against quiet game surrounds. */
@@ -452,8 +445,6 @@ html {
 .world-stage:not(.is-handheld) .social-floor > .hall-controls {
   top: 112px;
   bottom: auto;
-  left: 3%;
-  right: 3%;
   min-height: 44px;
   padding: 0;
   background: transparent;
@@ -478,10 +469,6 @@ html {
   mask-image: linear-gradient(#000 0 65%, transparent 76%);
 }
 @media (max-width: 700px) {
-  .world-stage:not(.is-handheld) .social-floor > .hall-controls {
-    left: 16px;
-    right: 16px;
-  }
   .social-floor .hall-controls > .hall-hint {
     display: block;
   }

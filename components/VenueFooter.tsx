@@ -55,39 +55,6 @@ export default function VenueFooter({
 
           <section
             className="event-footer-column"
-            aria-labelledby="footer-explore"
-          >
-            <h2 id="footer-explore">Explore</h2>
-            <ul>
-              <li>
-                <button type="button" onClick={onExplore}>
-                  Main hall
-                </button>
-              </li>
-              <li>
-                <button type="button" onClick={onSchedule}>
-                  Schedule
-                </button>
-              </li>
-            </ul>
-          </section>
-
-          <section
-            className="event-footer-column"
-            aria-labelledby="footer-player"
-          >
-            <h2 id="footer-player">Your player</h2>
-            <button
-              type="button"
-              className="pixel-button event-footer-signup"
-              onClick={onRegister}
-            >
-              {registered ? "My player" : "Sign up"}
-            </button>
-          </section>
-
-          <section
-            className="event-footer-column"
             aria-labelledby="footer-vega"
           >
             <h2 id="footer-vega">Vega</h2>
@@ -120,6 +87,39 @@ export default function VenueFooter({
                 </a>
               </li>
             </ul>
+          </section>
+
+          <section
+            className="event-footer-column"
+            aria-labelledby="footer-explore"
+          >
+            <h2 id="footer-explore">Explore</h2>
+            <ul>
+              <li>
+                <button type="button" onClick={onExplore}>
+                  Main hall
+                </button>
+              </li>
+              <li>
+                <button type="button" onClick={onSchedule}>
+                  Schedule
+                </button>
+              </li>
+            </ul>
+          </section>
+
+          <section
+            className="event-footer-column"
+            aria-labelledby="footer-player"
+          >
+            <h2 id="footer-player">Your player</h2>
+            <button
+              type="button"
+              className="pixel-button event-footer-signup"
+              onClick={onRegister}
+            >
+              {registered ? "My player" : "Sign up"}
+            </button>
           </section>
         </div>
 

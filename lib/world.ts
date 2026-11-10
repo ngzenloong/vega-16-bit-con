@@ -1630,9 +1630,7 @@ export function createWorld(
                   : target.kind === "schedule"
                     ? "VIEW"
                     : target.kind === "session"
-                      ? target.element.getAttribute("aria-pressed") === "true"
-                        ? "REMOVE INTEREST"
-                        : "SAVE INTEREST"
+                      ? target.element.dataset.actionLabel || "ADD TO MY LIST"
                       : "PLAY",
         hint = prompt.querySelector("[data-prompt-action]")!,
         text = snack.active ? "ENJOY YOUR SLICE" : `${key} · ${verb}`;

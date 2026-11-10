@@ -764,6 +764,7 @@ export default function Convention() {
       )}
       {panel?.kind === "schedule" && (
         <ScheduleDialog
+          registered={Boolean(player)}
           interests={player?.interests || []}
           onSession={session}
           onClose={close}

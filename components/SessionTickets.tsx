@@ -5,12 +5,14 @@ import TypewriterText, { TypewriterSequence } from "./TypewriterText";
 
 export default function SessionTickets({
   interests,
+  registered,
   onSession,
   inWorld = false,
   paused = false,
   reduced = false,
 }: {
   interests: number[];
+  registered: boolean;
   onSession: (index: number) => void;
   inWorld?: boolean;
   paused?: boolean;
@@ -20,7 +22,12 @@ export default function SessionTickets({
     <TypewriterSequence>
       <div className="event-tickets">
         {SESSIONS.map((session, index) => {
-          const selected = interests.includes(index);
+          const selected = registered && interests.includes(index);
+          const label = !registered
+            ? "Sign up"
+            : selected
+              ? "On my list"
+              : "Add to my list";
           return (
             <InfoWindow
               className="event-ticket"
@@ -55,7 +62,7 @@ export default function SessionTickets({
               </div>
               <div className="session-actions">
                 <button
-                  className="ticket-action pixel-button"
+                  className="ticket-action pixel-button primary"
                   {...(inWorld
                     ? {
                         "data-target": String(index),
@@ -63,13 +70,18 @@ export default function SessionTickets({
                         "data-label": session.title,
                         "data-x": SCENE.booth,
                         "data-active-mode": "page",
+                        "data-action-label": !registered
+                          ? "SIGN UP"
+                          : selected
+                            ? "REMOVE FROM LIST"
+                            : "ADD TO MY LIST",
                       }
                     : {})}
                   onClick={() => onSession(index)}
-                  aria-pressed={selected}
-                  aria-label={`${selected ? "On my list" : "Add to my list"}: ${session.title}${selected ? ". Remove session" : ""}`}
+                  aria-pressed={registered ? selected : undefined}
+                  aria-label={`${label}: ${session.title}${selected ? ". Remove session" : ""}`}
                 >
-                  {selected ? "On my list" : "Add to my list"}
+                  {label}
                 </button>
               </div>
             </InfoWindow>
