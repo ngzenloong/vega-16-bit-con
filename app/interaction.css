@@ -1,5 +1,7 @@
 /* Conversation is a viewport state. Its geometry never depends on typing. */
 .conversation-dialog {
+  --scroll-track: var(--cinema-bg);
+  --scroll-thumb: var(--cinema-keyline);
   position: fixed;
   inset: 0;
   margin: 0;
@@ -82,6 +84,12 @@
   margin-top: 7px;
 }
 .dialogue-copy {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
   width: 100%;
   align-self: stretch;
   display: flex;
@@ -113,13 +121,21 @@
   gap: 14px;
 }
 .dialogue-choice-slot {
+  min-width: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
   height: 116px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  justify-content: safe center;
   gap: 5px;
 }
 .dialogue-choice-slot button {
+  flex-shrink: 0;
+  min-width: 0;
   min-height: 32px;
   padding: 5px 0;
   border: 0;
@@ -131,15 +147,21 @@
   text-align: left;
   font: 12px/1.4 var(--font-mono);
 }
-.dialogue-choice-slot button > span:first-child {
+.dialogue-choice-marker {
   display: inline-block;
   flex: 0 0 10px;
 }
 .dialogue-choice-slot button[data-selected="true"] {
   color: var(--yellow);
 }
-.dialogue-choice-slot button:hover {
-  color: var(--yellow);
+@media (hover: hover) {
+  .dialogue-choice-slot button:hover {
+    color: var(--yellow);
+  }
+}
+.dialogue-choice-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .dialogue-interaction > p {
   color: var(--cinema-muted);
@@ -294,9 +316,6 @@
   }
   .dialogue-interaction {
     grid-column: 1/-1;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
     gap: var(--space-3);
   }
   .dialogue-choice-slot {
@@ -338,4 +357,9 @@
   .world-floor.is-conversation .world-inner {
     transition: none;
   }
+}
+
+.dialogue-choice-slot button:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: -2px;
 }

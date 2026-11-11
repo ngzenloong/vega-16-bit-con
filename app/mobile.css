@@ -98,15 +98,15 @@ html {
 @media (max-width: 700px) {
   .conversation-frame {
     height: min(
-      calc(100dvh - 80px),
-      calc(clamp(304px, 46dvh, 336px) + env(safe-area-inset-bottom))
+      calc(100dvh - 112px),
+      calc(clamp(344px, 50dvh, 392px) + env(safe-area-inset-bottom))
     );
     padding: var(--space-4) max(var(--space-4), env(safe-area-inset-right))
       max(var(--space-4), env(safe-area-inset-bottom))
       max(var(--space-4), env(safe-area-inset-left));
     grid-template-columns: 64px minmax(0, 1fr);
-    grid-template-rows: minmax(124px, 1fr) auto;
-    gap: var(--space-2) var(--space-3);
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: var(--space-4) var(--space-3);
   }
   .dialogue-portrait {
     width: 64px;
@@ -117,22 +117,45 @@ html {
     font-size: 22px;
   }
   .dialogue-copy {
-    font: 20px/1.35 var(--font-game);
+    min-width: 0;
+    min-height: 0;
+    align-items: flex-start;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    font: 20px/1.3 var(--font-game);
   }
   .dialogue-interaction {
-    grid-template-rows: auto auto;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    justify-content: stretch;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+    height: auto;
     gap: var(--space-2);
   }
   .dialogue-choice-slot {
     height: auto;
-    min-height: 88px;
-    justify-content: flex-end;
-    gap: 4px;
+    min-height: calc(3 * var(--control-hit) + 2 * var(--space-1));
+    width: 100%;
+    min-width: 0;
+    align-items: stretch;
+    justify-content: flex-start;
+    justify-content: safe flex-end;
+    gap: var(--space-1);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
   }
   .dialogue-choice-slot button,
   .dialogue-choice-slot .dialogue-continue {
+    flex-shrink: 0;
     min-height: var(--control-hit);
     width: 100%;
+    min-width: 0;
+    align-self: stretch;
     padding: var(--space-2) 0;
     white-space: normal;
     font: 18px/1.25 var(--font-game);
@@ -150,6 +173,14 @@ html {
     font-size: 11px;
   }
 }
+@media (max-width: 700px) and (max-height: 600px) {
+  .conversation-frame {
+    height: min(
+      calc(100dvh - 112px),
+      calc(304px + env(safe-area-inset-bottom))
+    );
+  }
+}
 @media (max-height: 480px) and (min-width: 480px) {
   .conversation-frame {
     height: min(200px, calc(100dvh - 60px));
@@ -160,12 +191,28 @@ html {
   }
   .dialogue-interaction {
     grid-column: auto;
+    height: 100%;
+    min-height: 0;
   }
   .dialogue-choice-slot {
-    min-height: 88px;
+    min-height: 0;
+  }
+  .dialogue-interaction > p {
+    min-height: 16px;
   }
   .dialogue-copy {
     font-size: 18px;
+  }
+  .dialogue-portrait {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 4px;
+  }
+  .dialogue-identity h2 {
+    font-size: 22px;
+  }
+  .dialogue-identity p {
+    display: none;
   }
 }
 @media (max-width: 259px) {
@@ -214,14 +261,6 @@ html {
 }
 .convention[data-handheld-entry="true"] .is-handheld .handheld-controls {
   pointer-events: none;
-}
-@media (max-width: 700px), (pointer: coarse) {
-  .world-stage:not(.is-handheld) .hall-hint {
-    display: none;
-  }
-  .world-stage:not(.is-handheld) .hall-controls {
-    justify-content: flex-end;
-  }
 }
 html:has(.conversation-dialog[open]) {
   scrollbar-gutter: auto;
@@ -281,21 +320,6 @@ html:has(.conversation-dialog[open]) {
     );
   }
 }
-@media (max-width: 700px) {
-  .event-board .pixel-button {
-    min-height: var(--control-hit);
-  }
-  .venue-footer {
-    padding-left: max(20px, env(safe-area-inset-left));
-    padding-right: max(20px, env(safe-area-inset-right));
-  }
-}
-@media (max-width: 340px) {
-  .venue-footer .footer-details > span {
-    white-space: normal;
-    text-wrap: balance;
-  }
-}
 
 /* Handheld rooms expose a sign; the same session component opens at a readable size. */
 .handheld-lineup {
@@ -315,8 +339,8 @@ html:has(.conversation-dialog[open]) {
   min-width: 168px;
   min-height: 68px;
   padding: var(--space-2) var(--space-4);
-  border: 2px solid var(--ink);
-  background: var(--paper);
+  border: 1px solid var(--ui-ink);
+  background: var(--ui-surface);
   color: var(--ink);
   box-shadow: 4px 4px 0 var(--ink);
   cursor: pointer;
@@ -351,10 +375,12 @@ html:has(.conversation-dialog[open]) {
     100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom)
   );
   overflow: hidden;
-  border: 2px solid var(--ink);
-  background: var(--paper);
+  border: 1px solid var(--ui-ink);
+  background: var(--ui-surface);
   color: var(--ink);
   box-shadow: 4px 4px 0 var(--ink);
+  --scroll-thumb: var(--ui-muted);
+  --scroll-track: var(--ui-surface);
 }
 .lineup-dialog[open] {
   display: flex;
@@ -366,7 +392,7 @@ html:has(.conversation-dialog[open]) {
   flex: none;
 }
 .lineup-dialog h2 {
-  font: 26px/1.2 var(--font-game);
+  font: var(--ui-type-mono);
   margin: 0;
 }
 .lineup-content {
@@ -378,15 +404,11 @@ html:has(.conversation-dialog[open]) {
 }
 .lineup-content > p {
   margin: 0 0 var(--space-4);
-  font: var(--text-body) / 1.5 var(--font-body);
+  font: var(--ui-type-body);
 }
 .lineup-content .lineup-note {
   margin: var(--space-4) 0 0;
   font: var(--text-sm) / 1.5 var(--font-mono);
-}
-.lineup-dialog .event-ticket h3 {
-  min-height: 0;
-  font-size: 24px;
 }
 .lineup-dialog .ticket-action {
   min-height: var(--control-hit);
@@ -400,12 +422,6 @@ html:has(.conversation-dialog[open]) {
   outline-offset: -2px;
 }
 @media (max-width: 700px) {
-  .lineup-dialog .event-tickets {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-  }
-}
-@media (max-width: 700px) {
   .conversation-frame {
     align-items: start;
   }
@@ -415,7 +431,6 @@ html:has(.conversation-dialog[open]) {
 }
 
 .lineup-dialog .window-title .icon-button:not(.sound-toggle) {
-  background: var(--paper);
   border: 1px solid var(--ink);
 }
 
@@ -427,15 +442,6 @@ html:has(.conversation-dialog[open]) {
 }
 .convention:has(.world-stage[data-control="manual"]) .scene-entry-hint {
   visibility: hidden;
-}
-@media (pointer: fine) and (max-width: 700px) {
-  .world-stage:not(.is-handheld) .hall-controls .desktop-controls {
-    display: block;
-    font-size: 11px;
-  }
-  .world-stage:not(.is-handheld) .hall-controls {
-    justify-content: space-between;
-  }
 }
 .world-stage:not(.is-handheld):not([data-conversation="true"]) .social-floor {
   min-height: var(--content-floor-height, 0px);

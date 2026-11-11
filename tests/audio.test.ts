@@ -191,3 +191,15 @@ test("a music decode completing after app focus loss stays silent and can resume
     1,
   );
 });
+
+test("reconciling the shared venue track preserves the running source", async (t) => {
+  const { audio, requests, sources, success } = await audioFixture(t);
+  const started = audio.play("office");
+  await flush();
+  requests[0].resolve(success());
+  await started;
+  for (let floor = 0; floor < 6; floor++) await audio.play("office");
+  assert.equal(requests.length, 1);
+  assert.equal(sources.length, 1);
+  assert.equal(sources[0].stopped, false);
+});

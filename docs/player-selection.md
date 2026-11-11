@@ -1,31 +1,30 @@
 # Player selection
 
-PLAYER SELECT is a full-screen game menu for choosing a character, entering local RSVP details, and joining the convention. It extends the existing Sam Circuit menu with the same dark stage, pixel platform, yellow actions, square controls, and original character art.
+PLAYER SELECT is a full-screen game menu for choosing a character, entering local RSVP details, and joining the convention. It keeps the existing full-screen game-menu layout, pixel platform, square controls and original character art, with the white and black UI treatment from Vega’s live site.
 
 ## Visual reuse
 
-[Shared tokens](../app/tokens.css) remain the source of truth. [Sam Circuit](../components/CarSelection.tsx) and its [venue styles](../app/venue.css) establish the menu treatment; [player-select.css](../app/player-select.css) supplies the scoped layout. The surface reuses the shared game-menu button family, accessory thumbnails, `Sprite`, and `Companion`.
+[Shared tokens](../app/tokens.css) remain the source of truth. [Sam Circuit](../components/CarSelection.tsx) and its [venue styles](../app/venue.css) supply the shared menu actions; [player-select.css](../app/player-select.css) supplies the scoped layout. The surface reuses the shared game-menu button family, accessory thumbnails, `Sprite`, and `Companion`.
 
 | Token | Role in this surface |
 | --- | --- |
-| `--color-outline` | Full-screen stage and action-area background |
-| `--color-yellow`, through `--yellow` | Header, selected options, primary action, and success check |
-| `--color-ink`, through `--ink` | Text on yellow and the inset selection border |
-| `--color-paper`, through `--paper` | Main text and focus outlines on the dark stage |
-| `--game-muted` | Item captions, instructions, and secondary confirmation text |
-| `--platform-face`, `--color-grey-dark` | Unselected tiles and the platform; dark grey also marks disabled actions |
-| `--cinema-keyline`, `--color-orange` | Secondary outlines and scrollbars; the shared primary button's pressed depth |
+| `--ui-surface` | White stage, header, option faces and action-area background |
+| `--ui-primary` | Yellow primary action |
+| `--ui-ink` | Text, selection marker, focus outline and window keylines |
+| `--ui-muted` | Captions, instructions, secondary text and scroll thumb |
+| `--ui-line` | Decorative option outlines and dividers |
+| `--platform-face`, `--color-grey-dark`, `--yellow` | Physical pixel platform; illustration colors are separate from UI colors |
 | `--font-game`, `--font-body` | PP Mondwest for game headings, captions, and actions; Geist for labels, inputs, and status text |
 | `--game-action-type`, `--game-action-height`, `--game-action-padding` | Shared game action metrics for Back, Confirm, Save, game menus and the desktop race action |
 | `--space-*`, `--control-hit`, `--duration-fast` | Shared spacing, 44 px control targets, and the option background transition |
 
 Back and Confirm use the same font, line height, padding and control height. Two-action footers give them equal columns; primary and secondary variants differ in color and outline treatment.
 
-Selection has a yellow fill, inset ink border, and small triangle marker. Keyboard focus adds a separate paper outline. The platform uses the garage's clipped trapezoid and yellow lower edge. The success check has a short stepped entrance, disabled by reduced-motion preferences.
+Selection keeps a white face with a black inset border and small triangle marker. Keyboard focus adds a separate black outline. The platform uses the garage's clipped trapezoid and yellow lower edge. The success check has a short stepped entrance, disabled by reduced-motion preferences.
 
 ## Layout
 
-The native modal dialog fills the visual viewport. A persistent yellow header contains the step title, sound control, and close button. The content occupies the remaining space above the action footer. Inventory and details scroll internally when needed. Safe-area insets protect the header and actions.
+The native modal dialog fills the visual viewport. A persistent white header contains the step title, sound control, and close button. The content occupies the remaining space above the action footer. Inventory and details scroll internally when needed. Safe-area insets protect the header and actions.
 
 On a wide viewport, the look step uses two columns inside a maximum 1,280 px content width: character preview on the left and all eight accessory strips on the right. The preview shows the selected outfit and companion, the player's name, and the currently inspected category and item. The details step has a maximum 1,000 px width with the preview beside the fields. Confirmation centers the same character and a saved message.
 
@@ -68,6 +67,8 @@ Name and email are native labeled inputs with autocomplete. The name requires at
 Touch uses native horizontal strip scrolling and tap selection. Mouse dragging captures the pointer after a 6 px movement threshold and suppresses the resulting click. Edge fades update after scrolling and resizing, without horizontal scrollbars. Blur, pointer cancellation, and unmount release drag state. The native modal and shared [dialog focus helper](../lib/dialog-focus.ts) retain focus and page-scroll ownership; Escape and the close button dismiss registration.
 
 ## Verification
+
+The November 10 reference-alignment pass replaces the dark/yellow UI roles with the live site’s white surfaces, black type and selections, and yellow primary action. It preserves the layout and input flow below. Fresh Ego checks at 393 × 800 and 1440 × 1000 cover look/details, native inputs, Down from name to email to Confirm, Left to Back, and Enter returning to the look step.
 
 The scoped verification completed on November 7, 2026: 86 automated tests, TypeScript checking, the production build, and the diff whitespace check passed. Arrival tests cover completion, reduced motion, handheld scroll ownership, Escape, blur, hidden documents, and owner cancellation. These simulated tests do not establish browser animation smoothness.
 

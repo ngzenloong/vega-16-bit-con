@@ -28,6 +28,7 @@ import {
   awaitHandheldAssets,
   animateHandheldEntry,
 } from "@/lib/handheld-entry";
+import VenueFooter from "./VenueFooter";
 import { hallAudioShouldPlay } from "@/lib/ambience";
 
 const STORE = "vega-16-bit-con-v1";
@@ -50,6 +51,7 @@ export default function Convention() {
   const [handheld, setHandheld] = useState(false),
     [touch, setTouch] = useState(false),
     [coarseInput, setCoarseInput] = useState(false),
+    [hintInput, setHintInput] = useState<"keyboard" | "touch" | null>(null),
     [reduced, setReduced] = useState(false),
     [ambientPaused, setAmbientPaused] = useState(false),
     [arrival, setArrival] = useState(false),
@@ -75,6 +77,7 @@ export default function Convention() {
   arrivalRef.current = arrival;
   ambienceRef.current = ambientPaused;
   const desiredSound = useRef(false),
+    explicitlyMuted = useRef(false),
     soundIntent = useRef(0),
     handoff = useRef(0),
     frames = useRef<number[]>([]),
@@ -300,12 +303,16 @@ export default function Convention() {
     update();
     motion.addEventListener("change", update);
     narrow.addEventListener("change", update);
-    coarse.addEventListener("change", update);
+    const pointerChanged = () => {
+      setHintInput(null);
+      update();
+    };
+    coarse.addEventListener("change", pointerChanged);
     setReady(true);
     return () => {
       motion.removeEventListener("change", update);
       narrow.removeEventListener("change", update);
-      coarse.removeEventListener("change", update);
+      coarse.removeEventListener("change", pointerChanged);
       handoff.current++;
       frames.current.forEach(cancelAnimationFrame);
       const activeEntrance = entrance.current;
@@ -333,25 +340,49 @@ export default function Convention() {
       setSaveStatus("session");
     }
   }, [player, scores, ready]);
-  const toggleSound = useCallback(async () => {
-    const next = !desiredSound.current,
-      token = ++soundIntent.current;
+  useEffect(() => {
+    const keyboard = (event: KeyboardEvent) => {
+      if (event.ctrlKey || event.metaKey || event.altKey || event.isComposing)
+        return;
+      if (
+        !/^(Arrow(Left|Right|Up|Down)|Space|Enter|Escape|Tab|Key[WASDM])$/.test(
+          event.code,
+        )
+      )
+        return;
+      if (
+        event.target instanceof Element &&
+        event.target.closest("input,textarea,select,[contenteditable]")
+      )
+        return;
+      setHintInput("keyboard");
+    };
+    const pointer = (event: PointerEvent) => {
+      if (event.pointerType === "touch" || event.pointerType === "pen")
+        setHintInput("touch");
+    };
+    document.addEventListener("keydown", keyboard, true);
+    document.addEventListener("pointerdown", pointer, {
+      capture: true,
+      passive: true,
+    });
+    return () => {
+      document.removeEventListener("keydown", keyboard, true);
+      document.removeEventListener("pointerdown", pointer, true);
+    };
+  }, []);
+  const touchInteraction = touch || hintInput === "touch";
+  const keyboardHints =
+    ready && (hintInput ? hintInput === "keyboard" : !coarseInput);
+  const requestSound = useCallback(async (next: boolean) => {
+    if (next === desiredSound.current && next === audio.enabled) return;
+    const token = ++soundIntent.current;
     desiredSound.current = next;
     setSound(next);
     setSoundError("");
     setSoundStatus(next ? "loading" : "off");
     try {
       await audio.setEnabled(next);
-      if (next && audio.enabled) {
-        const active = panelRef.current;
-        await audio.prepare(
-          active?.kind === "game"
-            ? active.id
-            : viewedFloorRef.current === 1
-              ? "office"
-              : "hall",
-        );
-      }
       if (token !== soundIntent.current) return;
       if (next && !audio.enabled) throw Error("Sound unavailable");
       if (
@@ -363,7 +394,7 @@ export default function Convention() {
           gameOpen: panelRef.current?.kind === "game",
         })
       )
-        await audio.play(viewedFloorRef.current === 1 ? "office" : "hall");
+        await audio.play("office");
       if (token !== soundIntent.current) return;
       setSoundStatus(next ? "ready" : "off");
       if (next) audio.effect("click");
@@ -377,6 +408,26 @@ export default function Convention() {
       }
     }
   }, []);
+  const toggleSound = useCallback(() => {
+    const next = !desiredSound.current;
+    explicitlyMuted.current = !next;
+    return requestSound(next);
+  }, [requestSound]);
+  const enableSoundForGesture = useCallback(() => {
+    if (
+      explicitlyMuted.current ||
+      desiredSound.current ||
+      document.hidden ||
+      !document.hasFocus()
+    )
+      return;
+    // Call before yielding so AudioContext creation/resume belongs to this gesture.
+    void requestSound(true);
+  }, [requestSound]);
+  const movementIntent = useCallback(() => {
+    if (panelRef.current || arrivalRef.current || handheldEntry.current) return;
+    enableSoundForGesture();
+  }, [enableSoundForGesture]);
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       if (
@@ -421,21 +472,19 @@ export default function Convention() {
         return;
       }
       if (desiredSound.current)
-        void audio
-          .play(viewedFloorRef.current === 1 ? "office" : "hall")
-          .catch(() => {
-            if (
-              !active ||
-              intent !== soundIntent.current ||
-              !desiredSound.current ||
-              panelRef.current?.kind === "game"
-            )
-              return;
-            setSoundStatus("error");
-            setSoundError(
-              "Music could not load. Turn sound off and on to retry.",
-            );
-          });
+        void audio.play("office").catch(() => {
+          if (
+            !active ||
+            intent !== soundIntent.current ||
+            !desiredSound.current ||
+            panelRef.current?.kind === "game"
+          )
+            return;
+          setSoundStatus("error");
+          setSoundError(
+            "Music could not load. Turn sound off and on to retry.",
+          );
+        });
     };
     reconcile();
     document.addEventListener("visibilitychange", reconcile);
@@ -448,7 +497,7 @@ export default function Convention() {
       window.removeEventListener("blur", suspend);
       window.removeEventListener("focus", reconcile);
     };
-  }, [panel, sound, ambientPaused, viewedFloor]);
+  }, [panel, sound, ambientPaused]);
   useLayoutEffect(() => {
     if (!handheld) {
       if (handheldExit.current) {
@@ -487,11 +536,11 @@ export default function Convention() {
     (floor: number) => {
       if (arrivalRef.current || panelRef.current) return;
       audio.effect("click");
-      if (touch && !handheldRef.current) {
+      if (touchInteraction && !handheldRef.current) {
         void startHandheld(floor);
       } else world.current?.control(floor);
     },
-    [touch, startHandheld],
+    [touchInteraction, startHandheld],
   );
   const openTarget = useCallback(
     (target: WorldTarget) => {
@@ -506,7 +555,7 @@ export default function Convention() {
         else if (target.kind === "npc")
           open({ kind: "npc", id: target.id }, target.element);
       };
-      if (touch && !handheldRef.current) {
+      if (touchInteraction && !handheldRef.current) {
         const floor = Number(
           target.element.closest<HTMLElement>("[data-floor]")?.dataset.floor ||
             0,
@@ -516,7 +565,7 @@ export default function Convention() {
         });
       } else show();
     },
-    [open, touch, startHandheld],
+    [open, touchInteraction, startHandheld],
   );
   const onResult = useCallback(
     (result: GameResult) =>
@@ -665,24 +714,28 @@ export default function Convention() {
         onSchedule={() => navigate(1, SCENE.booth)}
         onRegister={register}
       />
-      {ready && touch && !handheld && !panel && !arrival && !footerVisible && (
-        <button
-          ref={entryHint}
-          className="scene-entry-hint"
-          aria-busy={handheldPending}
-          disabled={handheldPending}
-          hidden={hintObscured}
-          onClick={() => enterScene(viewedFloorRef.current)}
-        >
-          {handheldPending
-            ? "Preparing the hall…"
-            : handheldError
-              ? "Tap to try exploring again"
-              : coarseInput
-                ? "Tap the scene to explore"
-                : "Click the scene to explore"}
-        </button>
-      )}
+      {ready &&
+        !keyboardHints &&
+        touchInteraction &&
+        !handheld &&
+        !panel &&
+        !arrival &&
+        !footerVisible && (
+          <button
+            ref={entryHint}
+            className="scene-entry-hint"
+            aria-busy={handheldPending}
+            disabled={handheldPending}
+            hidden={hintObscured}
+            onClick={() => enterScene(viewedFloorRef.current)}
+          >
+            {handheldPending
+              ? "Preparing the hall…"
+              : handheldError
+                ? "Tap to try exploring again"
+                : "Tap the scene to explore"}
+          </button>
+        )}
       <div className="global-notices">
         {soundError && (
           <p className="global-notice" role="status">
@@ -697,6 +750,7 @@ export default function Convention() {
         )}
       </div>
       <World
+        keyboardHints={keyboardHints}
         ref={world}
         player={scenePlayer}
         paused={!!panel || arrival}
@@ -710,7 +764,7 @@ export default function Convention() {
         onRegister={register}
         onSession={session}
         onAnnounce={announce}
-        onHandheld={explore}
+        onMovementIntent={movementIntent}
         onEnterScene={enterScene}
         onViewFloorChange={floorViewed}
         onExitHandheld={exitHandheld}
@@ -728,36 +782,13 @@ export default function Convention() {
         }}
         soundControl={soundControl}
       />
-      <footer className="site-footer venue-footer" inert={handheld || arrival}>
-        <div className="footer-identity">
-          <img src="/assets/vega/logo.svg" alt="Vega" width={110} height={36} />
-          <div>
-            <h2>Meet Vega at Booth 630.</h2>
-            <p className="footer-details">
-              <time dateTime="2026-10-03">October 3–5, 2026</time>
-              <span>Javits Center, New York</span>
-            </p>
-          </div>
-        </div>
-        <div className="footer-actions">
-          <button
-            className="pixel-button primary"
-            onClick={register}
-            disabled={arrival}
-          >
-            {player ? "Edit my player" : "Register now"} ↗
-          </button>
-          <button
-            className="text-link"
-            onClick={() => navigate(0, SCENE.booth)}
-          >
-            Back to Booth 630 ↑
-          </button>
-        </div>
-        <p className="footer-note">
-          16-Bit Con is a fictional event and interactive demo.
-        </p>
-      </footer>
+      <VenueFooter
+        registered={Boolean(player)}
+        inactive={handheld || arrival}
+        onRegister={register}
+        onExplore={() => navigate(0, SCENE.booth)}
+        onSchedule={() => navigate(1, SCENE.booth)}
+      />
       <div className="sr-only" role="status" aria-live="polite">
         <span key={announcement.id}>{announcement.text}</span>
       </div>
@@ -777,10 +808,13 @@ export default function Convention() {
       )}
       {panel?.kind === "schedule" && (
         <ScheduleDialog
+          registered={Boolean(player)}
           interests={player?.interests || []}
           onSession={session}
           onClose={close}
           soundControl={soundControl}
+          reduced={reduced}
+          motionPaused={ambientPaused}
         />
       )}
       {panel?.kind === "npc" && (
@@ -799,6 +833,7 @@ export default function Convention() {
           appearance={player?.appearance || DEFAULT_APPEARANCE}
           sound={sound}
           onSound={toggleSound}
+          onPlayIntent={enableSoundForGesture}
           onClose={close}
           onResult={onResult}
           reducedMotion={reduced}

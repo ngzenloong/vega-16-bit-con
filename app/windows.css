@@ -1,0 +1,331 @@
+/* Vega's live window system: neutral surfaces, mono chrome and a 4px shadow. */
+.info-window {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--ui-ink);
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+  box-shadow: var(--ui-window-shadow);
+}
+.info-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: none;
+  gap: var(--space-2);
+  min-height: 33px;
+  padding: var(--ui-titlebar-padding);
+  border-bottom: 1px solid var(--ui-ink);
+  font: var(--ui-type-mono);
+}
+.info-caption {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.window-marks {
+  display: flex;
+  flex: none;
+  gap: var(--space-1);
+}
+.window-marks img {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+.info-window-body {
+  flex: 1;
+  min-height: 0;
+}
+.venue-sign {
+  position: absolute;
+  left: var(--world-center, 1800px);
+  top: calc(var(--roof-top) + var(--roof-height) / 2);
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  padding: 2px 14px;
+  background: var(--roof-face);
+  color: var(--ui-ink);
+  font: clamp(16px, 2vw, 22px) / 1 var(--font-display);
+  white-space: nowrap;
+  text-shadow: 0 1px var(--white);
+}
+.event-board {
+  position: absolute;
+  left: var(--world-center, 1800px);
+  top: 220px;
+  transform: translateX(-50%);
+  width: round(down, min(520px, calc(100vw - 48px)), 2px);
+  z-index: 5;
+  cursor: auto;
+}
+.event-intro {
+  padding: var(--space-6);
+  text-align: center;
+}
+.event-intro h1 {
+  font: var(--ui-type-display);
+  letter-spacing: 0;
+}
+.event-details {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+  margin: var(--space-6) 0 0;
+  font: var(--ui-type-mono);
+}
+.event-details > div {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-2);
+  text-align: left;
+}
+.event-details dt {
+  margin: 0;
+}
+.event-details dd {
+  margin: 0;
+  text-align: right;
+  text-wrap: pretty;
+}
+.event-description {
+  max-width: 448px;
+  margin: var(--space-6) auto;
+  color: var(--ui-muted);
+  font: var(--ui-type-body);
+}
+.event-intro .pixel-button {
+  min-height: 32px;
+  padding: var(--ui-button-padding);
+  border: 0;
+  font: var(--ui-type-mono);
+}
+.event-tickets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+.event-ticket {
+  min-height: 228px;
+  text-align: left;
+  cursor: auto;
+}
+.event-ticket .info-window-body {
+  display: flex;
+  flex-direction: column;
+}
+.session-copy {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-4) var(--space-3);
+}
+.typed-copy {
+  display: block;
+  position: relative;
+  font: var(--ui-type-mono);
+  color: var(--ui-ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.event-intro h1 .typed-copy,
+.event-details .typed-copy,
+.event-description .typed-copy {
+  display: block;
+  font: inherit;
+  color: inherit;
+  overflow-wrap: normal;
+}
+.typed-reserve {
+  display: block;
+}
+.typed-copy[data-type-state] .typed-reserve {
+  visibility: hidden;
+}
+.typed-live {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+}
+.typed-copy[data-type-state] .typed-live {
+  visibility: inherit;
+}
+.terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  margin-bottom: -2px;
+  background: currentColor;
+}
+.typed-copy[data-type-state="waiting"] .typed-live {
+  visibility: hidden;
+}
+.typed-copy:is([data-type-state="typing"], [data-type-state="complete"])
+  .typed-live
+  .terminal-cursor {
+  animation: terminal-blink 800ms steps(1, end) infinite;
+}
+/* Keep the reserved cursor space; only its paint disappears after hero entry. */
+.event-board
+  .typed-copy[data-type-state="complete"]
+  .typed-live
+  .terminal-cursor {
+  animation: none;
+  opacity: 0;
+}
+@keyframes terminal-blink {
+  50% {
+    opacity: 0;
+  }
+}
+.session-actions {
+  padding: 8px;
+  border-top: 1px solid var(--ui-ink);
+}
+.ticket-action {
+  border: 0;
+  justify-content: center;
+  width: 100%;
+  min-height: 32px;
+  margin: 0;
+  padding: var(--ui-button-padding);
+  font: var(--ui-type-mono);
+}
+.ticket-action[aria-pressed="true"] {
+  background: var(--ui-ink);
+  color: var(--ui-surface);
+}
+.schedule-board h2 {
+  font: var(--ui-type-display);
+  color: var(--ui-ink);
+}
+.schedule-board > p {
+  color: var(--ui-muted);
+  font: var(--ui-type-body);
+}
+.schedule-board small {
+  color: var(--ui-muted);
+}
+.handheld-lineup {
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+  border-color: var(--ui-ink);
+}
+.handheld-lineup:is(.is-near, :focus-visible) {
+  background: var(--ui-ink);
+  color: var(--ui-surface);
+}
+.npc-label {
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+  border-color: var(--ui-ink);
+}
+.player-name,
+.ambient-bubble,
+.social-sign,
+.stall-sign,
+.snack-note {
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+}
+.stall-sign {
+  box-shadow: 4px 4px 0 var(--ui-ink);
+}
+.scene-tools .icon-button[aria-pressed="true"],
+.handheld-top .icon-button[aria-pressed="true"] {
+  background: var(--ui-ink);
+  color: var(--ui-surface);
+}
+.scene-tools .icon-button,
+.handheld-top .icon-button {
+  color: var(--ui-ink);
+}
+.player-select-top {
+  border-bottom: 1px solid var(--ui-ink);
+}
+@media (max-width: 900px) {
+  .event-details > div {
+    display: block;
+  }
+  .event-details dt > .typed-copy {
+    display: none;
+  }
+  .event-details dt {
+    position: absolute;
+  }
+  .event-details dd {
+    text-align: center;
+  }
+}
+@media (max-width: 767px) {
+  .event-intro .pixel-button {
+    min-height: var(--control-hit);
+  }
+}
+@media (max-width: 700px) {
+  .event-tickets {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .event-ticket {
+    min-height: 190px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .typed-copy .terminal-cursor {
+    animation: none !important;
+  }
+}
+
+/* Keep translated scene text on whole pixels, including the three-column grid. */
+.schedule-board {
+  width: round(down, min(920px, calc(100vw - 54px)), 6px);
+}
+@media (max-width: 700px) {
+  .schedule-board {
+    width: round(down, min(430px, calc(100vw - 40px)), 2px);
+  }
+}
+@media (pointer: coarse) {
+  .ticket-action {
+    min-height: var(--control-hit);
+  }
+}
+.typed-copy[data-static="true"] .terminal-cursor {
+  animation: none;
+}
+
+/* The reserved full line anchors centered/right-aligned text while it types. */
+.event-intro h1 .typed-copy,
+.event-details dd .typed-copy {
+  display: inline-block;
+  max-width: 100%;
+  text-align: left;
+  vertical-align: top;
+}
+.event-intro h1 .terminal-cursor {
+  width: 0.5em;
+  margin-inline-end: -0.5em;
+}
+.world-stage:not(.is-handheld) .world-floor > .hall-controls {
+  left: 0;
+  right: 0;
+  width: var(--ui-page-width);
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: 0;
+}
+
+/* One hint owner chooses the input language; layout only places it. */
+.world-stage:not(.is-handheld) .world-floor > .hall-controls {
+  justify-content: space-between;
+}
+.world-stage:not(.is-handheld) .hall-controls .desktop-controls {
+  display: block;
+  min-width: 0;
+  text-align: left;
+}
+.hall-controls .scene-tools {
+  margin-inline-start: auto;
+}

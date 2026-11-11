@@ -7,10 +7,7 @@
   --color-yellow: #ffd11b;
   --color-lime: #d5fb19;
   --color-sky: #8dcaff;
-  --sky-dusk-top: #edc6ce;
-  --sky-dusk-pink: #dc9eaf;
-  --sky-dusk-gold: #ffdb94;
-  --sky-dusk-horizon: #a895c6;
+  --sky-day: #84c5ff;
   --color-orange: #ff9823;
   --color-line: #829372;
   --color-muted: #46563c;
@@ -18,6 +15,13 @@
   --color-outline: #151514;
   --color-grey: #8a8880;
   --color-grey-dark: #3c3b38;
+  /* Ordinary interface roles from the live Vega surface/CTA palette. */
+  --ui-ink: #141310;
+  --ui-surface: var(--color-white);
+  --ui-primary: #f9b806;
+  --ui-muted: #686355;
+  --ui-line: #c6c2b9;
+  --ui-overlay: #1413103d;
   --overlay-tint: #0f33013d;
   --overlay-game: #0f3301b8;
   --overlay-cinema: #14131020;
@@ -57,9 +61,18 @@
   --font-display: "PP Mondwest", serif;
   --font-game: "PP Mondwest", serif;
   --font-editorial: Signifier, serif;
+  --ui-type-display: 48px/56px var(--font-display);
+  --ui-type-body: 14px/20px var(--font-body);
+  --ui-type-mono: 13px/20px var(--font-mono);
+  --ui-page-width: min(1296px, calc(100% - 32px));
+  --ui-window-shadow: 4px 4px 0 var(--ui-ink);
+  --ui-window-padding: var(--space-10) var(--space-4);
+  --ui-titlebar-padding: 6px var(--space-2);
+  --ui-button-padding: 6px var(--space-3);
+  --ui-nav-padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
   --text-xs: 11px;
   --text-sm: 12px;
-  --text-body: 15px;
+  --text-body: 14px;
   --text-control: 13px;
   --space-1: 4px;
   --space-2: 8px;
@@ -81,6 +94,23 @@
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --ui-type-display: 48px/52px var(--font-display);
+  }
+}
+@media (max-width: 1023px) {
+  :root {
+    --ui-nav-padding: var(--space-1) var(--space-1) var(--space-1)
+      var(--space-3);
+  }
+}
+@media (max-width: 767px) {
+  :root {
+    --ui-type-display: 36px/40px var(--font-display);
+    --ui-page-width: calc(100% - 16px);
+  }
 }
 :root {
   --curtain-arcade: #2d1603cc;

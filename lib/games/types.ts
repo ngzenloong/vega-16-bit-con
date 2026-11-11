@@ -72,6 +72,19 @@ export const COLORS = {
   orange: "#ff9823",
   sky: "#8dcaff",
 };
+/** Daylight materials sampled from Vega's original city and cloud artwork. */
+export const CITY_COLORS = {
+  sky: "#84c5ff",
+  cloud: "#fffaeb",
+  side: "#495d82",
+  sideDistant: "#547099",
+  roof: "#bbbcc9",
+  roofDistant: "#b1bed3",
+  metal: "#7c8d9c",
+  pavement: ["#c8c3b8", "#d3cec2"],
+  curb: ["#9ba6b4", "#fffaeb"],
+  road: ["#505965", "#4b545f"],
+} as const;
 export function drawSam(
   ctx: CanvasRenderingContext2D,
   image: HTMLImageElement,
@@ -163,21 +176,12 @@ export function drawBrand(
     ctx.drawImage(image, x, y, width, width * (image.height / image.width));
 }
 
-/** Four solid bands keep the dusk sky within the games' native pixel language. */
-export function drawDuskSky(
+/** Vega's flat daytime sky leaves the detail to the original pixel artwork. */
+export function drawDaySky(
   c: CanvasRenderingContext2D,
   height: number,
   width = 640,
 ) {
-  const colors = ["#edc6ce", "#dc9eaf", "#ffdb94", "#a895c6"];
-  const stops = [0, 0.28, 0.58, 0.84, 1];
-  colors.forEach((color, i) => {
-    c.fillStyle = color;
-    c.fillRect(
-      0,
-      Math.floor(height * stops[i]),
-      width,
-      Math.ceil(height * (stops[i + 1] - stops[i])) + 1,
-    );
-  });
+  c.fillStyle = CITY_COLORS.sky;
+  c.fillRect(0, 0, width, height);
 }

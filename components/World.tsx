@@ -29,6 +29,8 @@ import Icon from "./Icon";
 import Companion from "./Companion";
 import VenueLife from "./VenueLife";
 import SessionTickets from "./SessionTickets";
+import InfoWindow from "./InfoWindow";
+import TypewriterText, { TypewriterSequence } from "./TypewriterText";
 import { snackSheet } from "@/lib/snack-art";
 import { SCENE, MACHINES } from "@/lib/scene";
 
@@ -38,6 +40,7 @@ const defaultSheets = {
   jump: "/assets/vega/sam-jump.png",
 };
 type Props = {
+  keyboardHints: boolean;
   soundControl: ReactNode;
   player: Player | null;
   paused: boolean;
@@ -51,7 +54,7 @@ type Props = {
   onRegister: () => void;
   onSession: (index: number) => void;
   onAnnounce: (text: string) => void;
-  onHandheld: () => void;
+  onMovementIntent: () => void;
   onEnterScene: (floor: number) => void;
   onViewFloorChange: (floor: number) => void;
   onExitHandheld: () => void;
@@ -60,6 +63,7 @@ type Props = {
 const World = forwardRef<WorldController, Props>(function World(
   {
     player,
+    keyboardHints,
     paused,
     arriving = false,
     entering = false,
@@ -71,7 +75,7 @@ const World = forwardRef<WorldController, Props>(function World(
     onRegister,
     onSession,
     onAnnounce,
-    onHandheld,
+    onMovementIntent,
     onEnterScene,
     onViewFloorChange,
     onExitHandheld,
@@ -85,6 +89,7 @@ const World = forwardRef<WorldController, Props>(function World(
     callbacks = useRef({
       onTarget,
       onAnnounce,
+      onMovementIntent,
       onSession,
       onEnterScene,
       onViewFloorChange,
@@ -92,6 +97,7 @@ const World = forwardRef<WorldController, Props>(function World(
   callbacks.current = {
     onTarget,
     onAnnounce,
+    onMovementIntent,
     onSession,
     onEnterScene,
     onViewFloorChange,
@@ -131,6 +137,7 @@ const World = forwardRef<WorldController, Props>(function World(
       (text) => callbacks.current.onAnnounce(text),
       (floor) => callbacks.current.onEnterScene(floor),
       (floor) => callbacks.current.onViewFloorChange(floor),
+      () => callbacks.current.onMovementIntent(),
     );
     engine.current = controller;
     return () => {
@@ -440,33 +447,6 @@ const World = forwardRef<WorldController, Props>(function World(
       inert={arriving}
       className={`world-stage ${handheld ? "is-handheld" : ""} ${reduced ? "reduced-motion" : ""}`}
     >
-      <svg
-        className="scene-color-filters"
-        aria-hidden="true"
-        width="0"
-        height="0"
-      >
-        <defs>
-          <filter id="sunset-city" colorInterpolationFilters="sRGB">
-            <feColorMatrix
-              type="matrix"
-              values=".90 0 .30 0 0 .15 .70 0 0 0 .15 0 .80 0 0 0 0 0 1 0"
-            />
-          </filter>
-          <filter id="sunset-distance" colorInterpolationFilters="sRGB">
-            <feColorMatrix
-              type="matrix"
-              values=".68 0 .30 0 .13 .12 .64 0 0 .06 .12 0 .73 0 .05 0 0 0 1 0"
-            />
-          </filter>
-          <filter id="sunset-clouds" colorInterpolationFilters="sRGB">
-            <feColorMatrix
-              type="matrix"
-              values=".80 0 0 0 .20 0 .65 0 0 .20 0 0 .60 0 .15 0 0 0 1 0"
-            />
-          </filter>
-        </defs>
-      </svg>
       {handheld && (
         <div className="handheld-top">
           <span>16-Bit Con</span>
@@ -510,50 +490,92 @@ const World = forwardRef<WorldController, Props>(function World(
         <div className="world-inner" data-world-inner>
           <div className="glass-wall" aria-hidden="true" />
           <div className="steel-roof" aria-hidden="true" />
-          <div className="venue-sign">JAVITS CENTER · NEW YORK</div>
-          <div className="event-board" data-platform>
-            <div className="billboard-hardware" aria-hidden="true">
-              <span className="billboard-clamp clamp-left" />
-              <span className="billboard-clamp clamp-right" />
-              <span className="billboard-bolt bolt-left" />
-              <span className="billboard-bolt bolt-right" />
-              <span className="billboard-light light-left">
-                <i className="billboard-beam" />
-                <i className="lamp-head" />
-              </span>
-              <span className="billboard-light light-right">
-                <i className="billboard-beam" />
-                <i className="lamp-head" />
-              </span>
-            </div>
-            <h1>16-Bit Con</h1>
-            <p>
-              The retro gaming convention for people who never stopped playing.
-            </p>
-            <div className="event-date">October 3–5, 2026</div>
-            <div className="button-row">
-              <button className="pixel-button primary" onClick={onRegister}>
-                {player ? "Edit my player" : "Register now"}
-              </button>
-              <a
-                className="pixel-button lineup-link"
-                href="#social-floor"
-                onClick={(e) => {
-                  e.preventDefault();
-                  engine.current?.reveal(1, SCENE.booth);
-                }}
-              >
-                See the lineup ↓
-              </a>
-              <button
-                className="pixel-button hero-explore"
-                onClick={onHandheld}
-                aria-label="Explore the hall"
-              >
-                Explore
-              </button>
-            </div>
+          <div className="venue-sign" aria-hidden="true">
+            JAVITS CENTER
           </div>
+          <TypewriterSequence>
+            <InfoWindow
+              className="event-board"
+              title="Event Details"
+              labelledBy="event-title"
+              platform
+            >
+              <div className="event-intro">
+                <h1>
+                  <span id="event-title" className="sr-only">
+                    16-Bit Con
+                  </span>
+                  <TypewriterText
+                    text="16-Bit Con"
+                    step={0}
+                    paused={ambientPaused}
+                    reduced={reduced}
+                  />
+                </h1>
+                <dl className="event-details">
+                  <div>
+                    <dt>
+                      <span className="sr-only">Date</span>
+                      <TypewriterText
+                        text="Date"
+                        step={1}
+                        skipHidden
+                        paused={ambientPaused}
+                        reduced={reduced}
+                      />
+                    </dt>
+                    <dd>
+                      <time className="sr-only" dateTime="2026-10-03">
+                        October 3–5, 2026
+                      </time>
+                      <TypewriterText
+                        text="October 3–5, 2026"
+                        step={2}
+                        paused={ambientPaused}
+                        reduced={reduced}
+                      />
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>
+                      <span className="sr-only">Location</span>
+                      <TypewriterText
+                        text="Location"
+                        step={3}
+                        skipHidden
+                        paused={ambientPaused}
+                        reduced={reduced}
+                      />
+                    </dt>
+                    <dd>
+                      <span className="sr-only">Javits Center, New York</span>
+                      <TypewriterText
+                        text="Javits Center, New York"
+                        step={4}
+                        paused={ambientPaused}
+                        reduced={reduced}
+                      />
+                    </dd>
+                  </div>
+                </dl>
+                <div className="event-description">
+                  <p className="sr-only">
+                    The retro gaming convention for people who never stopped
+                    playing.
+                  </p>
+                  <TypewriterText
+                    text="The retro gaming convention for people who never stopped playing."
+                    step={5}
+                    paused={ambientPaused}
+                    reduced={reduced}
+                  />
+                </div>
+                <button className="pixel-button primary" onClick={onRegister}>
+                  {player ? "My player" : "Sign up"}
+                </button>
+              </div>
+            </InfoWindow>
+          </TypewriterSequence>
           {prop("plant-flowers", 1050)}
           {prop("plant-flowers", 2550)}
           {prop("plant-2", 3470)}
@@ -684,10 +706,11 @@ const World = forwardRef<WorldController, Props>(function World(
         {prompt}
         <div className="hall-controls">
           {sceneTools}
-          <span className="desktop-controls">
-            ← → Move Sam · Space Jump · Enter Interact · Esc Release · M Sound
-          </span>
-          <span className="hall-hint">Tap the hall to explore.</span>
+          {keyboardHints && (
+            <span className="desktop-controls">
+              ← → Move Sam · Space Jump · Enter Interact · Esc Release · M Sound
+            </span>
+          )}
         </div>
       </section>
       <section
@@ -704,9 +727,12 @@ const World = forwardRef<WorldController, Props>(function World(
             <h2>The lineup.</h2>
             <p>Three highlights from 16-Bit Con.</p>
             <SessionTickets
+              registered={Boolean(player)}
               interests={interests}
               onSession={onSession}
               inWorld
+              paused={ambientPaused}
+              reduced={reduced}
             />
             <small>Featured sessions · October 3–5 · New York time</small>
           </div>
@@ -751,10 +777,11 @@ const World = forwardRef<WorldController, Props>(function World(
         {prompt}
         <div className="hall-controls">
           {sceneTools}
-          <span className="desktop-controls">
-            ← → Move Sam · Space Jump · Enter Interact · Esc Release · M Sound
-          </span>
-          <span className="hall-hint">Tap the hall to explore.</span>
+          {keyboardHints && (
+            <span className="desktop-controls">
+              ← → Move Sam · Space Jump · Enter Interact · Esc Release · M Sound
+            </span>
+          )}
         </div>
       </section>
       {handheld && (

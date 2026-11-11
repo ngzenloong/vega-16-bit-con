@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 type Name =
   | "chevron"
+  | "menu"
   | "lock"
   | "close"
   | "pause"
@@ -32,6 +33,13 @@ export default function Icon({
       style={style}
     >
       {name === "chevron" && <path d="m6 9 6 6 6-6" />}
+      {name === "menu" && (
+        <path
+          d="M20 18H4v-2h16v2Zm0-5H4v-2h16v2Zm0-5H4V6h16v2Z"
+          fill="currentColor"
+          stroke="none"
+        />
+      )}
       {name === "lock" && (
         <path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5zM12 14v3" />
       )}

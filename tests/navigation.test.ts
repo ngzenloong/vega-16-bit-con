@@ -373,29 +373,22 @@ test("layout breakpoints close a popup and restore a visible header control", (t
   menu.menuKey("End");
   assert.equal(menu.page.activeElement, menu.items[2]);
   menu.items[2].rendered = false;
-  menu.page.activeElement = null; // The browser drops focus when the menu CTA hides.
-  menu.mediaChange("(min-width: 22rem)", true);
-  assert.equal(menu.open(), false);
-  assert.equal(menu.page.activeElement, menu.trigger);
-
-  menu.clickTrigger(0);
   menu.trigger.rendered = false;
-  menu.mediaChange("(min-width: 35rem)", true);
+  menu.page.activeElement = null; // The browser drops focus as the mobile menu hides.
+  menu.mediaChange("(min-width: 48rem)", true);
   assert.equal(menu.open(), false);
   assert.equal(menu.page.activeElement, menu.desktop);
 
   menu.desktop.rendered = false;
   menu.trigger.rendered = true;
-  menu.mediaChange("(min-width: 35rem)", false);
-  assert.equal(menu.page.activeElement, menu.trigger);
   menu.inlineAction.focus();
   menu.inlineAction.rendered = false;
-  menu.mediaChange("(min-width: 22rem)", false);
+  menu.mediaChange("(min-width: 48rem)", false);
   assert.equal(menu.page.activeElement, menu.trigger);
 
   const outside = {};
   menu.page.activeElement = outside;
-  menu.mediaChange("(min-width: 22rem)", true);
+  menu.mediaChange("(min-width: 48rem)", true);
   assert.equal(
     menu.page.activeElement,
     outside,

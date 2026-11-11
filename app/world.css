@@ -25,11 +25,10 @@
   inset: 0 auto 0 0;
   width: var(--world-width, 3600px);
   min-width: 100%;
-  transform: translate3d(calc(-1 * var(--camera-x)), 0, 0);
-  will-change: transform;
+  transform: translateX(calc(-1 * var(--camera-x)));
 }
 .main-hall {
-  background: var(--color-sky);
+  background: var(--sky-day);
 }
 .sky-stack {
   position: absolute;
@@ -149,65 +148,6 @@
       transparent 52%
     );
   background-size: 160px 44px;
-}
-.venue-sign {
-  position: absolute;
-  left: var(--world-center, 1800px);
-  top: calc(var(--roof-top) + var(--roof-height) / 2);
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  padding: 5px var(--space-4);
-  background: var(--paper);
-  border: 1px solid var(--ink);
-  font: 12px/1.4 var(--font-mono);
-  white-space: nowrap;
-}
-.event-board {
-  position: absolute;
-  left: var(--world-center, 1800px);
-  top: 100px;
-  transform: translateX(-50%);
-  width: 560px;
-  padding: var(--space-6) 30px 26px;
-  border: 2px solid var(--ink);
-  background: var(--paper);
-  box-shadow: 4px 4px 0 var(--ink);
-  text-align: center;
-  z-index: 5;
-}
-.event-board:before,
-.event-board:after {
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  width: 2px;
-  height: 32px;
-  background: var(--frame-dark);
-}
-.event-board:before {
-  left: 36px;
-}
-.event-board:after {
-  right: 36px;
-}
-.event-board h1 {
-  font: 76px/0.95 var(--font-display);
-  letter-spacing: -0.02em;
-}
-.event-board p {
-  max-width: 390px;
-  margin: var(--space-3) auto;
-  font-size: 14px;
-  line-height: 1.6;
-}
-.event-date {
-  margin: 0 0 18px;
-  font: 12px var(--font-mono);
-}
-.event-board .pixel-button {
-  min-height: 40px;
-  font-size: 12px;
-  padding: var(--space-2) var(--space-4);
 }
 
 .world-floor-art {
@@ -411,12 +351,8 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0 156px,
-    var(--wall-rule) 156px 160px
-  );
-  opacity: 0.55;
+  background: url("/assets/vega/inner-wall-tile-3.png") no-repeat 28px 180px /
+    510px 142px;
 }
 .lift-bay {
   position: absolute;
@@ -659,9 +595,6 @@
   font: 11px var(--font-mono);
   z-index: 15;
 }
-.hall-hint {
-  display: none;
-}
 .mobile-explore {
   display: none;
 }
@@ -672,7 +605,20 @@
 .concourse-wall {
   position: absolute;
   inset: 0 0 88px;
-  background: var(--paper);
+  background-color: var(--wall-paper);
+  background-image:
+    url("/assets/vega/inner-wall-tile-1.png"),
+    url("/assets/vega/inner-wall-tile-2.png"),
+    url("/assets/vega/inner-wall-tile-3.png");
+  background-size:
+    512px 142px,
+    510px 142px,
+    510px 142px;
+  background-repeat: no-repeat;
+  background-position:
+    980px 260px,
+    2360px 360px,
+    1640px 620px;
   border-top: 5px solid var(--wall-edge);
 }
 .concourse-ceiling {
@@ -702,57 +648,6 @@
 .schedule-board > p {
   font-size: 14px;
   margin-bottom: var(--space-6);
-}
-.event-tickets {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-6);
-}
-.event-ticket {
-  position: relative;
-  min-height: 232px;
-  padding: 18px var(--space-5) var(--space-5);
-  text-align: left;
-  background: var(--yellow);
-  border: 2px solid var(--ink);
-  box-shadow: 3px 3px 0 var(--ink);
-}
-.ticket-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 17px;
-  font: 10px var(--font-mono);
-  gap: var(--space-3);
-}
-.ticket-top time {
-  font-size: 19px;
-}
-.ticket-top > span {
-  display: none;
-}
-.event-ticket h3 {
-  font: 29px/1.08 var(--font-display);
-  min-height: 64px;
-  margin-bottom: 10px;
-}
-.event-ticket p {
-  font-size: 12px;
-}
-.ticket-action {
-  display: block;
-  width: 100%;
-  border: 0;
-  border-top: 1px dashed var(--ink);
-  padding: 13px 0 0;
-  margin-top: 18px;
-  background: none;
-  text-align: left;
-  font: 12px var(--font-mono);
-}
-.ticket-action:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
 }
 .schedule-board small {
   display: block;
@@ -814,7 +709,6 @@
 .world-stage:not(.is-handheld) .world-floor {
   cursor: pointer;
 }
-.event-board,
 .schedule-board,
 .hall-controls {
   cursor: auto;
@@ -841,21 +735,9 @@
   }
 }
 @media (max-width: 1000px) {
-  .event-board {
-    width: 560px;
-  }
   .schedule-board {
     width: calc(100vw - 54px);
     max-width: 920px;
-  }
-  .event-tickets {
-    gap: var(--space-4);
-  }
-  .event-ticket {
-    padding: 17px var(--space-4) var(--space-5);
-  }
-  .event-ticket h3 {
-    font-size: 27px;
   }
 }
 @media (max-width: 700px) {
@@ -869,41 +751,6 @@
   }
   .glass-wall {
     top: 56px;
-  }
-  .venue-sign {
-    font-size: 10px;
-    padding: 6px 10px;
-  }
-  .event-board {
-    top: 86px;
-    width: calc(100vw - 36px);
-    max-width: 420px;
-    padding: 21px 18px 23px;
-  }
-  .event-board:before,
-  .event-board:after {
-    height: 30px;
-  }
-  .event-board h1 {
-    font-size: clamp(44px, 15vw, 62px);
-  }
-  .event-board p {
-    font-size: 12px;
-    line-height: 1.6;
-    margin: var(--space-3) auto;
-    max-width: 290px;
-  }
-  .event-date {
-    font-size: 11px;
-    margin-bottom: var(--space-4);
-  }
-  .event-board .button-row {
-    gap: var(--space-2);
-  }
-  .event-board .pixel-button {
-    padding: var(--space-2) 11px;
-    font-size: 11px;
-    min-height: 40px;
   }
   .world-prompt {
     bottom: 330px;
@@ -920,9 +767,6 @@
     min-height: 44px;
     font-size: 10px;
     bottom: 0;
-  }
-  .desktop-controls {
-    display: none;
   }
   .mobile-explore {
     display: inline-flex;
@@ -944,33 +788,6 @@
   .schedule-board > p {
     font-size: 12px;
     margin-bottom: 22px;
-  }
-  .event-tickets {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-  .event-ticket {
-    min-height: 168px;
-    padding: 14px 19px var(--space-4);
-  }
-  .ticket-top {
-    margin-bottom: 10px;
-  }
-  .ticket-top time {
-    font-size: 18px;
-  }
-  .event-ticket h3 {
-    min-height: 0;
-    font-size: 27px;
-    margin-bottom: 6px;
-  }
-  .event-ticket p {
-    font-size: 11px;
-  }
-  .ticket-action {
-    font-size: 11px;
-    margin-top: var(--space-3);
-    padding-top: 11px;
   }
   .schedule-board small {
     font-size: 10px;

@@ -103,7 +103,7 @@ export const SESSIONS = [
   {
     time: "2:00 PM",
     title: "Pixel Art in the Age of AI",
-    kind: "Panel discussion",
+    kind: "Panel",
   },
   { time: "6:00 PM", title: "Vega After Party", kind: "Booth 630" },
 ];

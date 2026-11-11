@@ -26,7 +26,7 @@ export default function SiteHeader({
   const panel = useRef<HTMLDivElement>(null);
   const firstLink = useRef<HTMLButtonElement>(null);
   const initialItem = useRef<number | null>(null);
-  const cta = registered ? "My player" : "Register now";
+  const cta = registered ? "My player" : "Sign up";
   const close = useCallback((restore = false) => {
     setOpen(false);
     if (restore) trigger.current?.focus({ preventScroll: true });
@@ -76,8 +76,7 @@ export default function SiteHeader({
     if (inactive) setOpen(false);
   }, [inactive]);
   useEffect(() => {
-    const wide = matchMedia("(min-width: 35rem)");
-    const inlineAction = matchMedia("(min-width: 22rem)");
+    const wide = matchMedia("(min-width: 48rem)");
     const adapt = () => {
       const active = document.activeElement;
       const restore =
@@ -94,12 +93,8 @@ export default function SiteHeader({
           preventScroll: true,
         });
     };
-    const breakpoints = [wide, inlineAction];
-    breakpoints.forEach((media) => media.addEventListener("change", adapt));
-    return () =>
-      breakpoints.forEach((media) =>
-        media.removeEventListener("change", adapt),
-      );
+    wide.addEventListener("change", adapt);
+    return () => wide.removeEventListener("change", adapt);
   }, []);
   return (
     <header
@@ -131,7 +126,12 @@ export default function SiteHeader({
         aria-label="Visit Vega"
         onClick={() => close()}
       >
-        <img src="/assets/vega/logo.svg" alt="Vega" width={111} height={36} />
+        <img
+          src="/assets/vega/nav-logo.svg"
+          alt="Vega"
+          width={45}
+          height={26}
+        />
       </a>
       <nav className="header-nav" aria-label="Convention navigation">
         <div className="header-links">
@@ -145,6 +145,7 @@ export default function SiteHeader({
         <button
           ref={trigger}
           className="nav-toggle"
+          aria-label={open ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={open}
           aria-controls="convention-menu"
           onClick={(event) => {
@@ -167,8 +168,7 @@ export default function SiteHeader({
             }
           }}
         >
-          <span>Menu</span>
-          <Icon name="chevron" size={14} />
+          <Icon name="menu" size={24} />
         </button>
         <button
           className="header-cta"

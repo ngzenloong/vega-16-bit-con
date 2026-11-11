@@ -23,7 +23,8 @@ import {
 } from "./track.ts";
 import {
   COLORS as C,
-  drawDuskSky,
+  drawDaySky,
+  CITY_COLORS,
   drawSam,
   drawBrand,
   pixelText,
@@ -265,8 +266,8 @@ export const createGame: GameFactory = (env) => {
         road = buildRoad(distance);
       const project = (z: number, lane = 0) =>
         projectRoad(road, lateral, z, lane, viewHeight);
-      drawDuskSky(c, horizon + 20);
-      c.fillStyle = "#FFE1B2";
+      drawDaySky(c, horizon + 20);
+      c.fillStyle = CITY_COLORS.cloud;
       for (let i = 0; i < 6; i++) {
         const x = ((((i * 150 - heading * 75) % 900) + 900) % 900) - 120;
         c.fillRect(x, 38 + (i % 2) * 16, 78, 9);
@@ -279,22 +280,22 @@ export const createGame: GameFactory = (env) => {
         for (let i = -1; i < Math.ceil(640 / w) + 1; i++)
           c.drawImage(env.backdrop, x + i * w, horizon - h, w, h);
       }
-      c.fillStyle = "#8b7889";
+      c.fillStyle = CITY_COLORS.metal;
       c.fillRect(0, horizon, 640, 4);
       for (let y = horizon + 2; y < viewHeight; y += 2) {
         const p = (y - horizon) / roadHeight,
           z = ROAD_DEPTH / p - ROAD_DEPTH,
           world = distance + z - PLAYER_DEPTH,
           q = project(z),
-          band = Math.floor(world / 180) % 2;
-        c.fillStyle = band ? "#c7b3a4" : "#bca89d";
+          band = Math.abs(Math.floor(world / 180) % 2);
+        c.fillStyle = CITY_COLORS.pavement[band];
         c.fillRect(0, y, 640, 2);
-        c.fillStyle = band ? "#e5d7c7" : "#a18d8b";
+        c.fillStyle = CITY_COLORS.curb[band];
         c.fillRect(q.center - q.half - 12 * p, y, q.half * 2 + 24 * p, 2);
-        c.fillStyle = band ? "#504b55" : "#55505a";
+        c.fillStyle = CITY_COLORS.road[band];
         c.fillRect(q.center - q.half, y, q.half * 2, 2);
         if (Math.floor(world / 145) % 2 === 0) {
-          c.fillStyle = "#f6edc8";
+          c.fillStyle = CITY_COLORS.cloud;
           for (const lane of [-1 / 3, 1 / 3])
             c.fillRect(
               q.center + q.half * lane - 2 * p,
@@ -324,7 +325,7 @@ export const createGame: GameFactory = (env) => {
             h = 46 * q.p * zoom;
           c.fillStyle = C.paper;
           c.fillRect(q.x - w / 2, q.y - h, w, h);
-          c.fillStyle = "#8b7889";
+          c.fillStyle = CITY_COLORS.metal;
           c.fillRect(q.x - w / 2, q.y - h, w, h * 0.35);
         }
       }

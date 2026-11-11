@@ -108,6 +108,7 @@ export function createWorld(
   announce: (text: string) => void,
   onSceneTap: (floor: number) => void = () => {},
   onViewFloorChange: (floor: number) => void = () => {},
+  onMovementIntent: () => void = () => {},
 ): WorldController {
   const floors = [...root.querySelectorAll<HTMLElement>("[data-floor]")];
   const inners = floors.map(
@@ -911,7 +912,10 @@ export function createWorld(
       finishSnack(false);
     }
     if (!input.down(source, button)) return;
-    if (button === "left" || button === "right") audio.effect("step");
+    if (button === "left" || button === "right") {
+      onMovementIntent();
+      audio.effect("step");
+    }
     begin();
     if (button === "action") {
       engage();
@@ -1626,9 +1630,7 @@ export function createWorld(
                   : target.kind === "schedule"
                     ? "VIEW"
                     : target.kind === "session"
-                      ? target.element.getAttribute("aria-pressed") === "true"
-                        ? "REMOVE INTEREST"
-                        : "SAVE INTEREST"
+                      ? target.element.dataset.actionLabel || "ADD TO MY LIST"
                       : "PLAY",
         hint = prompt.querySelector("[data-prompt-action]")!,
         text = snack.active ? "ENJOY YOUR SLICE" : `${key} · ${verb}`;

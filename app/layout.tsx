@@ -10,6 +10,8 @@ import "./navigation.css";
 import "./mobile.css";
 import "./player-select.css";
 import "./handheld-menus.css";
+import "./windows.css";
+import "./footer.css";
 export const viewport: Viewport = { viewportFit: "cover" };
 export const metadata: Metadata = {
   title: "16-Bit Con — Never stopped playing",
@@ -25,6 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <noscript>
+          <style>{`.typed-copy[data-type-state="waiting"] .typed-reserve { visibility: inherit; }`}</style>
+        </noscript>
         <link
           rel="preload"
           href="/fonts/mondwest.woff2"

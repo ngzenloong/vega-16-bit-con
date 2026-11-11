@@ -33,7 +33,7 @@ The full reports and screenshots are in the sibling `audit-2026-11-06/mobile-rou
 
 ## Brand and brief
 
-The retained Figma instruction, brand and copy snapshots were compared again. Event name, tagline, October 3–5, 2026, Javits Center, Booth 630 and the three supplied session titles/times remain intact. The brief does not assign session days, so the schedule describes event highlights without inventing a daily agenda. Original logo/daisy, Mondwest game text, Geist body/command roles and existing palette remain the foundation. The dusk city, continuous venue, four era-specific games and local player follow the user's approved direction.
+The retained Figma instruction, brand and copy snapshots were compared again. Event name, tagline, October 3–5, 2026, Javits Center, Booth 630 and the three supplied session titles/times remain intact. The brief does not assign session days, so the schedule describes event highlights without inventing a daily agenda. Original logo/daisy, Mondwest game text, Geist body/command roles and existing palette remain the foundation. The continuous venue, four era-specific games and local player follow the user's approved direction; the November 10 color pass restores the original daylight city.
 
 Five review lenses were applied: make-interfaces-feel-better, vercel-react-best-practices, humanizer, hallmark and stageshow. Reports distinguish source checks, browser observations and independent artifact review. No animation framework or design-system package was introduced. A fresh independent finish reviewer approved the full-screen selector after reviewing the nine viewport pairs, customization, success, mid-drop and landed evidence.
 
@@ -81,4 +81,76 @@ Twenty-seven real-engine regression cases use controlled DOM geometry and a fram
 
 The existing Figma instruction, copy and brand snapshots were checked again: the repair restores access to the required hero, schedule and registration information. Event facts, typography, palette and the continuous-venue design are unchanged. Source and interaction reviewers found and repaired an initial camera-outruns-player case and a same-floor scrollbar gap before this record was written.
 
-**Browser acceptance remains pending for this follow-up.** Ego's earlier task workspace disappeared; recovery authorization is pending. No replacement was created and no user-owned workspace was claimed. Earlier responsive captures remain evidence for their recorded versions, not proof of this new exit transition. A new Ego pass must exercise both floors, rapid reentry, the final navigation scroll event and normal/reduced motion before this follow-up is described as visually verified. See `audit-2026-11-06/exit-round-8` for the source reviews, logs and remaining checks.
+At that checkpoint, browser acceptance was pending because the earlier Ego workspace disappeared. The separate November 10 reference-alignment task now includes fresh browser evidence for reading-scroll floor following, handheld travel in both directions, same-floor exit/reentry and door holds. That newer evidence is recorded below; the earlier captures remain scoped to their own versions. See `audit-2026-11-06/exit-round-8` for the historical source reviews and logs.
+
+## November 10: live Vega alignment and deliberate sound
+
+The final reference is Vega's live white-window UI, not the abandoned train/flip-board exploration. Figma instruction, copy and palette/font frames were read again. The actual home/Careers CSS and rendered styles were inspected in Ego at phone, tablet and desktop sizes. The new UI role tokens preserve the Figma foundations while matching the live white, black and yellow controls. Original day sky, city textures, wall, brick, yellow trim and wood floor remain separate artwork roles.
+
+The header follows the original 768 px navigation boundary and its compact wordmark/menu icon. Measured CTA top/right/bottom insets are exactly 8/8/8 px at desktop sizes and 4/4/4 px at 768–1023 px. Narrow layouts move links and signup into the dropdown. The hero uses the original 688 px maximum window width, 24 px side gutters and 40/16 px content padding. Narrow tablets/phones show the date and venue directly. Display type is Mondwest 48/56, 48/52 or 36/40 by breakpoint; body is Geist 14/20; chrome, metadata and controls are Geist Mono 13/20. Mobile actions retain 44 px targets. Muted text uses the darker live 700 role to preserve body-text contrast.
+
+The shared information window and text reveal serve the hero and three supplied sessions. The title remains stable; full-text reserves prevent reflow as facts and description type. The underlying semantic copy is complete from the start. One browser trace recorded 43 text mutations with all three session windows staying exactly 228 px high. Signup followed by close leaves the unseen lineup in its waiting state; entering the floor reveals it once. Reduced motion exposes the full copy immediately. The mobile lineup dialog also uses the neutral window surface, titlebar type and 44 px close/sound controls.
+
+Fresh Ego checks cover widths from 240 to 1920 px, including phone, tablet, landscape, short desktop and square viewports. The final responsive measurements show no document or hero overflow. Native menu toggles, Escape and outside dismissal work; the source/component regression checks also cover both directions of the new breakpoint, hidden-action recovery and preserving outside focus. Player selection was inspected at 393×800 and 1440×1000. Down moves name → email → Confirm; Left reaches Back; Enter returns to the look step without a pointer.
+
+Native keyboard and synthesized touch both enabled sound on the first accepted horizontal movement. Explicit mute remained off on subsequent movement, and direct game start enabled sound before the race. A cold mid-round Beat unmute now prepares the score before sampling the fresh visual-clock offset. Request and launch ownership prevent stale loads from restarting old playback or stealing focus. The cold-network scenario is regression-fixture verified, not a physical-device or throttled-browser claim.
+
+The phone floor trace starts in the main hall, travels to the social floor, exits and walks back to the center of that same floor, then reenters and travels upstairs before exiting there. One player surface is visible at every checkpoint. Body overflow is restored after each exit. The destination lift holds its arrived state until Sam walks away, while the departure lift closes. Reading scroll to the other floor still transfers Sam. A separate lower-floor entry/exit confirms the same behavior without travel.
+
+Verification: **137 automated tests passed**, TypeScript checking, production build and diff whitespace checks passed. Independent source review closed the offscreen-typewriter and cold-Beat-offset findings. Separate make-interfaces-feel-better, Hallmark, Humanizer and applicable StageShow reviews found no remaining actionable issue in their inspected source/capture scope. StageShow's faux-UI film gate was not used as a substitute for live interaction tests. The mechanical UI scan reported only the two mandated Geist font warnings; these are deliberate source-brand matches, not replacement-font recommendations.
+
+Evidence lives in the sibling `audit-2026-11-10-daylight` folder, including reference styles, final rendered-token measurements, responsive captures, floor traces and independent review reports. Local browser evidence is Chromium. Physical iOS audio unlocking/software keyboard behavior, VoiceOver output, exact-device touch feel and exhaustive low-speed motion inspection remain unverified. Deployment verification is separately recorded against the pushed commit.
+
+
+## Rendering regressions and footer follow-up
+
+The visible typewriter layer now inherits visibility from its scene, so hiding an information window also hides its text. Completed cursors blink, with static/reduced-motion states exempt. Whole-pixel board widths and grid columns avoid fractional transformed text; the scene no longer forces a persistent 3D text layer. The original lift-hit hover region is restored, including the secondary button border. A native edge-hover trace settled at the identical47,464 coordinates for the final10 sampled frames rather than repeatedly entering/leaving. The smaller lineup action uses the original secondary button sizing.
+
+Dialogue scene setup/cleanup now runs before paint. It restores floor layout before releasing modal scroll ownership and removes the delayed scroll write that could overwrite a subsequent navigation. Three regressions fail on the previous ordering and pass on the repair. Browser checking confirmed all three hero text layers hidden during dialogue, restoration to2048px combined floor height, and immediate navigation to the schedule remaining atscrollY1024.
+
+Both floors now continuously use the former1F acoustic score. Regression checks cover identical track selection on both floors and reuse of the running audio source. The footer follows the actual Vega footer: original53×48 flower, framed white surface, monospace event columns, two columns on narrow screens, and original brick artwork. Desktop1440px and mobile393px rendered without horizontal overflow. No corporate product catalog or registration backend was added.
+
+142 tests, typecheck and production build passed for this follow-up. Physical-device limitations remain as above.
+
+## Sequential window text follow-up
+
+The hero now has a 520px maximum width and left-aligned contents. Its metadata labels and values share adjacent columns rather than opposite edges. One completion-driven sequence types the H1, Date label/value, Location label/value and description in order. Narrow layouts skip the hidden labels. The session sequence types each card's time and body before starting the next card, matching left-to-right desktop and top-to-bottom mobile reading order.
+
+A browser mutation trace showed at most one typing step across the three session cards and a constant 372px schedule-board height. The hero trace showed all six ordered handoffs, including its formerly static title and labels. Phone checks completed with hidden labels, direct scrolling to the third card, and reduced motion. The queue advances past items clipped above a scrollport, including when a fast scroll produces no IntersectionObserver threshold event; resize also releases a newly hidden label. All text remains available semantically, and no-script rendering exposes the reserved copy. An initial waiting state prevents already-complete text flashing before hydration.
+
+147 tests, typecheck, production build and diff checking passed. Independent source review closed the fast-scroll, inner-scrollport and exact-boundary queue cases. Evidence is in `audit-2026-11-10-daylight/sequence-desktop-trace.json` and the appended code review. Earlier simultaneous-typewriter and static-title descriptions are superseded by this sequence.
+
+
+## Action and alignment follow-up
+
+The Event Details window is centered with24px padding on all sides; desktop date/location labels and values occupy opposite edges. Its title and metadata now retain blinking cursor blocks. The header CTA's104px minimum is removed, so labels plus12px horizontal padding determine width. Both floor control rows share the header width token. Across ten viewport sizes from240 to1920px, measured header/control left and right edges matched exactly, the title text's center delta was0, and no page overflow was observed.
+
+Each lineup card has one full-width yellow action: Sign up for guests, Add to my list for registered players, and On my list for saved sessions. Guest actions have no toggle semantics; saved-session actions expose pressed state. The scene prompt follows the same action label. Footer DOM and focus order are Event, Vega, Explore, Your player. Footer text controls can wrap on extremely narrow screens.
+
+Wardrobe snap padding now matches its visual inset, eliminating the4px first-row scroll offset. Desktop measurement found all eight first tiles at the same582.078px coordinate; mobile found all eight at24px. Native touch swipe advanced165px and showed both overflow fades. End/Home checks removed/restored the correct fade and returned every first tile to the same origin. The fade widens from18 to36px with an8px transparent edge. Label-specific submission-button minimum widths were removed while paired Back/Confirm columns and touch targets remain.
+
+Independent component review exercised six guest/registered/selected cases across page and dialog variants. Physical iOS and VoiceOver limitations remain as previously recorded.
+
+The native signup/list flow also passed: selecting the Panel signup action opened player creation; completion retained that session as On my list while the other two became Add to my list. Adding and removing another session worked. Header width changed naturally from78.609px (Sign up) to94.203px (My player), retaining the same padding. The temporary local QA profile was restored afterward.147 tests, typecheck and production build passed.
+
+The wardrobe keyboard focus ring is inset6px, preserving a distinct double outline without extending4px past the row’s shared left edge.
+
+## Hero cursor completion
+
+Hero cursors blink during the sequential entrance and become transparent once their text block completes. Their existing layout boxes remain in place. A browser trace recorded a constant316px hero height, an active blink during typing, and six completed cursors at opacity0 with their original dimensions intact. The production build and diff checks passed; no animation-state logic changed.
+
+
+## Input hint exclusivity
+
+The page now owns one hint preference, initialized from pointer capability and updated by actual game/navigation keys or touch/pen input. No operating-system/user-agent inference is used. Keyboard typing in editable fields, composition and modified shortcuts do not change the hint. A pointer-capability change resets the default. Both floors render the key legend only when selected; the sticky touch prompt uses the opposite condition. Redundant inline touch copy and the coarse-pointer right-alignment rule were removed. Settings retain their right edge and keyboard instructions stay at the left edge of the shared header-width frame.
+
+Ego Chromium checks:768×1024 touch mode had no keyboard legends and one tap prompt; Tab switched to keyboard text atx16 with no tap prompt; a native touch switched back. Desktop1440px placed the key text and row atx72. A240px keyboard viewport had no horizontal overflow or overlap with the event window. These are emulated capability/native-event checks, not physical iPad verification. The existing tests, typecheck and production build passed.
+
+
+## Mobile dialogue response layout
+
+The narrow response column was reproduced at393×665: the interaction region was361px wide but an implicit grid column, combined with inherited space-between alignment, reduced the actual buttons to137.875px. An explicit minmax(0,1fr) column and stretch alignment now give each response the full361px width and44px minimum height. The mobile portrait layout groups the64px speaker portrait/name with the dialogue above a full-width response area and its instruction line. Three choices have reserved geometry, so the same344px panel height was measured before typing and after all options appeared. Short portrait panels use304px to retain more of the scene.
+
+The response text has its own flexible label span; the selector marker has an explicit class. Touch no longer inherits sticky hover coloring. Scrollable text/choice areas handle unusually small heights without growing the panel, use safe alignment so the first item remains reachable, and keep keyboard outlines inset. Arrow navigation scrolls only the choice slot to reveal the focused option. Landscape portraits consistently use64px instead of overflowing their column.
+
+Rendered checks covered393×665,393×844,320×568,240×480,568×320,844×390,480×240,768×1024 and1440×900. At480×240, focusing the last option moved the local slot8px and focusing the first restored0px; page scroll stayed0. A native touch at the right-hand blank area of Explore the floor activated it and retained handheld mode and its scroll lock. The final844×390 slot is148px high with no overflow. Independent layout review found no further confirmed blocking issue in its inspected captures. Mechanical layout scan returned no findings. Existing147 tests, typecheck and production build pass; physical Safari testing remains outside this evidence.

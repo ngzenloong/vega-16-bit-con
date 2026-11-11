@@ -1,4 +1,4 @@
-import type { GameEnvironment } from "./types.ts";
+import { CITY_COLORS, type GameEnvironment } from "./types.ts";
 
 // Original facade crop, side-face width and the first front-wall row.
 export const FACADE_CROPS = [
@@ -121,7 +121,7 @@ export function drawFacade(
     c.closePath();
   };
   path(points);
-  c.fillStyle = distant ? "#A88DB5" : "#775784";
+  c.fillStyle = distant ? CITY_COLORS.sideDistant : CITY_COLORS.side;
   c.fill();
   c.drawImage(
     texture,
@@ -149,7 +149,7 @@ export function drawFacade(
           [x + side, y + slant],
         ],
   );
-  c.fillStyle = distant ? "#D4BDCD" : "#C99DAD";
+  c.fillStyle = distant ? CITY_COLORS.roofDistant : CITY_COLORS.roof;
   c.fill();
   if (mural !== null) {
     const art = cityMural(env, mural);

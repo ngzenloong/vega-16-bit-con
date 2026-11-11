@@ -31,11 +31,14 @@ function fixture(t: TestContext, reduced = false) {
   const scrolls: number[] = [];
   const sounds: string[] = [];
   const viewedFloors: number[] = [];
+  const movementIntents: number[] = [];
+  let dialogOpen = false;
   const media = { matches: reduced };
   const windowMock = new EventTarget();
   const page = Object.assign(new EventTarget(), {
     hidden: false,
-    querySelector: () => null,
+    querySelector: (selector: string) =>
+      dialogOpen && selector === "dialog[open]" ? {} : null,
   });
   Object.defineProperty(page, "activeElement", { get: () => active });
   const globals: Record<string, unknown> = {
@@ -279,6 +282,7 @@ function fixture(t: TestContext, reduced = false) {
     () => {},
     () => {},
     (floor: number) => viewedFloors.push(floor),
+    () => movementIntents.push(now),
   );
   engine.setAmbient(true);
   t.after(() => engine.destroy());
@@ -293,6 +297,31 @@ function fixture(t: TestContext, reduced = false) {
     scrolls,
     sounds,
     viewedFloors,
+    movementIntents,
+    dialog(value: boolean) {
+      dialogOpen = value;
+    },
+    key(code: string, kind = "scene", repeat = false) {
+      const target = kind === "scene" ? floors[0] : new Surface();
+      if (kind === "input")
+        target.closest = (selector) =>
+          selector.includes("input") ? target : null;
+      if (kind === "navigation")
+        target.closest = (selector) =>
+          selector.includes("button") || selector.includes(".nav-dropdown")
+            ? target
+            : null;
+      const event = new Event("keydown", { cancelable: true });
+      Object.defineProperties(event, {
+        key: {
+          value: code.startsWith("Key") ? code.slice(3).toLowerCase() : code,
+        },
+        code: { value: code },
+        repeat: { value: repeat },
+        target: { value: target },
+      });
+      page.dispatchEvent(event);
+    },
     position(i: number) {
       const [, x, y] = actors[i].style
         .getPropertyValue("transform")
@@ -364,6 +393,50 @@ function fixture(t: TestContext, reduced = false) {
     },
   };
 }
+
+test("only accepted horizontal controls emit a sound-enabling movement intent", (t) => {
+  const scene = fixture(t);
+  scene.engine.goTo(0, 520, false);
+  scene.engine.restorePage();
+  scene.step(480);
+  scene.engine.control(0);
+  scene.engine.virtual("up", true);
+  scene.engine.virtual("up", false);
+  assert.equal(
+    scene.movementIntents.length,
+    0,
+    "automatic return, control entry and jumping stay silent",
+  );
+  scene.key("ArrowRight");
+  scene.key("ArrowRight", "scene", true);
+  assert.equal(scene.movementIntents.length, 1);
+  scene.engine.virtual("right", true, "pad-pointer:1");
+  scene.engine.virtual("right", true, "pad-pointer:1");
+  scene.engine.virtual("right", false, "pad-pointer:1");
+  assert.equal(
+    scene.movementIntents.length,
+    2,
+    "one new pad press counts, repeats and release do not",
+  );
+});
+
+test("editable/navigation/modal keys and paused or hidden virtual input do not emit movement intent", (t) => {
+  const scene = fixture(t);
+  scene.key("KeyA", "input");
+  scene.key("ArrowRight", "navigation");
+  scene.dialog(true);
+  scene.key("ArrowLeft");
+  scene.dialog(false);
+  scene.engine.pause("overlay", true);
+  scene.engine.virtual("right", true);
+  scene.engine.pause("overlay", false);
+  scene.hidden(true);
+  scene.engine.virtual("left", true);
+  scene.hidden(false);
+  assert.equal(scene.movementIntents.length, 0);
+  scene.key("KeyD");
+  assert.equal(scene.movementIntents.length, 1);
+});
 
 test("page release walks only the current Sam home and restores both cameras", (t) => {
   const scene = fixture(t);

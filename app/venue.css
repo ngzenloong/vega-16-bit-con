@@ -16,16 +16,6 @@
 .world-stage:not(.is-handheld) .main-hall:not(.is-conversation) .glass-wall {
   top: 148px;
 }
-.event-board {
-  --hero-cta-width: 140px;
-  top: 238px;
-  --cable-length: 88px;
-}
-.event-board .primary {
-  width: var(--hero-cta-width);
-  min-width: var(--hero-cta-width);
-  white-space: nowrap;
-}
 
 .hall-controls {
   display: flex;
@@ -72,31 +62,31 @@
   scrollbar-color: var(--scroll-thumb) var(--scroll-track);
 }
 :is(
-  .registration-dialog,
-  .registration-content,
-  .wardrobe-rows,
-  .accessory-strip,
-  .game-message
-)::-webkit-scrollbar {
+    .registration-dialog,
+    .registration-content,
+    .wardrobe-rows,
+    .accessory-strip,
+    .game-message
+  )::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 :is(
-  .registration-dialog,
-  .registration-content,
-  .wardrobe-rows,
-  .accessory-strip,
-  .game-message
-)::-webkit-scrollbar-track {
+    .registration-dialog,
+    .registration-content,
+    .wardrobe-rows,
+    .accessory-strip,
+    .game-message
+  )::-webkit-scrollbar-track {
   background: var(--scroll-track);
 }
 :is(
-  .registration-dialog,
-  .registration-content,
-  .wardrobe-rows,
-  .accessory-strip,
-  .game-message
-)::-webkit-scrollbar-thumb {
+    .registration-dialog,
+    .registration-content,
+    .wardrobe-rows,
+    .accessory-strip,
+    .game-message
+  )::-webkit-scrollbar-thumb {
   background: var(--scroll-thumb);
   border: 2px solid var(--scroll-track);
 }
@@ -106,6 +96,10 @@
 }
 .dialogue-interaction {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-content: stretch;
+  align-items: stretch;
+  min-width: 0;
   grid-template-rows: minmax(0, 1fr) auto;
   align-content: center;
   gap: 12px;
@@ -113,7 +107,8 @@
 .dialogue-choice-slot {
   min-height: 132px;
   height: auto;
-  justify-content: center;
+  justify-content: flex-start;
+  justify-content: safe center;
 }
 .dialogue-choice-slot .dialogue-continue {
   min-height: 52px;
@@ -180,29 +175,14 @@
   width: 392px;
   height: 206px;
 }
+.code-bench.bench-daisy {
+  width: 210px;
+  height: 134px;
+}
 .bench-coder {
   position: absolute;
   bottom: 0;
   left: 200px;
-}
-.developer-wall {
-  position: absolute;
-  top: 510px;
-  left: 1600px;
-  width: 400px;
-  padding: 16px;
-  border: 3px solid var(--ink);
-  background: var(--screen-dark);
-  color: var(--paper);
-  box-shadow: 8px 8px 0 var(--line);
-}
-.developer-wall > span {
-  font: 26px/1.2 var(--font-game);
-  color: var(--yellow);
-}
-.developer-wall pre {
-  margin: 12px 0 0;
-  font: 12px/1.5 var(--font-mono);
 }
 .ping-sign {
   left: 3040px;
@@ -223,18 +203,6 @@
     gap: 8px;
     padding-inline: 12px;
   }
-  .hall-hint {
-    display: block;
-    font-size: 11px;
-  }
-  .social-floor .hall-controls > span {
-    display: none;
-  }
-  .event-board {
-    --hero-cta-width: 120px;
-    top: 220px;
-    --cable-length: 78px;
-  }
   .dialogue-interaction {
     display: grid;
     grid-template-rows: minmax(0, 1fr) auto;
@@ -248,9 +216,6 @@
   }
   .dialogue-interaction > p {
     min-height: 18px;
-  }
-  .developer-wall {
-    display: none;
   }
 }
 @media (max-height: 600px) and (min-width: 701px) {
@@ -289,152 +254,6 @@ html {
   margin: 0;
   border: 1px solid var(--ink);
   box-shadow: 2px 2px 0 var(--ink);
-}
-@media (min-width: 701px) and (max-height: 820px) {
-  .event-board {
-    --hero-cta-width: 128px;
-    --billboard-top: clamp(
-      238px,
-      calc(var(--floor-height) - 100svh + 16px),
-      calc(var(--floor-height) - 630px)
-    );
-    --cable-length: calc(var(--billboard-top) - 150px);
-    top: var(--billboard-top);
-    width: min(560px, calc(100vw - 64px));
-    padding: 14px 24px;
-  }
-  .event-board h1 {
-    font-size: 56px;
-  }
-  .event-board p {
-    font-size: 13px;
-    line-height: 1.4;
-    margin: 8px auto;
-  }
-  .event-date {
-    margin-bottom: 10px;
-  }
-  .event-board .button-row {
-    gap: 8px;
-  }
-}
-
-/* The scenery keeps the original pixel silhouettes and opaque depth layers. */
-.scene-color-filters {
-  position: absolute;
-  pointer-events: none;
-}
-.main-hall {
-  background: linear-gradient(
-    var(--sky-dusk-top) 0%,
-    var(--sky-dusk-pink) 28%,
-    var(--sky-dusk-gold) 58%,
-    var(--sky-dusk-horizon) 100%
-  );
-}
-.skyline-far {
-  filter: url(#sunset-distance);
-}
-.skyline-towers,
-.skyline-mid {
-  filter: url(#sunset-city);
-}
-.sky-cloud {
-  filter: url(#sunset-clouds);
-}
-.event-board {
-  border: 4px solid var(--ink);
-  box-shadow:
-    inset 0 0 0 3px var(--billboard-trim),
-    6px 8px 0 var(--frame-dark);
-  background: linear-gradient(0deg, #fff2c9, var(--paper) 68%);
-}
-.event-board::before,
-.event-board::after {
-  width: 6px;
-  height: var(--cable-length);
-  background: repeating-linear-gradient(
-    145deg,
-    var(--cable-dark) 0 3px,
-    var(--cable-light) 3px 5px
-  );
-  box-shadow: 1px 0 0 var(--cable-dark);
-}
-.event-board::before {
-  left: 48px;
-}
-.event-board::after {
-  right: 48px;
-}
-.event-board > :not(.billboard-hardware) {
-  position: relative;
-  z-index: 1;
-}
-.billboard-hardware {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-.billboard-clamp {
-  position: absolute;
-  top: -10px;
-  width: 16px;
-  height: 18px;
-  background: var(--roof-edge);
-  border: 3px solid var(--cable-dark);
-  box-shadow: inset 2px 0 var(--cable-light);
-}
-.clamp-left {
-  left: 43px;
-}
-.clamp-right {
-  right: 43px;
-}
-.billboard-bolt {
-  position: absolute;
-  bottom: 10px;
-  width: 4px;
-  height: 4px;
-  background: var(--billboard-trim);
-}
-.bolt-left {
-  left: 12px;
-}
-.bolt-right {
-  right: 12px;
-}
-.billboard-light {
-  position: absolute;
-  top: 100%;
-  width: 8px;
-  height: 35px;
-  background: var(--roof-edge);
-  border-inline: 2px solid var(--cable-dark);
-}
-.light-left {
-  left: 20%;
-}
-.light-right {
-  right: 20%;
-}
-.lamp-head {
-  position: absolute;
-  width: 34px;
-  height: 16px;
-  left: -15px;
-  top: 30px;
-  background: var(--cable-dark);
-  border: 2px solid var(--roof-edge);
-  box-shadow: inset 0 4px #fff3ac;
-}
-.billboard-beam {
-  position: absolute;
-  bottom: -3px;
-  left: -94px;
-  width: 188px;
-  height: 220px;
-  background: linear-gradient(0deg, #fff4c27a, #fff7d22e 60%, #fff7d200);
-  clip-path: polygon(0 0, 100% 0, 60% 100%, 40% 100%);
 }
 .stall-hotspot {
   position: absolute;
@@ -566,11 +385,6 @@ html {
 .world-stage:not(.is-handheld) .main-hall > .hall-controls {
   top: 160px;
   bottom: auto;
-  left: 3%;
-  right: 3%;
-  width: auto;
-  max-width: none;
-  margin: 0;
   min-height: 44px;
   padding: 0;
   background: transparent;
@@ -582,7 +396,7 @@ html {
   border: 0;
   box-shadow: none;
 }
-.main-hall > .hall-controls :is(.desktop-controls, .hall-hint) {
+.main-hall > .hall-controls .desktop-controls {
   text-shadow:
     1px 0 var(--paper),
     -1px 0 var(--paper),
@@ -592,8 +406,6 @@ html {
 @media (max-width: 700px) {
   .world-stage:not(.is-handheld) .main-hall > .hall-controls {
     top: 154px;
-    left: 16px;
-    right: 16px;
   }
 }
 /* Each machine keeps one recognizable accent, against quiet game surrounds. */
@@ -631,8 +443,6 @@ html {
 .world-stage:not(.is-handheld) .social-floor > .hall-controls {
   top: 112px;
   bottom: auto;
-  left: 3%;
-  right: 3%;
   min-height: 44px;
   padding: 0;
   background: transparent;
@@ -647,9 +457,6 @@ html {
 .social-floor .schedule-board {
   top: 176px;
 }
-.social-floor .developer-wall {
-  top: 586px;
-}
 .social-floor {
   background: linear-gradient(
     var(--paper) calc(100% - 142px),
@@ -658,44 +465,6 @@ html {
 }
 .social-floor .world-floor-art {
   mask-image: linear-gradient(#000 0 65%, transparent 76%);
-}
-.venue-footer {
-  position: relative;
-  isolation: isolate;
-  background: linear-gradient(var(--floor-foreground), var(--paper) 80%);
-  color: var(--ink);
-}
-.venue-footer::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0 0 auto;
-  height: 64px;
-  background: url("/assets/vega/floor-tile.png") repeat-x left -40px / 512px
-    142px;
-  image-rendering: pixelated;
-  mask-image: linear-gradient(#000, transparent);
-}
-.venue-footer img {
-  filter: none;
-}
-.venue-footer .footer-actions {
-  flex-direction: column;
-}
-.venue-footer small {
-  font-size: 11px;
-}
-@media (max-width: 700px) {
-  .world-stage:not(.is-handheld) .social-floor > .hall-controls {
-    left: 16px;
-    right: 16px;
-  }
-  .social-floor .hall-controls > .hall-hint {
-    display: block;
-  }
-  .venue-footer {
-    gap: 24px;
-  }
 }
 .foot-dust {
   position: absolute;
@@ -734,107 +503,8 @@ html {
   transform-origin: top left;
 }
 /* Hallmark component review: identity and event facts lead; actions form one group. */
-.venue-footer {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas: "identity actions" "note actions";
-  column-gap: 64px;
-  row-gap: 24px;
-  align-items: start;
-  align-content: center;
-  min-height: 286px;
-  padding: 78px max(3%, calc((100% - 1160px) / 2)) 44px;
-}
-.venue-footer .footer-identity {
-  grid-area: identity;
-  display: flex;
-  align-items: flex-start;
-  gap: 28px;
-  min-width: 0;
-}
-.venue-footer .footer-identity > div {
-  min-width: 0;
-}
-.venue-footer .footer-identity img {
-  width: 110px;
-  flex: none;
-  margin-top: 3px;
-}
-.venue-footer h2 {
-  font: 32px/1.15 var(--font-editorial);
-  text-wrap: balance;
-  margin: 0 0 14px;
-}
-.venue-footer .footer-details {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 20px;
-  margin: 0;
-  font: 13px/1.5 var(--font-mono);
-}
 .footer-details > * {
   white-space: nowrap;
-}
-.venue-footer .footer-actions {
-  grid-area: actions;
-  display: flex;
-  width: 190px;
-  align-items: stretch;
-  gap: 8px;
-}
-.venue-footer .footer-actions .pixel-button {
-  min-height: 48px;
-  white-space: nowrap;
-}
-.venue-footer .footer-actions .text-link {
-  min-height: 44px;
-  white-space: nowrap;
-  font-size: 12px;
-}
-.venue-footer .footer-note {
-  grid-area: note;
-  margin: 0 0 0 138px;
-  max-width: 520px;
-  color: var(--color-muted);
-  font: 12px/1.5 var(--font-body);
-}
-@media (max-width: 900px) {
-  .venue-footer {
-    column-gap: 28px;
-  }
-  .venue-footer h2 {
-    font-size: 28px;
-  }
-}
-@media (max-width: 700px) {
-  .venue-footer {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "identity" "actions" "note";
-    justify-items: center;
-    row-gap: 26px;
-    min-height: 0;
-    padding: 64px 20px 40px;
-    text-align: center;
-  }
-  .venue-footer .footer-identity {
-    flex-direction: column;
-    align-items: center;
-    gap: 22px;
-  }
-  .venue-footer h2 {
-    font-size: 30px;
-  }
-  .venue-footer .footer-details {
-    justify-content: center;
-  }
-  .venue-footer .footer-actions {
-    width: min(280px, 100%);
-    align-items: stretch;
-  }
-  .venue-footer .footer-note {
-    margin: 0;
-    max-width: 310px;
-  }
 }
 .social-floor .world-floor-art {
   mask-image: none;
@@ -844,16 +514,6 @@ html {
   position: absolute;
   inset: 104px 0 0;
   background: url("/assets/vega/floor-plane.svg") repeat 0 0 / 512px 64px;
-}
-.venue-footer {
-  overflow: clip;
-}
-.venue-footer::before {
-  height: 100%;
-  right: -512px;
-  background: url("/assets/vega/floor-plane.svg") repeat 0 -38px / 512px 64px;
-  transform: translateX(calc(-1 * var(--footer-floor-phase, 0px)));
-  mask-image: linear-gradient(#000, transparent 70%);
 }
 /* Keep the menu action in view while long instructions and the garage scroll. */
 .game-message {

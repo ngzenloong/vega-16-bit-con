@@ -2,7 +2,8 @@ import { drawFacade } from "./city-art.ts";
 import { clamp, overlaps, landingSurface } from "../math.ts";
 import {
   COLORS as C,
-  drawDuskSky,
+  drawDaySky,
+  CITY_COLORS,
   drawCharacter,
   drawBrand,
   pixelText,
@@ -235,7 +236,7 @@ export const createGame: GameFactory = (env) => {
     },
     draw(c, t) {
       const { width, height } = viewport;
-      drawDuskSky(c, height, width);
+      drawDaySky(c, height, width);
       const cam = clamp(state.x - width * 0.35, 0, 2250 - width);
       if (env.backdrop) {
         const w = env.backdrop.width,
@@ -249,7 +250,7 @@ export const createGame: GameFactory = (env) => {
           flip: i % 2 === 0,
         });
       }
-      c.fillStyle = "#7e7376";
+      c.fillStyle = CITY_COLORS.metal;
       for (let i = 0; i < 12; i++)
         c.fillRect(i * 140 - cam * 0.45, 52, 3, height - 112);
       c.fillRect(0, height - 215, width, 3);
@@ -257,7 +258,7 @@ export const createGame: GameFactory = (env) => {
       c.translate(-cam, height - 400);
       c.fillStyle = "#d2bea1";
       c.fillRect(0, 338, 2250, 62);
-      c.fillStyle = "#897574";
+      c.fillStyle = CITY_COLORS.metal;
       c.fillRect(0, 338, 2250, 8);
       c.fillStyle = "#b99863";
       for (let i = 0; i < 45; i++)
