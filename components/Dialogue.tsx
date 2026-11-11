@@ -265,11 +265,18 @@ export default function Dialogue({
       const delta = ["ArrowDown", "ArrowRight"].includes(event.key) ? 1 : -1;
       const next = (selected + delta + choices.length) % choices.length;
       setSelected(next);
-      ref.current
-        ?.querySelectorAll<HTMLButtonElement>(
-          ".dialogue-choice-slot [data-native-action]",
-        )
-        [next]?.focus({ preventScroll: true });
+      const button = ref.current?.querySelectorAll<HTMLButtonElement>(
+        ".dialogue-choice-slot [data-native-action]",
+      )[next];
+      button?.focus({ preventScroll: true });
+      const slot = button?.parentElement;
+      if (button && slot) {
+        const item = button.getBoundingClientRect();
+        const viewport = slot.getBoundingClientRect();
+        if (item.top < viewport.top) slot.scrollTop -= viewport.top - item.top;
+        else if (item.bottom > viewport.bottom)
+          slot.scrollTop += item.bottom - viewport.bottom;
+      }
       audio.effect("click");
       return;
     }
@@ -359,8 +366,10 @@ export default function Dialogue({
                   onFocus={() => setSelected(i)}
                   onClick={() => leave(choice.action)}
                 >
-                  <span aria-hidden="true">{selected === i ? "▸" : " "}</span>
-                  {choice.label}
+                  <span className="dialogue-choice-marker" aria-hidden="true">
+                    {selected === i ? "▸" : " "}
+                  </span>
+                  <span className="dialogue-choice-label">{choice.label}</span>
                 </button>
               ))
             ) : (

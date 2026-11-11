@@ -96,6 +96,10 @@
 }
 .dialogue-interaction {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-content: stretch;
+  align-items: stretch;
+  min-width: 0;
   grid-template-rows: minmax(0, 1fr) auto;
   align-content: center;
   gap: 12px;
@@ -103,7 +107,8 @@
 .dialogue-choice-slot {
   min-height: 132px;
   height: auto;
-  justify-content: center;
+  justify-content: flex-start;
+  justify-content: safe center;
 }
 .dialogue-choice-slot .dialogue-continue {
   min-height: 52px;
